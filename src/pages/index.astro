@@ -8,7 +8,7 @@ import FAQAccordion from "../components/FAQAccordion.astro";
 import BookingCTA from "../components/BookingCTA.astro";
 import { buildOrganization } from "../lib/json-ld";
 import { buildFAQPage } from "../lib/json-ld";
-import { assetPath } from "../utils/asset";
+import { assetPath, url } from "../utils/asset";
 
 const locations = await getCollection("locations");
 const services = await getCollection("services");
