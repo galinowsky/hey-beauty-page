@@ -1,0 +1,30 @@
+{
+  "scope": "service",
+  "scopeSlug": "wlosy",
+  "items": [
+    {
+      "question": "Jak długo utrzymuje się efekt keratynowego prostowania?",
+      "answer": "Efekt utrzymuje się od 3 do 5 miesięcy, w zależności od rodzaju włosa i sposobu pielęgnacji. Włosy po zabiegu wymagają specjalnych szamponów bez siarczanów, które przedłużają trwałość efektu."
+    },
+    {
+      "question": "Czy zabieg jest bezpieczny dla farbowanych włosów?",
+      "answer": "Tak. Stosujemy wyłącznie formuły bezformaldehydowe, bezpieczne dla włosów farbowanych, rozjaśnianych i po zabiegach chemicznych. Magdalena podczas konsultacji ocenia stan włosa i dobiera odpowiednią formułę."
+    },
+    {
+      "question": "Czym różni się prostowanie od regeneracji keratynowej?",
+      "answer": "Prostowanie keratynowe wygładza i relaksuje skręt włosa — efektem są idealnie gładkie, proste włosy. Regeneracja keratynowa skupia się na odbudowie struktury i nawilżeniu, zachowując naturalny skręt. Magdalena pomoże Ci wybrać odpowiedni zabieg podczas konsultacji."
+    },
+    {
+      "question": "Czy muszę coś zrobić przed wizytą?",
+      "answer": "Przyjdź z czystymi, nieukładanymi włosami. Nie stosuj żadnych olejków ani masek na dzień przed zabiegiem. Zabieg trwa 2,5–4 godziny, więc warto zaplanować cały dzień."
+    },
+    {
+      "question": "Kiedy mogę umyć włosy po zabiegu?",
+      "answer": "Pierwsze mycie zalecamy po 48–72 godzinach od zabiegu. Przez ten czas nie spinaj, nie zaplataj ani nie moczyj włosów. Magdalena poinstruuje Cię dokładnie po zabiegu."
+    },
+    {
+      "question": "Czy zabieg jest dostępny we wszystkich salonach Hey Beauty?",
+      "answer": "Zabiegi keratynowe prostowania i regeneracji dostępne są wyłącznie w salonie Hey Beauty Zabłocie, ul. Przemysłowa 4/469. Specjalistką jest Magdalena Tryba."
+    }
+  ]
+}

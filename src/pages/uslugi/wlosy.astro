@@ -2,8 +2,13 @@
 import Base from "../../layouts/Base.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import JsonLd from "../../components/JsonLd.astro";
-import { buildBreadcrumbList } from "../../lib/json-ld";
+import FAQAccordion from "../../components/FAQAccordion.astro";
+import { buildBreadcrumbList, buildFAQPage } from "../../lib/json-ld";
+import { getCollection } from "astro:content";
 import { assetPath, url } from "../../utils/asset";
+
+const allFaq = await getCollection("faq");
+const hairFaq = allFaq.find((f) => f.data.scope === "service" && f.data.scopeSlug === "wlosy");
 
 const title = "Keratynowe Zabiegi Włosów Kraków — Magdalena Tryba | Hey Beauty Zabłocie";
 const description =
@@ -56,6 +61,7 @@ const reviews = [
 
 <Base {title} {description}>
   <JsonLd slot="head" data={buildBreadcrumbList(breadcrumbs, Astro.site)} />
+  {hairFaq && <JsonLd slot="head" data={buildFAQPage(hairFaq.data.items)} />}
 
   <!-- Breadcrumbs -->
   <div class="mx-auto max-w-7xl px-6 pt-8">
@@ -342,6 +348,21 @@ const reviews = [
       </p>
     </div>
   </section>
+
+  <!-- ── FAQ ── -->
+  {hairFaq && (
+    <section class="py-24 lg:py-32">
+      <div class="mx-auto max-w-3xl px-6">
+        <div class="text-center">
+          <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">FAQ</p>
+          <h2 class="mt-4 font-display text-h2">Najczęściej zadawane pytania</h2>
+        </div>
+        <div class="mt-16">
+          <FAQAccordion items={hairFaq.data.items} />
+        </div>
+      </div>
+    </section>
+  )}
 
   <!-- ── BOOKING CTA — dark strip ── -->
   <section class="bg-[#0a0a0a] px-6 py-24 text-center">
