@@ -5,6 +5,7 @@ import JsonLd from "../../components/JsonLd.astro";
 import BookingCTA from "../../components/BookingCTA.astro";
 import FAQAccordion from "../../components/FAQAccordion.astro";
 import { buildFAQPage, buildBreadcrumbList } from "../../lib/json-ld";
+import { url } from "../../utils/asset";
 
 export async function getStaticPaths() {
   const services = await getCollection("services");
@@ -100,7 +101,7 @@ const breadcrumbs = [
               <div class="flex items-center gap-6">
                 <span class="font-ui text-sm">od {sl.data.price} zł</span>
                 <a
-                  href={`/salony/${sl.data.locationSlug}/${service.data.slug}/`}
+                  href={url(`/salony/${sl.data.locationSlug}/${service.data.slug}/`)}
                   class="bg-accent px-4 py-2 font-ui text-[10px] uppercase tracking-[2px] text-white transition-colors hover:bg-accent-hover"
                 >
                   Szczegóły
@@ -130,7 +131,7 @@ const breadcrumbs = [
     <h2 class="font-display text-h3">Inne zabiegi</h2>
     <p class="mt-2 text-sm text-muted">
       <a
-        href="/uslugi/"
+        href={url("/uslugi/")}
         class="border-b border-accent text-accent"
       >
         Zobacz pełną ofertę →

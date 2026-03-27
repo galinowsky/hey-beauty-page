@@ -41,14 +41,28 @@
   --ease-move: ease-in-out;
 }
 
-/* ── Hero Background Slow Zoom ── */
+/* ── Hero Carousel ── */
 @keyframes hero-zoom {
   from { transform: scale(1); }
-  to { transform: scale(1.08); }
+  to   { transform: scale(1.08); }
 }
 
-.hero-bg {
-  animation: hero-zoom 20s ease-out forwards;
+.hero-slide {
+  opacity: 0;
+  transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-slide img {
+  transform: scale(1);
+  transition: transform 0s; /* reset on swap */
+}
+
+.hero-slide.is-active {
+  opacity: 1;
+}
+
+.hero-slide.is-active img {
+  animation: hero-zoom 8s ease-out forwards;
 }
 
 /* ── Base Styles ── */

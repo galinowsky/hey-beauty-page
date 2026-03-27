@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import { url } from "../utils/asset";
 
 const locations = await getCollection("locations");
 const services = await getCollection("services");
@@ -41,7 +42,7 @@ const sortedServices = services
           sortedServices.map((s) => (
             <li>
               <a
-                href={`/uslugi/${s.data.slug}/`}
+                href={url(`/uslugi/${s.data.slug}/`)}
                 class="text-sm text-muted transition-colors hover:text-primary"
               >
                 {s.data.name}
@@ -64,7 +65,7 @@ const sortedServices = services
           sortedLocations.map((l) => (
             <li>
               <a
-                href={`/salony/${l.data.slug}/`}
+                href={url(`/salony/${l.data.slug}/`)}
                 class="text-sm text-muted transition-colors hover:text-primary"
               >
                 {l.data.name}
@@ -94,20 +95,20 @@ const sortedServices = services
           </a>
         </li>
         <li>
-          <a href="/kontakt/" class="transition-colors hover:text-primary">
+          <a href={url("/kontakt/")} class="transition-colors hover:text-primary">
             Kontakt
           </a>
         </li>
         <li>
           <a
-            href="/polityka-prywatnosci/"
+            href={url("/polityka-prywatnosci/")}
             class="transition-colors hover:text-primary"
           >
             Polityka Prywatności
           </a>
         </li>
         <li>
-          <a href="/regulamin/" class="transition-colors hover:text-primary">
+          <a href={url("/regulamin/")} class="transition-colors hover:text-primary">
             Regulamin
           </a>
         </li>

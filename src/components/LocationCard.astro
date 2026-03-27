@@ -1,5 +1,5 @@
 ---
-import { assetPath } from "../utils/asset";
+import { assetPath, url } from "../utils/asset";
 
 interface Props {
   name: string;
@@ -55,7 +55,7 @@ const { name, shortName, slug, address, district, rating, booksyUrl, image } =
     }
     <div class="mt-4 flex gap-2">
       <a
-        href={`/salony/${slug}/`}
+        href={url(`/salony/${slug}/`)}
         class="flex-1 border border-primary py-2 font-ui text-[11px] uppercase tracking-[2px] text-primary transition-colors hover:bg-primary hover:text-bg"
       >
         Szczegóły

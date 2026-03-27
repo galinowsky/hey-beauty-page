@@ -1,6 +1,6 @@
 ---
 import { getCollection } from "astro:content";
-import { assetPath } from "../utils/asset";
+import { assetPath, url } from "../utils/asset";
 
 const locations = await getCollection("locations");
 const sortedLocations = locations.sort(
@@ -9,11 +9,11 @@ const sortedLocations = locations.sort(
 const currentPath = Astro.url.pathname;
 
 const navItems = [
-  { href: "/uslugi/", label: "Usługi" },
-  { href: "/salony/", label: "Salony" },
-  { href: "/o-nas/", label: "O nas" },
-  { href: "/faq/", label: "FAQ" },
-  { href: "/kontakt/", label: "Kontakt" },
+  { href: url("/uslugi/"), label: "Usługi" },
+  { href: url("/salony/"), label: "Salony" },
+  { href: url("/o-nas/"), label: "O nas" },
+  { href: url("/faq/"), label: "FAQ" },
+  { href: url("/kontakt/"), label: "Kontakt" },
 ];
 ---
 
@@ -22,7 +22,7 @@ const navItems = [
 >
   <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
     <!-- Logo (real brand logo) -->
-    <a href="/" class="block">
+    <a href={url("/")} class="block">
       <img
         src={assetPath("/images/hey-beauty-logo.avif")}
         alt="Hey Beauty"
@@ -91,10 +91,10 @@ const navItems = [
     <nav class="flex gap-0 overflow-x-auto">
       {
         sortedLocations.map((loc) => {
-          const isLocActive = currentPath.includes(loc.data.slug);
+          const isLocActive = currentPath.includes(`/${loc.data.slug}/`);
           return (
             <a
-              href={`/salony/${loc.data.slug}/`}
+              href={url(`/salony/${loc.data.slug}/`)}
               class:list={[
                 "border-b-2 px-6 py-3 font-mono text-[13px] tracking-[1px] transition-colors whitespace-nowrap",
                 isLocActive

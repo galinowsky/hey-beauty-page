@@ -37,20 +37,32 @@ const description =
     )
   }
 
-  <!-- HERO — Photo background with slow zoom + text overlay -->
+  <!-- HERO — Carousel with cross-fade + slow zoom -->
   <section class="hero-section relative flex min-h-[90vh] flex-col items-center justify-center overflow-hidden">
-    <!-- Background image with slow zoom -->
-    <div class="hero-bg absolute inset-0">
-      <img
-        src={assetPath("/images/hero-salon.jpeg")}
-        alt="Wnętrze salonu Hey Beauty"
-        class="h-full w-full object-cover"
-      />
-      <div class="absolute inset-0 bg-black/40"></div>
-    </div>
+    <!-- Carousel slides -->
+    {[
+      { src: assetPath("/images/hero-salon.jpeg"),          alt: "Recepcja salonu Hey Beauty" },
+      { src: assetPath("/images/inspiration-1.jpeg"),       alt: "Stylizacja paznokci Hey Beauty" },
+      { src: assetPath("/images/locations/hey_beauty_2.avif"), alt: "Wnętrze salonu Hey Beauty 2.0" },
+      { src: assetPath("/images/inspiration-2.jpeg"),       alt: "Zabiegi kosmetyczne Hey Beauty" },
+    ].map((slide, i) => (
+      <div
+        class:list={["hero-slide absolute inset-0", i === 0 && "is-active"]}
+        data-slide
+      >
+        <img
+          src={slide.src}
+          alt={slide.alt}
+          class="h-full w-full object-cover"
+          loading={i === 0 ? "eager" : "lazy"}
+        />
+      </div>
+    ))}
+    <!-- Shared dark overlay -->
+    <div class="absolute inset-0 z-[1] bg-black/45"></div>
 
     <!-- Content -->
-    <div class="relative z-10 px-6 text-center text-white">
+    <div class="relative z-10 px-6 text-center text-white" style="z-index:2">
       <img
         data-hero
         src={assetPath("/images/hey-beauty-logo.avif")}
@@ -72,11 +84,53 @@ const description =
       </div>
     </div>
 
-    <p data-hero-delay-2 class="relative z-10 mt-auto pb-12 font-mono text-xs tracking-[2px] text-white/40">
+    <!-- Carousel dots -->
+    <div class="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 gap-2" style="z-index:2" id="hero-dots">
+      {[0,1,2,3].map((i) => (
+        <button
+          class:list={["hero-dot size-1.5 rounded-full transition-all duration-500", i === 0 ? "bg-white scale-125" : "bg-white/40"]}
+          data-index={i}
+          aria-label={`Slajd ${i + 1}`}
+        />
+      ))}
+    </div>
+
+    <p data-hero-delay-2 class="relative mt-auto pb-20 font-mono text-xs tracking-[2px] text-white/40" style="z-index:2">
       4 salony &middot;
       {sortedLocations.map((l) => l.data.shortName).join(" · ")}
     </p>
   </section>
+
+  <script>
+    const slides = document.querySelectorAll<HTMLElement>("[data-slide]");
+    const dots = document.querySelectorAll<HTMLButtonElement>(".hero-dot");
+    let current = 0;
+    let timer: ReturnType<typeof setInterval>;
+
+    function goTo(index: number) {
+      slides[current].classList.remove("is-active");
+      dots[current].classList.remove("bg-white", "scale-125");
+      dots[current].classList.add("bg-white/40");
+      current = index;
+      slides[current].classList.add("is-active");
+      dots[current].classList.add("bg-white", "scale-125");
+      dots[current].classList.remove("bg-white/40");
+    }
+
+    function next() {
+      goTo((current + 1) % slides.length);
+    }
+
+    timer = setInterval(next, 5000);
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener("click", () => {
+        clearInterval(timer);
+        goTo(i);
+        timer = setInterval(next, 5000);
+      });
+    });
+  </script>
 
   <!-- LOCATIONS -->
   <section class="grain bg-surface py-24 lg:py-32">
@@ -137,7 +191,7 @@ const description =
       </div>
       <div class="mt-12 text-center">
         <a
-          href="/uslugi/"
+          href={url("/uslugi/")}
           class="inline-block border border-primary px-8 py-3 font-ui text-[11px] uppercase tracking-[3px] transition-colors hover:bg-primary hover:text-bg"
         >
           Zobacz wszystkie usługi
@@ -164,7 +218,7 @@ const description =
           przez zabiegi na twarz i ciało, po manicure i pedicure.
         </p>
         <a
-          href="/o-nas/"
+          href={url("/o-nas/")}
           class="mt-10 inline-block self-start border-b border-primary pb-1 font-ui text-[11px] uppercase tracking-[3px]"
         >
           Poznaj nas bliżej →

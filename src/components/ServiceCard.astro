@@ -8,10 +8,11 @@ interface Props {
   image?: string;
 }
 
+import { url } from "../utils/asset";
 const { name, slug, description, priceMin, duration, image } = Astro.props;
 ---
 
-<a href={`/uslugi/${slug}/`} class="group block border border-border transition-shadow hover:shadow-sm">
+<a href={url(`/uslugi/${slug}/`)} class="group block border border-border transition-shadow hover:shadow-sm">
   <!-- Image -->
   <div class="aspect-[4/3] overflow-hidden bg-surface">
     {

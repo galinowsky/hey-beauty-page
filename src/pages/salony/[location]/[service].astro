@@ -10,6 +10,7 @@ import {
   buildFAQPage,
   buildBreadcrumbList,
 } from "../../../lib/json-ld";
+import { url } from "../../../utils/asset";
 
 export async function getStaticPaths() {
   const allServiceLocations = await getCollection("serviceLocations");
@@ -156,7 +157,7 @@ const breadcrumbs = [
                   </span>
                   {!isCurrent && (
                     <a
-                      href={`/salony/${sl.data.locationSlug}/${service!.data.slug}/`}
+                      href={url(`/salony/${sl.data.locationSlug}/${service!.data.slug}/`)}
                       class="font-ui text-[10px] uppercase tracking-[2px] text-accent"
                     >
                       Sprawdź →
@@ -192,7 +193,7 @@ const breadcrumbs = [
     </h2>
     <p class="mt-2 text-sm text-muted">
       <a
-        href={`/salony/${location!.data.slug}/`}
+        href={url(`/salony/${location!.data.slug}/`)}
         class="border-b border-accent text-accent"
       >
         Zobacz pełną ofertę salonu →
