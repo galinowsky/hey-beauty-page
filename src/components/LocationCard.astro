@@ -14,7 +14,7 @@ const { name, shortName, slug, address, district, rating, booksyUrl, image } =
   Astro.props;
 ---
 
-<div class="border border-border">
+<div class="hover-lift border border-border">
   <!-- Image -->
   <div class="aspect-[16/10] overflow-hidden bg-surface">
     {
@@ -22,7 +22,7 @@ const { name, shortName, slug, address, district, rating, booksyUrl, image } =
         <img
           src={image}
           alt={name}
-          class="h-full w-full object-cover grayscale"
+          class="h-full w-full object-cover img-reveal"
           loading="lazy"
         />
       ) : (
