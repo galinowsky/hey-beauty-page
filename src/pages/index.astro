@@ -67,7 +67,7 @@ const description =
         data-hero
         src={assetPath("/images/hey-beauty-logo.avif")}
         alt="Hey Beauty"
-        class="mx-auto mt-8 h-24 w-auto invert md:mt-12 md:h-36"
+        class="mx-auto h-24 w-auto invert md:h-36"
       />
       <p data-hero-delay class="mt-8 font-ui text-sm uppercase tracking-[8px] text-white/70">
         Face &middot; Body &middot; Brows &middot; Nails &middot; Kraków
@@ -95,7 +95,7 @@ const description =
       ))}
     </div>
 
-    <p data-hero-delay-2 class="relative mt-auto pb-20 font-mono text-xs tracking-[2px] text-white/40" style="z-index:2">
+    <p data-hero-delay-2 class="absolute bottom-16 left-0 right-0 text-center font-mono text-xs tracking-[2px] text-white/40" style="z-index:2">
       4 salony &middot;
       {sortedLocations.map((l) => l.data.shortName).join(" · ")}
     </p>
