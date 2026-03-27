@@ -1,4 +1,6 @@
 ---
+import { assetPath } from "../utils/asset";
+
 interface Props {
   name: string;
   shortName: string;
@@ -20,7 +22,7 @@ const { name, shortName, slug, address, district, rating, booksyUrl, image } =
     {
       image ? (
         <img
-          src={image}
+          src={assetPath(image)}
           alt={name}
           class="h-full w-full object-cover img-reveal"
           loading="lazy"

@@ -8,6 +8,7 @@ import FAQAccordion from "../components/FAQAccordion.astro";
 import BookingCTA from "../components/BookingCTA.astro";
 import { buildOrganization } from "../lib/json-ld";
 import { buildFAQPage } from "../lib/json-ld";
+import { assetPath } from "../utils/asset";
 
 const locations = await getCollection("locations");
 const services = await getCollection("services");
@@ -41,7 +42,7 @@ const description =
     <!-- Background image with slow zoom -->
     <div class="hero-bg absolute inset-0">
       <img
-        src="/images/hero-salon.jpeg"
+        src={assetPath("/images/hero-salon.jpeg")}
         alt="Wnętrze salonu Hey Beauty"
         class="h-full w-full object-cover"
       />
@@ -52,7 +53,7 @@ const description =
     <div class="relative z-10 px-6 text-center text-white">
       <img
         data-hero
-        src="/images/hey-beauty-logo.avif"
+        src={assetPath("/images/hey-beauty-logo.avif")}
         alt="Hey Beauty"
         class="mx-auto mt-8 h-24 w-auto invert md:mt-12 md:h-36"
       />

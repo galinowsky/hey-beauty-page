@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import { assetPath } from "../utils/asset";
 
 const locations = await getCollection("locations");
 const sortedLocations = locations.sort(
@@ -23,7 +24,7 @@ const navItems = [
     <!-- Logo (real brand logo) -->
     <a href="/" class="block">
       <img
-        src="/images/hey-beauty-logo.avif"
+        src={assetPath("/images/hey-beauty-logo.avif")}
         alt="Hey Beauty"
         class="h-10 w-auto"
       />
@@ -120,7 +121,7 @@ const navItems = [
     <!-- Header row -->
     <div class="flex items-center justify-between">
       <img
-        src="/images/hey-beauty-logo.avif"
+        src={assetPath("/images/hey-beauty-logo.avif")}
         alt="Hey Beauty"
         class="h-10 w-auto"
       />
