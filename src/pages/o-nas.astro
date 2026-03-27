@@ -1,0 +1,56 @@
+---
+import Page from "../layouts/Page.astro";
+import BookingCTA from "../components/BookingCTA.astro";
+
+const title = "O Hey Beauty — Salon Kosmetyczny Kraków";
+const description = "Poznaj Hey Beauty. Sieć salonów kosmetycznych w Krakowie łączących profesjonalizm z luksusową atmosferą. 4 lokalizacje, doświadczony zespół, najwyższa jakość.";
+const breadcrumbs = [
+  { name: "Strona główna", url: "/" },
+  { name: "O nas", url: "/o-nas/" },
+];
+---
+
+<Page {title} {description} {breadcrumbs}>
+  <section class="py-16 lg:py-24">
+    <h1 class="font-display text-h1">O Hey Beauty</h1>
+    <p class="mt-6 max-w-3xl text-lg leading-relaxed text-muted">
+      Hey Beauty to sieć salonów kosmetycznych w Krakowie, łączących profesjonalizm
+      z luksusową atmosferą. Oferujemy pełen zakres usług, od stylizacji brwi i rzęs,
+      przez zabiegi na twarz i ciało, po manicure i pedicure.
+    </p>
+  </section>
+
+  <section class="border-t border-border py-16">
+    <div class="grid grid-cols-1 gap-16 md:grid-cols-2">
+      <div>
+        <h2 class="font-display text-h3">Nasza filozofia</h2>
+        <p class="mt-4 leading-relaxed text-muted">
+          Wierzymy, że każda kobieta zasługuje na chwilę luksusu. Nasze salony
+          inspirowane są stylem &ldquo;Soft Industrial Luxury&rdquo; — połączeniem
+          surowych materiałów z ciepłem i elegancją.
+        </p>
+      </div>
+      <div>
+        <h2 class="font-display text-h3">Dlaczego my?</h2>
+        <ul class="mt-4 space-y-3 text-muted">
+          <li>★ 5.0 na Booksy z setkami opinii</li>
+          <li>4 lokalizacje w Krakowie</li>
+          <li>Profesjonalny zespół specjalistek</li>
+          <li>Darmowa konsultacja kosmetologiczna</li>
+          <li>Program lojalnościowy</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-border py-16 text-center">
+    <h2 class="font-display text-h2">Zapraszamy</h2>
+    <p class="mt-4 text-muted">
+      Umów swoją pierwszą wizytę i przekonaj się sama.
+    </p>
+    <BookingCTA
+      url="https://booksy.com/pl-pl/111132_hey-beauty-2-0_salon-kosmetyczny_8820_krakow"
+      class="mt-8"
+    />
+  </section>
+</Page>

@@ -1,0 +1,140 @@
+---
+import Page from "../../layouts/Page.astro";
+import { getCollection } from "astro:content";
+import JsonLd from "../../components/JsonLd.astro";
+import BookingCTA from "../../components/BookingCTA.astro";
+import FAQAccordion from "../../components/FAQAccordion.astro";
+import { buildFAQPage, buildBreadcrumbList } from "../../lib/json-ld";
+
+export async function getStaticPaths() {
+  const services = await getCollection("services");
+  const serviceLocations = await getCollection("serviceLocations");
+  const locations = await getCollection("locations");
+
+  return services.map((service) => {
+    const availability = serviceLocations
+      .filter(
+        (sl) => sl.data.serviceSlug === service.data.slug && sl.data.available,
+      )
+      .map((sl) => ({
+        serviceLocation: sl,
+        location: locations.find((l) => l.data.slug === sl.data.locationSlug),
+      }))
+      .filter((a) => a.location);
+
+    return {
+      params: { service: service.data.slug },
+      props: { service, availability },
+    };
+  });
+}
+
+const { service, availability } = Astro.props;
+
+const allFaq = await getCollection("faq");
+const serviceFaq = allFaq.find(
+  (f) => f.data.scope === "service" && f.data.scopeSlug === service.data.slug,
+);
+
+const title = `${service.data.name} Kraków — Hey Beauty | Cennik i Rezerwacja`;
+const description = `${service.data.description} Dostępne w ${availability.length} salonach Hey Beauty w Krakowie. Cena od ${service.data.priceRange.min} zł.`;
+const breadcrumbs = [
+  { name: "Strona główna", url: "/" },
+  { name: "Usługi", url: "/uslugi/" },
+  { name: service.data.name, url: `/uslugi/${service.data.slug}/` },
+];
+---
+
+<Page {title} {description} {breadcrumbs}>
+  <JsonLd slot="head" data={buildBreadcrumbList(breadcrumbs, Astro.site)} />
+  {
+    serviceFaq && (
+      <JsonLd slot="head" data={buildFAQPage(serviceFaq.data.items)} />
+    )
+  }
+
+  <section class="py-16 lg:py-24">
+    <p class="font-ui text-[11px] uppercase tracking-[3px] text-muted">
+      {service.data.category}
+    </p>
+    <h1 class="mt-4 font-display text-h1">
+      {service.data.name}
+      <span class="text-muted"> Kraków</span>
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg leading-relaxed text-muted">
+      {service.data.description}
+    </p>
+    <p class="mt-4 font-ui text-sm">
+      <span class="text-muted">Cena od</span>
+      <span class="font-display text-2xl ml-1">
+        {service.data.priceRange.min} zł
+      </span>
+      <span class="text-muted ml-2">·</span>
+      <span class="text-muted ml-2">
+        {service.data.duration.min}
+        {service.data.duration.min !== service.data.duration.max &&
+          `-${service.data.duration.max}`} min
+      </span>
+    </p>
+  </section>
+
+  <!-- Available locations -->
+  {
+    availability.length > 0 && (
+      <section class="border-t border-border py-16">
+        <h2 class="font-display text-h3">
+          Dostępne w {availability.length} salonach
+        </h2>
+        <div class="mt-8 divide-y divide-border">
+          {availability.map(({ serviceLocation: sl, location: loc }) => (
+            <div class="flex items-center justify-between py-5">
+              <div>
+                <span class="font-mono text-xs text-muted">
+                  {loc!.data.shortName}
+                </span>
+                <span class="ml-2 font-medium">{loc!.data.name}</span>
+                <p class="mt-1 text-sm text-muted">
+                  {loc!.data.address.street}
+                </p>
+              </div>
+              <div class="flex items-center gap-6">
+                <span class="font-ui text-sm">od {sl.data.price} zł</span>
+                <a
+                  href={`/salony/${sl.data.locationSlug}/${service.data.slug}/`}
+                  class="bg-accent px-4 py-2 font-ui text-[10px] uppercase tracking-[2px] text-white transition-colors hover:bg-accent-hover"
+                >
+                  Szczegóły
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <!-- FAQ -->
+  {
+    serviceFaq && (
+      <section class="border-t border-border py-16">
+        <h2 class="font-display text-h3">Najczęściej zadawane pytania</h2>
+        <div class="mt-8">
+          <FAQAccordion items={serviceFaq.data.items} />
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Cross-links to other services -->
+  <section class="border-t border-border py-16">
+    <h2 class="font-display text-h3">Inne zabiegi</h2>
+    <p class="mt-2 text-sm text-muted">
+      <a
+        href="/uslugi/"
+        class="border-b border-accent text-accent"
+      >
+        Zobacz pełną ofertę →
+      </a>
+    </p>
+  </section>
+</Page>

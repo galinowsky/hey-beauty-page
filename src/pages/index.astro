@@ -1,0 +1,182 @@
+---
+import Base from "../layouts/Base.astro";
+import { getCollection } from "astro:content";
+import JsonLd from "../components/JsonLd.astro";
+import ServiceCard from "../components/ServiceCard.astro";
+import LocationCard from "../components/LocationCard.astro";
+import FAQAccordion from "../components/FAQAccordion.astro";
+import BookingCTA from "../components/BookingCTA.astro";
+import { buildOrganization } from "../lib/json-ld";
+import { buildFAQPage } from "../lib/json-ld";
+
+const locations = await getCollection("locations");
+const services = await getCollection("services");
+const faqEntries = await getCollection("faq");
+
+const sortedLocations = locations.sort(
+  (a, b) => a.data.sortOrder - b.data.sortOrder,
+);
+const sortedServices = services.sort(
+  (a, b) => a.data.sortOrder - b.data.sortOrder,
+);
+
+const globalFaq = faqEntries.find((f) => f.data.scope === "global");
+
+const title =
+  "Hey Beauty — Salon Kosmetyczny Kraków | Face · Body · Brows · Nails";
+const description =
+  "Hey Beauty to sieć salonów kosmetycznych w Krakowie. 4 lokalizacje, profesjonalne zabiegi na twarz i ciało, stylizacja brwi i rzęs, pedicure. Umów wizytę online.";
+---
+
+<Base {title} {description}>
+  <JsonLd slot="head" data={buildOrganization()} />
+  {
+    globalFaq && (
+      <JsonLd slot="head" data={buildFAQPage(globalFaq.data.items)} />
+    )
+  }
+
+  <!-- HERO — Typography-only (Risk #2: no photo above fold) -->
+  <section
+    class="flex min-h-[85vh] flex-col items-center justify-center px-6 text-center"
+  >
+    <h1
+      class="font-display text-hero font-normal leading-[0.9] tracking-tight"
+    >
+      Hey Beauty
+    </h1>
+    <p class="mt-6 font-ui text-sm uppercase tracking-[6px] text-muted">
+      Face &middot; Body &middot; Brows &middot; Nails &middot; Kraków
+    </p>
+    <BookingCTA
+      url="https://booksy.com/pl-pl/111132_hey-beauty-2-0_salon-kosmetyczny_8820_krakow"
+      class="mt-12"
+    />
+    <p class="mt-auto pb-10 font-mono text-xs tracking-[2px] text-muted">
+      4 salony &middot;
+      {sortedLocations.map((l) => l.data.shortName).join(" · ")}
+    </p>
+  </section>
+
+  <!-- LOCATIONS -->
+  <section class="bg-surface py-20 lg:py-28">
+    <div class="mx-auto max-w-7xl px-6">
+      <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">
+        Nasze Salony
+      </p>
+      <h2 class="mt-4 font-display text-h2">4 lokalizacje w Krakowie</h2>
+      <div
+        class="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
+      >
+        {
+          sortedLocations.map((loc) => (
+            <LocationCard
+              name={loc.data.name}
+              shortName={loc.data.shortName}
+              slug={loc.data.slug}
+              address={loc.data.address.street}
+              district={loc.data.address.district}
+              rating={loc.data.rating}
+              booksyUrl={loc.data.booksyUrl}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="py-20 lg:py-28">
+    <div class="mx-auto max-w-7xl px-6">
+      <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">
+        Usługi
+      </p>
+      <h2 class="mt-4 font-display text-h2">Zabiegi kosmetyczne</h2>
+      <div
+        class="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+      >
+        {
+          sortedServices.map((s) => (
+            <ServiceCard
+              name={s.data.name}
+              slug={s.data.slug}
+              description={s.data.description}
+              priceMin={s.data.priceRange.min}
+              duration={`${s.data.duration.min} min`}
+              image={s.data.image}
+            />
+          ))
+        }
+      </div>
+      <div class="mt-12 text-center">
+        <a
+          href="/uslugi/"
+          class="inline-block border border-primary px-8 py-3 font-ui text-[11px] uppercase tracking-[3px] transition-colors hover:bg-primary hover:text-bg"
+        >
+          Zobacz wszystkie usługi
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT PREVIEW -->
+  <section class="grid min-h-[500px] grid-cols-1 md:grid-cols-2">
+    <div class="flex items-center bg-surface">
+      <div class="p-12 lg:p-20">
+        <p class="font-display text-xl italic text-muted">
+          &ldquo;Your Care Place&rdquo;
+        </p>
+      </div>
+    </div>
+    <div class="flex flex-col justify-center p-12 lg:p-20">
+      <h2 class="font-display text-h2">O Hey Beauty</h2>
+      <p class="mt-6 leading-relaxed text-muted">
+        Hey Beauty to sieć salonów kosmetycznych w Krakowie, łączących
+        profesjonalizm z luksusową atmosferą. Oferujemy pełen zakres usług, od
+        stylizacji brwi i rzęs, przez zabiegi na twarz i ciało, po manicure i
+        pedicure.
+      </p>
+      <a
+        href="/o-nas/"
+        class="mt-8 inline-block self-start border-b border-accent pb-0.5 font-ui text-[11px] uppercase tracking-[3px] text-accent"
+      >
+        Poznaj nas bliżej →
+      </a>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  {
+    globalFaq && (
+      <section class="py-20 lg:py-28">
+        <div class="mx-auto max-w-3xl px-6">
+          <p class="text-center font-ui text-[11px] uppercase tracking-[4px] text-muted">
+            FAQ
+          </p>
+          <h2 class="mt-4 text-center font-display text-h2">
+            Najczęściej zadawane pytania
+          </h2>
+          <div class="mt-12">
+            <FAQAccordion items={globalFaq.data.items} />
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- INSTAGRAM / SOCIAL PROOF -->
+  <section class="bg-primary py-16 text-center text-bg">
+    <p class="font-display text-h3">@heybeauty_krk</p>
+    <p class="mt-2 font-ui text-sm text-bg/70">
+      5,600+ obserwujących na Instagramie
+    </p>
+    <a
+      href="https://instagram.com/heybeauty_krk"
+      target="_blank"
+      rel="noopener"
+      class="mt-6 inline-block border border-bg/30 px-8 py-3 font-ui text-[11px] uppercase tracking-[3px] text-bg transition-colors hover:bg-bg hover:text-primary"
+    >
+      Obserwuj nas
+    </a>
+  </section>
+</Base>

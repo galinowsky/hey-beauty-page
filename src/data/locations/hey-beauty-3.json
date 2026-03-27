@@ -1,0 +1,20 @@
+{
+  "name": "HEY BEAUTY 3.0",
+  "slug": "hey-beauty-3-0",
+  "shortName": "3.0",
+  "booksyId": "251875",
+  "booksyUrl": "https://booksy.com/pl-pl/251875_hey-beauty-3-0_paznokcie_8820_krakow",
+  "address": {
+    "street": "Kraków",
+    "city": "Kraków",
+    "postalCode": "30-000",
+    "country": "PL"
+  },
+  "coordinates": {
+    "lat": 50.0614,
+    "lng": 19.9372
+  },
+  "openingHours": [],
+  "images": [],
+  "sortOrder": 2
+}

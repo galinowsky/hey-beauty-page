@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+/* ── Hey Beauty Design Tokens ── */
+/* Source of truth: DESIGN.md */
+/* Swapping any value here changes the entire site. */
+
+@theme inline {
+  /* Colors */
+  --color-bg: #FFFFFF;
+  --color-surface: #F6F5F3;
+  --color-primary: #0A0A0A;
+  --color-muted: #71717A;
+  --color-border: #E4E4E7;
+  --color-accent: #6B1D2A;
+  --color-accent-hover: #4A1019;
+  --color-success: #4A6B5A;
+  --color-warning: #C4783A;
+  --color-error: #9B3B4D;
+  --color-info: #3B5998;
+
+  /* Fonts */
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+  --font-ui: "Space Grotesk", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Typography scale */
+  --text-hero: clamp(3rem, 8vw, 6rem);
+  --text-h1: clamp(2.5rem, 6vw, 4rem);
+  --text-h2: clamp(2rem, 4vw, 3rem);
+  --text-h3: 1.5rem;
+  --text-h4: 1.25rem;
+  --text-body-lg: 1.125rem;
+  --text-body: 1rem;
+  --text-sm: 0.875rem;
+  --text-caption: 0.75rem;
+
+  /* Motion */
+  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit: ease-in;
+  --ease-move: ease-in-out;
+}
+
+/* ── Base Styles ── */
+body {
+  font-family: var(--font-body);
+  color: var(--color-primary);
+  background-color: var(--color-bg);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Heading defaults */
+h1, h2, h3 {
+  font-family: var(--font-display);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+/* Selection */
+::selection {
+  background-color: var(--color-accent);
+  color: white;
+}
+
+/* Focus visible */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Skip nav link */
+.skip-nav {
+  position: absolute;
+  left: -9999px;
+  z-index: 999;
+  padding: 1em;
+  background: var(--color-primary);
+  color: var(--color-bg);
+  font-family: var(--font-ui);
+}
+.skip-nav:focus {
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;
+}

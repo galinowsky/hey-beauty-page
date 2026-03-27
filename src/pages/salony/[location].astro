@@ -1,0 +1,129 @@
+---
+import Page from "../../layouts/Page.astro";
+import { getCollection } from "astro:content";
+import JsonLd from "../../components/JsonLd.astro";
+import ServiceCard from "../../components/ServiceCard.astro";
+import BookingCTA from "../../components/BookingCTA.astro";
+import { buildBeautySalon, buildBreadcrumbList } from "../../lib/json-ld";
+
+export async function getStaticPaths() {
+  const locations = await getCollection("locations");
+  const serviceLocations = await getCollection("serviceLocations");
+  const services = await getCollection("services");
+
+  return locations.map((location) => {
+    const locationServices = serviceLocations
+      .filter(
+        (sl) =>
+          sl.data.locationSlug === location.data.slug && sl.data.available,
+      )
+      .map((sl) => {
+        const service = services.find(
+          (s) => s.data.slug === sl.data.serviceSlug,
+        );
+        return { serviceLocation: sl, service };
+      })
+      .filter((s) => s.service);
+
+    return {
+      params: { location: location.data.slug },
+      props: { location, locationServices },
+    };
+  });
+}
+
+const { location, locationServices } = Astro.props;
+
+const title = `${location.data.name} — Salon Kosmetyczny Kraków`;
+const description = `Salon ${location.data.name}, ${location.data.address.street}, Kraków. ${location.data.rating ? `Ocena ${location.data.rating.value}/5 (${location.data.rating.count} opinii).` : ""} Umów wizytę online.`;
+const breadcrumbs = [
+  { name: "Strona główna", url: "/" },
+  { name: "Salony", url: "/salony/" },
+  { name: location.data.shortName, url: `/salony/${location.data.slug}/` },
+];
+---
+
+<Page {title} {description} {breadcrumbs}>
+  <JsonLd slot="head" data={buildBeautySalon(location.data)} />
+  <JsonLd slot="head" data={buildBreadcrumbList(breadcrumbs, Astro.site)} />
+
+  <!-- Location header -->
+  <section class="py-16 lg:py-24">
+    <span class="font-mono text-sm tracking-[2px] text-muted">
+      HB {location.data.shortName}
+    </span>
+    <h1 class="mt-2 font-display text-h1">{location.data.name}</h1>
+    <div class="mt-6 space-y-1 text-muted">
+      <p>{location.data.address.street}</p>
+      <p>
+        {location.data.address.postalCode}
+        {location.data.address.city}
+        {
+          location.data.address.district && (
+            <span>, {location.data.address.district}</span>
+          )
+        }
+      </p>
+    </div>
+    {
+      location.data.rating && (
+        <p class="mt-4 font-ui text-sm">
+          {"★".repeat(Math.round(location.data.rating.value))}{" "}
+          {location.data.rating.value.toFixed(1)}
+          <span class="text-muted">
+            ({location.data.rating.count} opinii na Booksy)
+          </span>
+        </p>
+      )
+    }
+    <BookingCTA
+      url={location.data.booksyUrl}
+      locationName={location.data.name}
+      class="mt-8"
+    />
+  </section>
+
+  <!-- Opening hours -->
+  {
+    location.data.openingHours.length > 0 && (
+      <section class="border-t border-border py-16">
+        <h2 class="font-display text-h3">Godziny otwarcia</h2>
+        <div class="mt-6 space-y-2">
+          {location.data.openingHours.map((h) => (
+            <div class="flex justify-between max-w-xs text-sm">
+              <span>{h.dayOfWeek}</span>
+              <span class="text-muted">
+                {h.opens} - {h.closes}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Services at this location -->
+  {
+    locationServices.length > 0 && (
+      <section class="border-t border-border py-16 lg:py-24">
+        <h2 class="font-display text-h2">
+          Usługi w {location.data.shortName}
+        </h2>
+        <div class="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {locationServices.map(({ service, serviceLocation }) =>
+            service ? (
+              <ServiceCard
+                name={service.data.name}
+                slug={`${location.data.slug}/${service.data.slug}`}
+                description={service.data.description}
+                priceMin={serviceLocation.data.price}
+                duration={`${serviceLocation.data.duration} min`}
+                image={service.data.image}
+              />
+            ) : null,
+          )}
+        </div>
+      </section>
+    )
+  }
+</Page>

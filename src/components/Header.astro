@@ -1,0 +1,162 @@
+---
+import { getCollection } from "astro:content";
+
+const locations = await getCollection("locations");
+const sortedLocations = locations.sort(
+  (a, b) => a.data.sortOrder - b.data.sortOrder,
+);
+const currentPath = Astro.url.pathname;
+---
+
+<header
+  class="sticky top-0 z-40 border-b border-border bg-bg/80 backdrop-blur-sm"
+>
+  <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+    <!-- Logo -->
+    <a href="/" class="font-display text-2xl font-normal tracking-tight">
+      Hey Beauty
+    </a>
+
+    <!-- Desktop Nav -->
+    <nav class="hidden items-center gap-8 md:flex">
+      <a
+        href="/uslugi/"
+        class="font-ui text-[13px] uppercase tracking-[2px] text-muted transition-colors hover:text-primary"
+      >
+        Usługi
+      </a>
+      <a
+        href="/salony/"
+        class="font-ui text-[13px] uppercase tracking-[2px] text-muted transition-colors hover:text-primary"
+      >
+        Salony
+      </a>
+      <a
+        href="/o-nas/"
+        class="font-ui text-[13px] uppercase tracking-[2px] text-muted transition-colors hover:text-primary"
+      >
+        O nas
+      </a>
+      <a
+        href="/faq/"
+        class="font-ui text-[13px] uppercase tracking-[2px] text-muted transition-colors hover:text-primary"
+      >
+        FAQ
+      </a>
+      <a
+        href="/kontakt/"
+        class="font-ui text-[13px] uppercase tracking-[2px] text-muted transition-colors hover:text-primary"
+      >
+        Kontakt
+      </a>
+    </nav>
+
+    <!-- Right side -->
+    <div class="flex items-center gap-4">
+      <!-- Language switch (placeholder) -->
+      <span
+        class="hidden font-ui text-[11px] uppercase tracking-[2px] text-muted md:inline"
+        >EN</span
+      >
+
+      <!-- Booking CTA -->
+      <a
+        href="https://booksy.com/pl-pl/111132_hey-beauty-2-0_salon-kosmetyczny_8820_krakow"
+        target="_blank"
+        rel="noopener"
+        class="bg-accent px-5 py-2 font-ui text-[11px] uppercase tracking-[3px] text-white transition-colors hover:bg-accent-hover"
+      >
+        Umów wizytę
+      </a>
+
+      <!-- Mobile menu button -->
+      <button
+        id="mobile-menu-btn"
+        class="flex size-10 items-center justify-center md:hidden"
+        aria-label="Menu"
+      >
+        <svg
+          class="size-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Version number tabs (desktop) -->
+  <div
+    class="mx-auto hidden max-w-7xl border-t border-border px-6 md:block"
+  >
+    <nav class="flex gap-0 overflow-x-auto">
+      {
+        sortedLocations.map((loc) => (
+          <a
+            href={`/salony/${loc.data.slug}/`}
+            class:list={[
+              "border-b-2 px-6 py-3 font-mono text-[13px] tracking-[1px] text-muted transition-colors hover:text-primary whitespace-nowrap",
+              currentPath.includes(loc.data.slug)
+                ? "border-accent text-primary"
+                : "border-transparent",
+            ]}
+          >
+            HB {loc.data.shortName}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</header>
+
+<!-- Mobile menu overlay -->
+<div
+  id="mobile-menu"
+  class="fixed inset-0 z-50 hidden bg-bg"
+>
+  <div class="flex h-full flex-col px-6 py-4">
+    <div class="flex items-center justify-between">
+      <span class="font-display text-2xl">Hey Beauty</span>
+      <button id="mobile-menu-close" class="size-10" aria-label="Zamknij">
+        <svg
+          class="size-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    <nav class="mt-12 flex flex-col gap-6">
+      <a href="/uslugi/" class="font-display text-3xl">Usługi</a>
+      <a href="/salony/" class="font-display text-3xl">Salony</a>
+      <a href="/o-nas/" class="font-display text-3xl">O nas</a>
+      <a href="/faq/" class="font-display text-3xl">FAQ</a>
+      <a href="/kontakt/" class="font-display text-3xl">Kontakt</a>
+    </nav>
+    <div class="mt-auto pb-8">
+      <div class="flex gap-4 font-mono text-sm text-muted">
+        {sortedLocations.map((loc) => <span>HB {loc.data.shortName}</span>)}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const btn = document.getElementById("mobile-menu-btn");
+  const menu = document.getElementById("mobile-menu");
+  const close = document.getElementById("mobile-menu-close");
+  btn?.addEventListener("click", () => menu?.classList.remove("hidden"));
+  close?.addEventListener("click", () => menu?.classList.add("hidden"));
+</script>

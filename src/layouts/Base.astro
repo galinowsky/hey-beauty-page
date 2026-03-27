@@ -1,0 +1,34 @@
+---
+import "../styles/global.css";
+import Head from "../components/Head.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  canonical?: string;
+}
+
+const { title, description, ogImage, canonical } = Astro.props;
+---
+
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <Head {title} {description} {ogImage} {canonical}>
+      <slot name="head" />
+    </Head>
+  </head>
+  <body class="min-h-screen">
+    <a href="#main-content" class="skip-nav">Przejdź do treści</a>
+    <Header />
+    <main id="main-content">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

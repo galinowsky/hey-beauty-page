@@ -1,0 +1,31 @@
+---
+interface Props {
+  url: string;
+  locationName?: string;
+  serviceName?: string;
+  class?: string;
+}
+
+const { url, locationName, serviceName, class: className } = Astro.props;
+
+// Build UTM params
+const utmParams = new URLSearchParams({
+  utm_source: "heybeauty-website",
+  utm_medium: "cta",
+  utm_campaign: [locationName, serviceName].filter(Boolean).join("-").toLowerCase().replace(/\s+/g, "-"),
+});
+
+const fullUrl = `${url}${url.includes("?") ? "&" : "?"}${utmParams}`;
+---
+
+<a
+  href={fullUrl}
+  target="_blank"
+  rel="noopener"
+  class:list={[
+    "inline-block bg-accent px-8 py-4 font-ui text-[12px] uppercase tracking-[3px] text-white transition-colors hover:bg-accent-hover",
+    className,
+  ]}
+>
+  Umów wizytę
+</a>

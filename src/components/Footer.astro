@@ -1,0 +1,125 @@
+---
+import { getCollection } from "astro:content";
+
+const locations = await getCollection("locations");
+const services = await getCollection("services");
+const sortedLocations = locations.sort(
+  (a, b) => a.data.sortOrder - b.data.sortOrder,
+);
+const sortedServices = services
+  .sort((a, b) => a.data.sortOrder - b.data.sortOrder)
+  .slice(0, 8);
+---
+
+<footer class="border-t border-border">
+  <div
+    class="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-6 py-16 sm:grid-cols-2 lg:grid-cols-4"
+  >
+    <!-- Brand -->
+    <div>
+      <p class="font-display text-2xl">Hey Beauty</p>
+      <p class="mt-2 font-ui text-[11px] uppercase tracking-[3px] text-muted">
+        Face &middot; Body &middot; Brows &middot; Nails
+      </p>
+      <p class="mt-6 text-sm leading-relaxed text-muted">
+        Sieć salonów kosmetycznych w Krakowie.
+      </p>
+      <div class="mt-4 font-mono text-xs text-muted">
+        {sortedLocations.map((l) => l.data.shortName).join(" · ")}
+      </div>
+    </div>
+
+    <!-- Services -->
+    <div>
+      <h4
+        class="mb-6 font-ui text-[11px] uppercase tracking-[3px] text-muted"
+      >
+        Usługi
+      </h4>
+      <ul class="space-y-2">
+        {
+          sortedServices.map((s) => (
+            <li>
+              <a
+                href={`/uslugi/${s.data.slug}/`}
+                class="text-sm text-muted transition-colors hover:text-primary"
+              >
+                {s.data.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <!-- Locations -->
+    <div>
+      <h4
+        class="mb-6 font-ui text-[11px] uppercase tracking-[3px] text-muted"
+      >
+        Salony
+      </h4>
+      <ul class="space-y-2">
+        {
+          sortedLocations.map((l) => (
+            <li>
+              <a
+                href={`/salony/${l.data.slug}/`}
+                class="text-sm text-muted transition-colors hover:text-primary"
+              >
+                {l.data.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <!-- Contact / Legal -->
+    <div>
+      <h4
+        class="mb-6 font-ui text-[11px] uppercase tracking-[3px] text-muted"
+      >
+        Kontakt
+      </h4>
+      <ul class="space-y-2 text-sm text-muted">
+        <li>
+          <a
+            href="https://instagram.com/heybeauty_krk"
+            target="_blank"
+            rel="noopener"
+            class="transition-colors hover:text-primary"
+          >
+            Instagram: @heybeauty_krk
+          </a>
+        </li>
+        <li>
+          <a href="/kontakt/" class="transition-colors hover:text-primary">
+            Kontakt
+          </a>
+        </li>
+        <li>
+          <a
+            href="/polityka-prywatnosci/"
+            class="transition-colors hover:text-primary"
+          >
+            Polityka Prywatności
+          </a>
+        </li>
+        <li>
+          <a href="/regulamin/" class="transition-colors hover:text-primary">
+            Regulamin
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Bottom bar -->
+  <div
+    class="mx-auto flex max-w-7xl items-center justify-between border-t border-border px-6 py-6 text-xs text-muted"
+  >
+    <span>&copy; {new Date().getFullYear()} Hey Beauty</span>
+    <span class="font-ui uppercase tracking-[2px]">PL | EN | UA</span>
+  </div>
+</footer>

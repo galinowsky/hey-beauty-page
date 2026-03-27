@@ -1,0 +1,10 @@
+{
+  "name": "Lifting rzęs",
+  "slug": "lifting-rzes",
+  "category": "brwi-i-rzesy",
+  "description": "Lifting rzęs z keratynowym dodatkiem odżywczym. W cenie koloryzacja rzęs specjalistyczną farbą górnych rzęs. Efekt utrzymuje się 6-8 tygodni.",
+  "duration": { "min": 60, "max": 60 },
+  "priceRange": { "min": 260, "max": 290 },
+  "booksySlug": "lifting-rzes",
+  "sortOrder": 0
+}

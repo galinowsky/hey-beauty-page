@@ -1,0 +1,24 @@
+{
+  "name": "HEY BEAUTY 1.0",
+  "slug": "hey-beauty-1-0",
+  "shortName": "1.0",
+  "booksyId": "104242",
+  "booksyUrl": "https://booksy.com/pl-pl/104242_hey-beauty-1-0_salon-kosmetyczny_8820_krakow",
+  "address": {
+    "street": "Kraków",
+    "city": "Kraków",
+    "postalCode": "30-000",
+    "country": "PL"
+  },
+  "coordinates": {
+    "lat": 50.0614,
+    "lng": 19.9372
+  },
+  "openingHours": [],
+  "rating": {
+    "value": 5.0,
+    "count": 200
+  },
+  "images": [],
+  "sortOrder": 0
+}

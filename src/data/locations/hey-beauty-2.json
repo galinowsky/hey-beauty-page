@@ -1,0 +1,32 @@
+{
+  "name": "HEY BEAUTY 2.0",
+  "slug": "hey-beauty-2-0",
+  "shortName": "2.0",
+  "booksyId": "111132",
+  "booksyUrl": "https://booksy.com/pl-pl/111132_hey-beauty-2-0_salon-kosmetyczny_8820_krakow",
+  "address": {
+    "street": "płk. pil. S. Łaszkiewicza 2",
+    "city": "Kraków",
+    "postalCode": "31-445",
+    "country": "PL",
+    "district": "Śródmieście"
+  },
+  "coordinates": {
+    "lat": 50.0647,
+    "lng": 19.9450
+  },
+  "openingHours": [
+    { "dayOfWeek": "Monday", "opens": "09:00", "closes": "20:00" },
+    { "dayOfWeek": "Tuesday", "opens": "09:00", "closes": "20:00" },
+    { "dayOfWeek": "Wednesday", "opens": "09:00", "closes": "20:00" },
+    { "dayOfWeek": "Thursday", "opens": "09:00", "closes": "20:00" },
+    { "dayOfWeek": "Friday", "opens": "09:00", "closes": "20:00" },
+    { "dayOfWeek": "Saturday", "opens": "09:00", "closes": "16:00" }
+  ],
+  "rating": {
+    "value": 5.0,
+    "count": 491
+  },
+  "images": [],
+  "sortOrder": 1
+}

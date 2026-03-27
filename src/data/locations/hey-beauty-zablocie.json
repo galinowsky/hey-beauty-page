@@ -1,0 +1,32 @@
+{
+  "name": "HEY BEAUTY ZABŁOCIE",
+  "slug": "hey-beauty-zablocie",
+  "shortName": "Zabłocie",
+  "booksyId": "306187",
+  "booksyUrl": "https://booksy.com/pl-pl/306187_hey-beauty-zablocie_salon-kosmetyczny_8820_krakow",
+  "address": {
+    "street": "Przemysłowa 4/469",
+    "city": "Kraków",
+    "postalCode": "30-701",
+    "country": "PL",
+    "district": "Podgórze"
+  },
+  "coordinates": {
+    "lat": 50.0480,
+    "lng": 19.9570
+  },
+  "openingHours": [
+    { "dayOfWeek": "Monday", "opens": "09:00", "closes": "20:00" },
+    { "dayOfWeek": "Tuesday", "opens": "09:00", "closes": "20:00" },
+    { "dayOfWeek": "Wednesday", "opens": "09:00", "closes": "20:00" },
+    { "dayOfWeek": "Thursday", "opens": "09:00", "closes": "20:00" },
+    { "dayOfWeek": "Friday", "opens": "09:00", "closes": "20:00" },
+    { "dayOfWeek": "Saturday", "opens": "09:00", "closes": "16:00" }
+  ],
+  "rating": {
+    "value": 5.0,
+    "count": 120
+  },
+  "images": [],
+  "sortOrder": 3
+}

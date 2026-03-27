@@ -1,0 +1,25 @@
+{
+  "items": [
+    {
+      "question": "Jak zarezerwować wizytę w Hey Beauty?",
+      "answer": "Rezerwacje prowadzimy przez Booksy. Kliknij przycisk \"Umów wizytę\" przy wybranym salonie lub usłudze, a zostaniesz przekierowana do naszego kalendarza online."
+    },
+    {
+      "question": "Ile lokalizacji Hey Beauty jest w Krakowie?",
+      "answer": "Mamy 4 salony w Krakowie: Hey Beauty 1.0, Hey Beauty 2.0 (Śródmieście), Hey Beauty 3.0 oraz Hey Beauty Zabłocie. Każdy z nich oferuje nieco inny zakres usług."
+    },
+    {
+      "question": "Czy pierwsza konsultacja jest bezpłatna?",
+      "answer": "Tak! Oferujemy darmową konsultację kosmetologiczną z ułożeniem beauty planu dopasowanego do Twoich potrzeb."
+    },
+    {
+      "question": "W jakich językach obsługujecie klientki?",
+      "answer": "Obsługujemy klientki w języku polskim i ukraińskim. Nasza strona dostępna jest również w języku angielskim."
+    },
+    {
+      "question": "Czy macie program lojalnościowy?",
+      "answer": "Tak! Prowadzimy program lojalnościowy, w którym za każdą wizytę zbierasz punkty wymienne na usługi i produkty. Zapytaj o szczegóły w salonie."
+    }
+  ],
+  "scope": "global"
+}

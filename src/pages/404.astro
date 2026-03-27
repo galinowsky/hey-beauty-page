@@ -1,0 +1,22 @@
+---
+import Base from "../layouts/Base.astro";
+
+const title = "404 — Strona nie znaleziona | Hey Beauty";
+const description = "Przepraszamy, ta strona nie istnieje. Wróć na stronę główną Hey Beauty.";
+---
+
+<Base {title} {description}>
+  <section class="flex min-h-[60vh] flex-col items-center justify-center px-6 text-center">
+    <span class="font-mono text-sm tracking-[4px] text-muted">404</span>
+    <h1 class="mt-4 font-display text-h1">Strona nie znaleziona</h1>
+    <p class="mt-4 text-muted">
+      Przepraszamy, ta strona nie istnieje.
+    </p>
+    <a
+      href="/"
+      class="mt-8 inline-block border border-primary px-8 py-3 font-ui text-[11px] uppercase tracking-[3px] transition-colors hover:bg-primary hover:text-bg"
+    >
+      Wróć na stronę główną
+    </a>
+  </section>
+</Base>
