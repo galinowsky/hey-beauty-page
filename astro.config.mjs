@@ -3,10 +3,12 @@ import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import sitemap from "@astrojs/sitemap";
 
+const isGitHubPages = process.env.GITHUB_ACTIONS === "true";
+
 // https://astro.build/config
 export default defineConfig({
-  site: "https://galinowsky.github.io",
-  base: "/hey-beauty-page",
+  site: isGitHubPages ? "https://galinowsky.github.io" : "http://localhost:4321",
+  base: isGitHubPages ? "/hey-beauty-page" : "/",
   output: "static",
   server: {
     host: true, // Expose to local network

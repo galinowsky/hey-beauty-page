@@ -41,10 +41,10 @@ const description =
   <section class="hero-section relative flex min-h-[90vh] flex-col items-center justify-center overflow-hidden">
     <!-- Carousel slides -->
     {[
+      { src: assetPath("/images/inspiration-2.jpeg"),       alt: "Zabiegi kosmetyczne Hey Beauty" },
       { src: assetPath("/images/hero-salon.jpeg"),          alt: "Recepcja salonu Hey Beauty" },
       { src: assetPath("/images/inspiration-1.jpeg"),       alt: "Stylizacja paznokci Hey Beauty" },
       { src: assetPath("/images/locations/hey_beauty_2.avif"), alt: "Wnętrze salonu Hey Beauty 2.0" },
-      { src: assetPath("/images/inspiration-2.jpeg"),       alt: "Zabiegi kosmetyczne Hey Beauty" },
     ].map((slide, i) => (
       <div
         class:list={["hero-slide absolute inset-0", i === 0 && "is-active"]}
