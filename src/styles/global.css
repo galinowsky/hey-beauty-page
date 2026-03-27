@@ -41,6 +41,16 @@
   --ease-move: ease-in-out;
 }
 
+/* ── Hero Background Slow Zoom ── */
+@keyframes hero-zoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
+}
+
+.hero-bg {
+  animation: hero-zoom 20s ease-out forwards;
+}
+
 /* ── Base Styles ── */
 body {
   font-family: var(--font-body);

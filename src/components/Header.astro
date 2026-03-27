@@ -6,54 +6,54 @@ const sortedLocations = locations.sort(
   (a, b) => a.data.sortOrder - b.data.sortOrder,
 );
 const currentPath = Astro.url.pathname;
+
+const navItems = [
+  { href: "/uslugi/", label: "Usługi" },
+  { href: "/salony/", label: "Salony" },
+  { href: "/o-nas/", label: "O nas" },
+  { href: "/faq/", label: "FAQ" },
+  { href: "/kontakt/", label: "Kontakt" },
+];
 ---
 
 <header
   class="sticky top-0 z-40 border-b border-border bg-bg/80 backdrop-blur-sm"
 >
-  <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-    <!-- Logo -->
-    <a href="/" class="font-display text-2xl font-normal tracking-tight">
-      Hey Beauty
+  <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
+    <!-- Logo (real brand logo) -->
+    <a href="/" class="block">
+      <img
+        src="/images/hey-beauty-logo.avif"
+        alt="Hey Beauty"
+        class="h-10 w-auto"
+      />
     </a>
 
-    <!-- Desktop Nav -->
+    <!-- Desktop Nav with active indicator -->
     <nav class="hidden items-center gap-8 md:flex">
-      <a
-        href="/uslugi/"
-        class="font-ui text-[13px] uppercase tracking-[2px] text-muted transition-colors hover:text-primary"
-      >
-        Usługi
-      </a>
-      <a
-        href="/salony/"
-        class="font-ui text-[13px] uppercase tracking-[2px] text-muted transition-colors hover:text-primary"
-      >
-        Salony
-      </a>
-      <a
-        href="/o-nas/"
-        class="font-ui text-[13px] uppercase tracking-[2px] text-muted transition-colors hover:text-primary"
-      >
-        O nas
-      </a>
-      <a
-        href="/faq/"
-        class="font-ui text-[13px] uppercase tracking-[2px] text-muted transition-colors hover:text-primary"
-      >
-        FAQ
-      </a>
-      <a
-        href="/kontakt/"
-        class="font-ui text-[13px] uppercase tracking-[2px] text-muted transition-colors hover:text-primary"
-      >
-        Kontakt
-      </a>
+      {
+        navItems.map((item) => {
+          const isActive = currentPath.startsWith(item.href);
+          return (
+            <a
+              href={item.href}
+              class:list={[
+                "relative py-1 font-ui text-[13px] uppercase tracking-[2px] transition-colors",
+                isActive ? "text-primary" : "text-muted hover:text-primary",
+              ]}
+            >
+              {item.label}
+              {isActive && (
+                <span class="absolute -bottom-1 left-0 h-[1.5px] w-full bg-primary" />
+              )}
+            </a>
+          );
+        })
+      }
     </nav>
 
     <!-- Right side -->
     <div class="flex items-center gap-4">
-      <!-- Language switch (placeholder) -->
       <span
         class="hidden font-ui text-[11px] uppercase tracking-[2px] text-muted md:inline"
         >EN</span
@@ -64,29 +64,21 @@ const currentPath = Astro.url.pathname;
         href="https://booksy.com/pl-pl/111132_hey-beauty-2-0_salon-kosmetyczny_8820_krakow"
         target="_blank"
         rel="noopener"
-        class="bg-accent px-5 py-2 font-ui text-[11px] uppercase tracking-[3px] text-white transition-colors hover:bg-accent-hover"
+        class="hidden bg-primary px-5 py-2 font-ui text-[11px] uppercase tracking-[3px] text-bg transition-opacity hover:opacity-80 sm:inline-block"
       >
         Umów wizytę
       </a>
 
-      <!-- Mobile menu button -->
+      <!-- Mobile menu button (animated hamburger → X) -->
       <button
         id="mobile-menu-btn"
-        class="flex size-10 items-center justify-center md:hidden"
+        class="relative flex size-10 items-center justify-center md:hidden"
         aria-label="Menu"
+        aria-expanded="false"
       >
-        <svg
-          class="size-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="1.5"
-            d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
+        <span class="hamburger-line hamburger-top"></span>
+        <span class="hamburger-line hamburger-mid"></span>
+        <span class="hamburger-line hamburger-bot"></span>
       </button>
     </div>
   </div>
@@ -97,33 +89,46 @@ const currentPath = Astro.url.pathname;
   >
     <nav class="flex gap-0 overflow-x-auto">
       {
-        sortedLocations.map((loc) => (
-          <a
-            href={`/salony/${loc.data.slug}/`}
-            class:list={[
-              "border-b-2 px-6 py-3 font-mono text-[13px] tracking-[1px] text-muted transition-colors hover:text-primary whitespace-nowrap",
-              currentPath.includes(loc.data.slug)
-                ? "border-accent text-primary"
-                : "border-transparent",
-            ]}
-          >
-            HB {loc.data.shortName}
-          </a>
-        ))
+        sortedLocations.map((loc) => {
+          const isLocActive = currentPath.includes(loc.data.slug);
+          return (
+            <a
+              href={`/salony/${loc.data.slug}/`}
+              class:list={[
+                "border-b-2 px-6 py-3 font-mono text-[13px] tracking-[1px] transition-colors whitespace-nowrap",
+                isLocActive
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted hover:text-primary",
+              ]}
+            >
+              HB {loc.data.shortName}
+            </a>
+          );
+        })
       }
     </nav>
   </div>
 </header>
 
-<!-- Mobile menu overlay -->
+<!-- Luxury Mobile Menu (full-screen overlay with stagger animation) -->
 <div
   id="mobile-menu"
-  class="fixed inset-0 z-50 hidden bg-bg"
+  class="mobile-menu fixed inset-0 z-50 bg-bg"
+  aria-hidden="true"
 >
-  <div class="flex h-full flex-col px-6 py-4">
+  <div class="flex h-full flex-col px-8 py-4">
+    <!-- Header row -->
     <div class="flex items-center justify-between">
-      <span class="font-display text-2xl">Hey Beauty</span>
-      <button id="mobile-menu-close" class="size-10" aria-label="Zamknij">
+      <img
+        src="/images/hey-beauty-logo.avif"
+        alt="Hey Beauty"
+        class="h-10 w-auto"
+      />
+      <button
+        id="mobile-menu-close"
+        class="flex size-10 items-center justify-center"
+        aria-label="Zamknij"
+      >
         <svg
           class="size-5"
           fill="none"
@@ -138,25 +143,148 @@ const currentPath = Astro.url.pathname;
         </svg>
       </button>
     </div>
-    <nav class="mt-12 flex flex-col gap-6">
-      <a href="/uslugi/" class="font-display text-3xl">Usługi</a>
-      <a href="/salony/" class="font-display text-3xl">Salony</a>
-      <a href="/o-nas/" class="font-display text-3xl">O nas</a>
-      <a href="/faq/" class="font-display text-3xl">FAQ</a>
-      <a href="/kontakt/" class="font-display text-3xl">Kontakt</a>
+
+    <!-- Nav links with stagger -->
+    <nav class="mt-16 flex flex-col gap-1">
+      {
+        navItems.map((item, i) => {
+          const isActive = currentPath.startsWith(item.href);
+          return (
+            <a
+              href={item.href}
+              class="menu-item group flex items-center justify-between border-b border-border py-5"
+              style={`--delay: ${i * 60}ms`}
+            >
+              <span
+                class:list={[
+                  "font-display text-[2rem] transition-transform duration-300 group-hover:translate-x-3",
+                  isActive ? "text-primary" : "text-muted",
+                ]}
+              >
+                {item.label}
+              </span>
+              {isActive && (
+                <span class="size-2 rounded-full bg-primary" />
+              )}
+              <span class="font-ui text-xs text-muted/0 transition-colors duration-300 group-hover:text-muted">
+                →
+              </span>
+            </a>
+          );
+        })
+      }
     </nav>
-    <div class="mt-auto pb-8">
-      <div class="flex gap-4 font-mono text-sm text-muted">
-        {sortedLocations.map((loc) => <span>HB {loc.data.shortName}</span>)}
+
+    <!-- Booking CTA in menu -->
+    <div class="menu-item mt-auto pb-6" style="--delay: 360ms">
+      <a
+        href="https://booksy.com/pl-pl/111132_hey-beauty-2-0_salon-kosmetyczny_8820_krakow"
+        target="_blank"
+        rel="noopener"
+        class="block w-full bg-primary py-4 text-center font-ui text-[12px] uppercase tracking-[3px] text-bg transition-opacity hover:opacity-80"
+      >
+        Umów wizytę
+      </a>
+      <div
+        class="mt-6 flex items-center justify-between font-mono text-xs tracking-[2px] text-muted"
+      >
+        <span>
+          {sortedLocations.map((l) => l.data.shortName).join(" · ")}
+        </span>
+        <span>@heybeauty_krk</span>
       </div>
     </div>
   </div>
 </div>
 
+<style>
+  /* Hamburger animation */
+  .hamburger-line {
+    position: absolute;
+    width: 18px;
+    height: 1.5px;
+    background: currentColor;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.2s ease;
+  }
+  .hamburger-top {
+    transform: translateY(-5px);
+  }
+  .hamburger-mid {
+    transform: translateY(0);
+  }
+  .hamburger-bot {
+    transform: translateY(5px);
+  }
+
+  /* When menu is open */
+  [aria-expanded="true"] .hamburger-top {
+    transform: rotate(45deg);
+  }
+  [aria-expanded="true"] .hamburger-mid {
+    opacity: 0;
+  }
+  [aria-expanded="true"] .hamburger-bot {
+    transform: rotate(-45deg);
+  }
+
+  /* Mobile menu animation */
+  .mobile-menu {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+      visibility 0s 0.5s;
+  }
+  .mobile-menu.is-open {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+      visibility 0s 0s;
+  }
+
+  /* Menu items stagger entrance */
+  .menu-item {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--delay, 0ms);
+  }
+  .mobile-menu.is-open .menu-item {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
 <script>
   const btn = document.getElementById("mobile-menu-btn");
   const menu = document.getElementById("mobile-menu");
-  const close = document.getElementById("mobile-menu-close");
-  btn?.addEventListener("click", () => menu?.classList.remove("hidden"));
-  close?.addEventListener("click", () => menu?.classList.add("hidden"));
+  const closeBtn = document.getElementById("mobile-menu-close");
+
+  function openMenu() {
+    menu?.classList.add("is-open");
+    menu?.setAttribute("aria-hidden", "false");
+    btn?.setAttribute("aria-expanded", "true");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeMenu() {
+    menu?.classList.remove("is-open");
+    menu?.setAttribute("aria-hidden", "true");
+    btn?.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
+  }
+
+  btn?.addEventListener("click", openMenu);
+  closeBtn?.addEventListener("click", closeMenu);
+
+  // Close on ESC
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeMenu();
+  });
+
+  // Close when clicking a nav link
+  menu?.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", closeMenu);
+  });
 </script>

@@ -7,6 +7,9 @@ import sitemap from "@astrojs/sitemap";
 export default defineConfig({
   site: "https://heybeauty.pl",
   output: "static",
+  server: {
+    host: true, // Expose to local network
+  },
   vite: {
     plugins: [tailwindcss()],
   },

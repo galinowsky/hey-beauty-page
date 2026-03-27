@@ -36,25 +36,42 @@ const description =
     )
   }
 
-  <!-- HERO — Typography-only with entrance animation -->
-  <section
-    class="flex min-h-[90vh] flex-col items-center justify-center px-6 text-center"
-  >
-    <h1
-      data-hero
-      class="font-display text-hero font-normal leading-[0.85] tracking-tight"
-    >
-      Hey Beauty
-    </h1>
-    <p data-hero-delay class="mt-8 font-ui text-sm uppercase tracking-[8px] text-muted">
-      Face &middot; Body &middot; Brows &middot; Nails &middot; Kraków
-    </p>
-    <div data-hero-delay-2 class="mt-16">
-      <BookingCTA
-        url="https://booksy.com/pl-pl/111132_hey-beauty-2-0_salon-kosmetyczny_8820_krakow"
+  <!-- HERO — Photo background with slow zoom + text overlay -->
+  <section class="hero-section relative flex min-h-[90vh] flex-col items-center justify-center overflow-hidden">
+    <!-- Background image with slow zoom -->
+    <div class="hero-bg absolute inset-0">
+      <img
+        src="/images/hero-salon.jpeg"
+        alt="Wnętrze salonu Hey Beauty"
+        class="h-full w-full object-cover"
       />
+      <div class="absolute inset-0 bg-black/40"></div>
     </div>
-    <p data-hero-delay-2 class="mt-auto pb-12 font-mono text-xs tracking-[2px] text-muted/50">
+
+    <!-- Content -->
+    <div class="relative z-10 px-6 text-center text-white">
+      <img
+        data-hero
+        src="/images/hey-beauty-logo.avif"
+        alt="Hey Beauty"
+        class="mx-auto h-20 w-auto invert md:h-28"
+      />
+      <p data-hero-delay class="mt-8 font-ui text-sm uppercase tracking-[8px] text-white/70">
+        Face &middot; Body &middot; Brows &middot; Nails &middot; Kraków
+      </p>
+      <div data-hero-delay-2 class="mt-16">
+        <a
+          href="https://booksy.com/pl-pl/111132_hey-beauty-2-0_salon-kosmetyczny_8820_krakow?utm_source=heybeauty-website&utm_medium=cta&utm_campaign=hero"
+          target="_blank"
+          rel="noopener"
+          class="inline-block border border-white/60 px-10 py-4 font-ui text-[12px] uppercase tracking-[4px] text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-black"
+        >
+          Umów wizytę
+        </a>
+      </div>
+    </div>
+
+    <p data-hero-delay-2 class="relative z-10 mt-auto pb-12 font-mono text-xs tracking-[2px] text-white/40">
       4 salony &middot;
       {sortedLocations.map((l) => l.data.shortName).join(" · ")}
     </p>
