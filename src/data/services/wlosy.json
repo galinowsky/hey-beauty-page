@@ -6,6 +6,6 @@
   "duration": { "min": 120, "max": 240 },
   "priceRange": { "min": 350, "max": 700 },
   "booksySlug": "wlosy-keratyna",
-  "image": "/images/team/madzia.jpg",
-  "sortOrder": 10
+  "image": "/images/team/madzia-card.jpg",
+  "sortOrder": 0
 }
