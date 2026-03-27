@@ -36,37 +36,42 @@ const description =
     )
   }
 
-  <!-- HERO — Typography-only (Risk #2: no photo above fold) -->
+  <!-- HERO — Typography-only with entrance animation -->
   <section
-    class="flex min-h-[85vh] flex-col items-center justify-center px-6 text-center"
+    class="flex min-h-[90vh] flex-col items-center justify-center px-6 text-center"
   >
     <h1
-      class="font-display text-hero font-normal leading-[0.9] tracking-tight"
+      data-hero
+      class="font-display text-hero font-normal leading-[0.85] tracking-tight"
     >
       Hey Beauty
     </h1>
-    <p class="mt-6 font-ui text-sm uppercase tracking-[6px] text-muted">
+    <p data-hero-delay class="mt-8 font-ui text-sm uppercase tracking-[8px] text-muted">
       Face &middot; Body &middot; Brows &middot; Nails &middot; Kraków
     </p>
-    <BookingCTA
-      url="https://booksy.com/pl-pl/111132_hey-beauty-2-0_salon-kosmetyczny_8820_krakow"
-      class="mt-12"
-    />
-    <p class="mt-auto pb-10 font-mono text-xs tracking-[2px] text-muted">
+    <div data-hero-delay-2 class="mt-16">
+      <BookingCTA
+        url="https://booksy.com/pl-pl/111132_hey-beauty-2-0_salon-kosmetyczny_8820_krakow"
+      />
+    </div>
+    <p data-hero-delay-2 class="mt-auto pb-12 font-mono text-xs tracking-[2px] text-muted/50">
       4 salony &middot;
       {sortedLocations.map((l) => l.data.shortName).join(" · ")}
     </p>
   </section>
 
   <!-- LOCATIONS -->
-  <section class="bg-surface py-20 lg:py-28">
+  <section class="grain bg-surface py-24 lg:py-32">
     <div class="mx-auto max-w-7xl px-6">
-      <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">
-        Nasze Salony
-      </p>
-      <h2 class="mt-4 font-display text-h2">4 lokalizacje w Krakowie</h2>
+      <div data-reveal>
+        <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">
+          Nasze Salony
+        </p>
+        <h2 class="mt-4 font-display text-h2">4 lokalizacje w Krakowie</h2>
+      </div>
       <div
-        class="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
+        data-reveal-stagger
+        class="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4"
       >
         {
           sortedLocations.map((loc) => (
@@ -86,14 +91,17 @@ const description =
   </section>
 
   <!-- SERVICES -->
-  <section class="py-20 lg:py-28">
+  <section class="py-24 lg:py-32">
     <div class="mx-auto max-w-7xl px-6">
-      <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">
-        Usługi
-      </p>
-      <h2 class="mt-4 font-display text-h2">Zabiegi kosmetyczne</h2>
+      <div data-reveal>
+        <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">
+          Usługi
+        </p>
+        <h2 class="mt-4 font-display text-h2">Zabiegi kosmetyczne</h2>
+      </div>
       <div
-        class="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+        data-reveal-stagger
+        class="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3"
       >
         {
           sortedServices.map((s) => (
@@ -119,44 +127,47 @@ const description =
     </div>
   </section>
 
-  <!-- ABOUT PREVIEW -->
-  <section class="grid min-h-[500px] grid-cols-1 md:grid-cols-2">
-    <div class="flex items-center bg-surface">
-      <div class="p-12 lg:p-20">
-        <p class="font-display text-xl italic text-muted">
-          &ldquo;Your Care Place&rdquo;
-        </p>
+  <!-- ABOUT PREVIEW — asymmetric editorial layout -->
+  <section class="grain bg-surface">
+    <div class="mx-auto grid min-h-[600px] max-w-7xl grid-cols-1 md:grid-cols-[1.2fr_1fr]">
+      <div data-reveal class="flex items-end p-12 pb-24 lg:p-20 lg:pb-32">
+        <div>
+          <p class="font-display text-[clamp(2.5rem,5vw,4rem)] italic leading-[1.05] text-primary/20">
+            &ldquo;Your Care Place&rdquo;
+          </p>
+        </div>
       </div>
-    </div>
-    <div class="flex flex-col justify-center p-12 lg:p-20">
-      <h2 class="font-display text-h2">O Hey Beauty</h2>
-      <p class="mt-6 leading-relaxed text-muted">
-        Hey Beauty to sieć salonów kosmetycznych w Krakowie, łączących
-        profesjonalizm z luksusową atmosferą. Oferujemy pełen zakres usług, od
-        stylizacji brwi i rzęs, przez zabiegi na twarz i ciało, po manicure i
-        pedicure.
-      </p>
-      <a
-        href="/o-nas/"
-        class="mt-8 inline-block self-start border-b border-accent pb-0.5 font-ui text-[11px] uppercase tracking-[3px] text-accent"
-      >
-        Poznaj nas bliżej →
-      </a>
+      <div data-reveal class="flex flex-col justify-center p-12 lg:p-20">
+        <h2 class="font-display text-h2">O Hey Beauty</h2>
+        <p class="mt-8 text-lg leading-relaxed text-muted">
+          Sieć salonów kosmetycznych w Krakowie, łączących profesjonalizm
+          z luksusową atmosferą. Pełen zakres usług, od stylizacji brwi i rzęs,
+          przez zabiegi na twarz i ciało, po manicure i pedicure.
+        </p>
+        <a
+          href="/o-nas/"
+          class="mt-10 inline-block self-start border-b border-primary pb-1 font-ui text-[11px] uppercase tracking-[3px]"
+        >
+          Poznaj nas bliżej →
+        </a>
+      </div>
     </div>
   </section>
 
   <!-- FAQ -->
   {
     globalFaq && (
-      <section class="py-20 lg:py-28">
+      <section class="py-24 lg:py-32">
         <div class="mx-auto max-w-3xl px-6">
-          <p class="text-center font-ui text-[11px] uppercase tracking-[4px] text-muted">
-            FAQ
-          </p>
-          <h2 class="mt-4 text-center font-display text-h2">
-            Najczęściej zadawane pytania
-          </h2>
-          <div class="mt-12">
+          <div data-reveal class="text-center">
+            <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">
+              FAQ
+            </p>
+            <h2 class="mt-4 font-display text-h2">
+              Najczęściej zadawane pytania
+            </h2>
+          </div>
+          <div data-reveal class="mt-16">
             <FAQAccordion items={globalFaq.data.items} />
           </div>
         </div>

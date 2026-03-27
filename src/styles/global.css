@@ -11,8 +11,8 @@
   --color-primary: #0A0A0A;
   --color-muted: #71717A;
   --color-border: #E4E4E7;
-  --color-accent: #6B1D2A;
-  --color-accent-hover: #4A1019;
+  --color-accent: #0A0A0A;
+  --color-accent-hover: #333333;
   --color-success: #4A6B5A;
   --color-warning: #C4783A;
   --color-error: #9B3B4D;
@@ -58,15 +58,112 @@ h1, h2, h3 {
   letter-spacing: -0.01em;
 }
 
+/* ── Scroll-Reveal Animations ── */
+/* Elements with [data-reveal] fade up on scroll */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+[data-reveal] {
+  opacity: 0;
+  animation: reveal-up 0.8s var(--ease-enter) forwards;
+  animation-timeline: view();
+  animation-range: entry 0% entry 30%;
+}
+
+/* Stagger children */
+[data-reveal-stagger] > * {
+  opacity: 0;
+  animation: reveal-up 0.6s var(--ease-enter) forwards;
+  animation-timeline: view();
+  animation-range: entry 0% entry 25%;
+}
+[data-reveal-stagger] > *:nth-child(1) { animation-delay: 0ms; }
+[data-reveal-stagger] > *:nth-child(2) { animation-delay: 80ms; }
+[data-reveal-stagger] > *:nth-child(3) { animation-delay: 160ms; }
+[data-reveal-stagger] > *:nth-child(4) { animation-delay: 240ms; }
+
+/* Hero entrance animation */
+@keyframes hero-fade {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+[data-hero] {
+  opacity: 0;
+  animation: hero-fade 1.2s var(--ease-enter) forwards;
+}
+
+[data-hero-delay] {
+  opacity: 0;
+  animation: hero-fade 1s var(--ease-enter) 0.3s forwards;
+}
+
+[data-hero-delay-2] {
+  opacity: 0;
+  animation: hero-fade 0.8s var(--ease-enter) 0.6s forwards;
+}
+
+/* ── Grain Texture for Surface Sections ── */
+/* Adds a subtle film grain overlay for "soft industrial" feel */
+.grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  pointer-events: none;
+  z-index: 1;
+}
+.grain {
+  position: relative;
+}
+.grain > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* ── Subtle Hover Lift on Cards ── */
+.hover-lift {
+  transition: transform 0.4s var(--ease-enter), box-shadow 0.4s var(--ease-enter);
+}
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.08);
+}
+
+/* ── Image Hover: grayscale to color ── */
+.img-reveal {
+  filter: grayscale(100%);
+  transition: filter 0.6s var(--ease-move);
+}
+.img-reveal:hover {
+  filter: grayscale(0%);
+}
+
 /* Selection */
 ::selection {
-  background-color: var(--color-accent);
-  color: white;
+  background-color: var(--color-primary);
+  color: var(--color-bg);
 }
 
 /* Focus visible */
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
