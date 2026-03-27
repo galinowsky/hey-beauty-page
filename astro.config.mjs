@@ -5,7 +5,8 @@ import sitemap from "@astrojs/sitemap";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://heybeauty.pl",
+  site: "https://galinowsky.github.io",
+  base: "/hey-beauty",
   output: "static",
   server: {
     host: true, // Expose to local network
