@@ -62,15 +62,40 @@ const reviews = [
     <Breadcrumbs items={breadcrumbs} />
   </div>
 
-  <!-- ── HERO — full-bleed editorial dark ── -->
+  <!-- ── HERO — full-bleed editorial dark with video background ── -->
   <section class="relative overflow-hidden bg-[#0a0a0a] py-32 lg:py-48">
-    <!-- Subtle noise grain -->
+
+    <!-- Video background — 3 clips rotating at low opacity -->
+    {[
+      assetPath("/videos/madzia/hair-1.mp4"),
+      assetPath("/videos/madzia/hair-2.mp4"),
+      assetPath("/videos/madzia/hair-3.mp4"),
+    ].map((src, i) => (
+      <video
+        data-hero-video
+        src={src}
+        autoplay
+        muted
+        loop
+        playsinline
+        class:list={[
+          "absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms]",
+          i === 0 ? "opacity-[0.22]" : "opacity-0",
+        ]}
+        aria-hidden="true"
+      />
+    ))}
+
+    <!-- Dark overlay so text stays crisp -->
+    <div class="pointer-events-none absolute inset-0 bg-[#0a0a0a]/60"></div>
+
+    <!-- Subtle noise grain on top -->
     <div
-      class="pointer-events-none absolute inset-0 opacity-[0.03]"
+      class="pointer-events-none absolute inset-0 opacity-[0.04]"
       style="background-image:url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\"); background-size:256px;"
     ></div>
 
-    <div class="relative mx-auto max-w-7xl px-6">
+    <div class="relative mx-auto max-w-7xl px-6" style="z-index:2">
       <p class="font-ui text-[11px] uppercase tracking-[6px] text-white/30">
         Hey Beauty Zabłocie &middot; Usługi
       </p>
@@ -98,6 +123,19 @@ const reviews = [
       </div>
     </div>
   </section>
+
+  <script>
+    const heroVideos = document.querySelectorAll<HTMLVideoElement>("[data-hero-video]");
+    let current = 0;
+
+    setInterval(() => {
+      heroVideos[current].classList.remove("opacity-[0.22]");
+      heroVideos[current].classList.add("opacity-0");
+      current = (current + 1) % heroVideos.length;
+      heroVideos[current].classList.remove("opacity-0");
+      heroVideos[current].classList.add("opacity-[0.22]");
+    }, 5000);
+  </script>
 
   <!-- ── MAGDALENA — expert card ── -->
   <section class="bg-[#f6f5f3]">
