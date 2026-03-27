@@ -7,5 +7,5 @@
   "priceRange": { "min": 350, "max": 700 },
   "booksySlug": "wlosy-keratyna",
   "image": "/images/team/madzia-card.jpg",
-  "sortOrder": 0
+  "sortOrder": -1
 }
