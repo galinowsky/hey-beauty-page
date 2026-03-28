@@ -1,0 +1,215 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getCollection } from "astro:content";
+import JsonLd from "../JsonLd.astro";
+import ServiceCard from "../ServiceCard.astro";
+import LocationCard from "../LocationCard.astro";
+import FAQAccordion from "../FAQAccordion.astro";
+import BookingCTA from "../BookingCTA.astro";
+import { buildOrganization, buildFAQPage } from "../../lib/json-ld";
+import { assetPath } from "../../utils/asset";
+import { useTranslations, localizePath } from "../../i18n/utils";
+import type { Lang } from "../../i18n/ui";
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const lp = (path: string) => localizePath(path, lang);
+
+const locations = await getCollection("locations");
+const services = await getCollection("services");
+const faqEntries = await getCollection("faq");
+
+const sortedLocations = locations.sort((a, b) => a.data.sortOrder - b.data.sortOrder);
+const sortedServices = services.sort((a, b) => a.data.sortOrder - b.data.sortOrder);
+const globalFaq = faqEntries.find((f) => f.data.scope === "global");
+
+const title = "Hey Beauty — Salon Kosmetyczny Kraków | Face · Body · Brows · Nails";
+const description = "Hey Beauty to sieć salonów kosmetycznych w Krakowie. 4 lokalizacje, profesjonalne zabiegi na twarz i ciało, stylizacja brwi i rzęs, pedicure. Umów wizytę online.";
+---
+
+<Base {title} {description} hreflangPath="/">
+  <JsonLd slot="head" data={buildOrganization()} />
+  {globalFaq && <JsonLd slot="head" data={buildFAQPage(globalFaq.data.items)} />}
+
+  <!-- HERO -->
+  <section class="hero-section relative flex min-h-[90vh] flex-col items-center justify-center overflow-hidden">
+    {[
+      { src: assetPath("/images/inspiration-2.jpeg"), alt: "Zabiegi kosmetyczne Hey Beauty" },
+      { src: assetPath("/images/hero-salon.jpeg"),    alt: "Recepcja salonu Hey Beauty" },
+      { src: assetPath("/images/inspiration-1.jpeg"), alt: "Stylizacja paznokci Hey Beauty" },
+      { src: assetPath("/images/locations/hey_beauty_2.avif"), alt: "Wnętrze salonu Hey Beauty 2.0" },
+    ].map((slide, i) => (
+      <div class:list={["hero-slide absolute inset-0", i === 0 && "is-active"]} data-slide>
+        <img src={slide.src} alt={slide.alt} class="h-full w-full object-cover"
+          loading={i === 0 ? "eager" : "lazy"} />
+      </div>
+    ))}
+    <div class="absolute inset-0 z-[1] bg-black/45"></div>
+
+    <div class="relative z-10 px-6 text-center text-white" style="z-index:2">
+      <img data-hero src={assetPath("/images/hey-beauty-logo.avif")} alt="Hey Beauty"
+        class="mx-auto h-24 w-auto invert md:h-36" />
+      <p data-hero-delay class="mt-8 font-ui text-sm uppercase tracking-[8px] text-white/70">
+        {t("home.heroSubtitle")}
+      </p>
+      <div data-hero-delay-2 class="mt-16">
+        <a href="https://booksy.com/pl-pl/111132_hey-beauty-2-0_salon-kosmetyczny_8820_krakow?utm_source=heybeauty-website&utm_medium=cta&utm_campaign=hero"
+          target="_blank" rel="noopener"
+          class="inline-block border border-white/60 px-10 py-4 font-ui text-[12px] uppercase tracking-[4px] text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-black">
+          {t("common.bookNow")}
+        </a>
+      </div>
+    </div>
+
+    <div class="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 gap-2" style="z-index:2" id="hero-dots">
+      {[0,1,2,3].map((i) => (
+        <button class:list={["hero-dot size-1.5 rounded-full transition-all duration-500", i === 0 ? "bg-white scale-125" : "bg-white/40"]}
+          data-index={i} aria-label={`Slajd ${i + 1}`} />
+      ))}
+    </div>
+
+    <p data-hero-delay-2 class="absolute bottom-16 left-0 right-0 text-center font-mono text-xs tracking-[2px] text-white/40" style="z-index:2">
+      4 salony &middot; {sortedLocations.map((l) => l.data.shortName).join(" · ")}
+    </p>
+  </section>
+
+  <script>
+    const slides = document.querySelectorAll<HTMLElement>("[data-slide]");
+    const dots = document.querySelectorAll<HTMLButtonElement>(".hero-dot");
+    let current = 0;
+    let timer: ReturnType<typeof setInterval>;
+    function goTo(index: number) {
+      slides[current].classList.remove("is-active");
+      dots[current].classList.remove("bg-white", "scale-125");
+      dots[current].classList.add("bg-white/40");
+      current = index;
+      slides[current].classList.add("is-active");
+      dots[current].classList.add("bg-white", "scale-125");
+      dots[current].classList.remove("bg-white/40");
+    }
+    function next() { goTo((current + 1) % slides.length); }
+    timer = setInterval(next, 5000);
+    dots.forEach((dot, i) => {
+      dot.addEventListener("click", () => { clearInterval(timer); goTo(i); timer = setInterval(next, 5000); });
+    });
+  </script>
+
+  <!-- LOCATIONS -->
+  <section class="grain bg-surface py-24 lg:py-32">
+    <div class="mx-auto max-w-7xl px-6">
+      <div data-reveal>
+        <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">{t("home.locationsLabel")}</p>
+        <h2 class="mt-4 font-display text-h2">{t("home.locationsTitle")}</h2>
+      </div>
+      <div data-reveal-stagger class="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        {sortedLocations.map((loc) => (
+          <LocationCard name={loc.data.name} shortName={loc.data.shortName} slug={loc.data.slug}
+            address={loc.data.address.street} district={loc.data.address.district}
+            rating={loc.data.rating} booksyUrl={loc.data.booksyUrl} image={loc.data.images[0]} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="py-24 lg:py-32">
+    <div class="mx-auto max-w-7xl px-6">
+      <div data-reveal>
+        <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">{t("home.servicesLabel")}</p>
+        <h2 class="mt-4 font-display text-h2">{t("home.servicesTitle")}</h2>
+      </div>
+      <div data-reveal-stagger class="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        {sortedServices.map((s) => (
+          <ServiceCard name={s.data.name} slug={s.data.slug} description={s.data.description}
+            priceMin={s.data.priceRange.min} duration={`${s.data.duration.min} ${t("common.min")}`}
+            image={s.data.image} />
+        ))}
+      </div>
+      <div class="mt-12 text-center">
+        <a href={lp("/uslugi/")}
+          class="inline-block border border-primary px-8 py-3 font-ui text-[11px] uppercase tracking-[3px] transition-colors hover:bg-primary hover:text-bg">
+          {t("common.seeAll")}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT PREVIEW -->
+  <section class="grain bg-surface">
+    <div class="mx-auto grid min-h-[600px] max-w-7xl grid-cols-1 md:grid-cols-[1.2fr_1fr]">
+      <div data-reveal class="flex items-end p-12 pb-24 lg:p-20 lg:pb-32">
+        <div>
+          <p class="font-display text-[clamp(2.5rem,5vw,4rem)] italic leading-[1.05] text-primary/20">
+            {t("home.aboutQuote")}
+          </p>
+        </div>
+      </div>
+      <div data-reveal class="flex flex-col justify-center p-12 lg:p-20">
+        <h2 class="font-display text-h2">{t("home.aboutTitle")}</h2>
+        <p class="mt-8 text-lg leading-relaxed text-muted">{t("home.aboutText")}</p>
+        <a href={lp("/o-nas/")}
+          class="mt-10 inline-block self-start border-b border-primary pb-1 font-ui text-[11px] uppercase tracking-[3px]">
+          {t("home.aboutLink")}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="py-24 lg:py-32">
+    <div class="mx-auto max-w-7xl px-6">
+      <div data-reveal class="text-center">
+        <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">{t("home.reviewsLabel")}</p>
+        <h2 class="mt-4 font-display text-h2">{t("home.reviewsTitle")}</h2>
+        <p class="mt-4 font-mono text-xs tracking-[2px] text-muted">{t("home.reviewsRating")}</p>
+      </div>
+      <div data-reveal-stagger class="mt-16 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {[
+          { text: "Czułam się jak na spotkaniu z koleżanką, a przy okazji dowiedziałam się jaki jest stan mojej skóry, jakie kremy powinnam stosować i co ze sobą łączyć. Mamy obraną wstępną strategię dalszego postępowania i nie mogę się doczekać efektów i kolejnego spotkania. Bardzo polecam.", name: "Daria", service: "Konsultacja kosmetyczna", location: "HB 2.0", rating: 5 },
+          { text: "Wrażenie niesamowicie pozytywne. Profesjonalne podejście, wyczerpujące odpowiedzi na nurtujące pytania. Ponadto miło, sympatycznie, relaksująco i klimatycznie. Jak najbardziej polecam!", name: "Małgorzata", service: "Oczyszczanie wodorowe", location: "HB 1.0", rating: 5 },
+          { text: "Zabieg przeprowadzony bardzo sprawnie, dostałam dużo informacji o tym jak zadbać o twarz po zabiegu i na co dzień. Pani Paulina szczegółowo informowała mnie o każdym kroku — sprawiła, że zabieg był na tyle przyjemny, na ile przyjemne może być wbijanie igieł do twarzy ;)", name: "Paulina", service: "Dermapen 4.0", location: "HB 2.0", rating: 5 },
+          { text: "Pani Marta samodzielnie dobrała preparaty, wiedząc co potrzeba na moje problemy skórne. Efekt był dokładnie taki jak zamierzony — z czystym sumieniem mogę polecić, szczególnie Panią Martę.", name: "Marta", service: "Zabieg dopasowany indywidualnie", location: "HB 3.0", rating: 5 },
+          { text: "Rewelacja, bardzo polecam. Dawno nie czułam się tak zaopiekowana. Azjatycki masaż twarzy to coś, do czego zdecydowanie wrócę.", name: "Karina", service: "Azjatycki masaż twarzy", location: "HB 1.0", rating: 5 },
+          { text: "Bardzo miła atmosfera i profesjonalizm na najwyższym poziomie. Zabieg wykonano komfortowo, z pełnym wyjaśnieniem każdego etapu. Zdecydowanie polecam i na pewno wrócę.", name: "Kasia", service: "Oczyszczanie wodorowe", location: "HB 3.0", rating: 5 },
+        ].map((review) => (
+          <div class="flex flex-col border border-border p-8">
+            <p class="font-display text-3xl text-muted/20 leading-none">&ldquo;</p>
+            <p class="mt-3 flex-1 text-sm leading-relaxed text-muted">{review.text}</p>
+            <div class="mt-6 border-t border-border pt-6">
+              <p class="font-ui text-[13px] font-medium">{review.name}</p>
+              <p class="mt-0.5 font-ui text-[11px] uppercase tracking-[2px] text-muted">{review.service} &middot; {review.location}</p>
+              <p class="mt-1 text-xs text-muted/60">{"★".repeat(review.rating)}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+      <p class="mt-10 text-center font-mono text-xs tracking-[2px] text-muted/50">{t("common.sourceBooksy")}</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  {globalFaq && (
+    <section class="py-24 lg:py-32">
+      <div class="mx-auto max-w-3xl px-6">
+        <div data-reveal class="text-center">
+          <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">{t("home.faqLabel")}</p>
+          <h2 class="mt-4 font-display text-h2">{t("home.faqTitle")}</h2>
+        </div>
+        <div data-reveal class="mt-16">
+          <FAQAccordion items={globalFaq.data.items} />
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- INSTAGRAM -->
+  <section class="bg-primary py-16 text-center text-bg">
+    <p class="font-display text-h3">@heybeauty_krk</p>
+    <p class="mt-2 font-ui text-sm text-bg/70">{t("home.instagramFollowers")}</p>
+    <a href="https://instagram.com/heybeauty_krk" target="_blank" rel="noopener"
+      class="mt-6 inline-block border border-bg/30 px-8 py-3 font-ui text-[11px] uppercase tracking-[3px] text-bg transition-colors hover:bg-bg hover:text-primary">
+      {t("home.instagramFollow")}
+    </a>
+  </section>
+</Base>

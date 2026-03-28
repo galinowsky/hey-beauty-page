@@ -1,13 +1,17 @@
 ---
+import { hreflangUrls } from "../i18n/utils";
+
 interface Props {
   title: string;
   description: string;
   ogImage?: string;
   canonical?: string;
+  hreflangPath?: string;
 }
 
-const { title, description, ogImage = "/og-default.jpg", canonical } = Astro.props;
+const { title, description, ogImage = "/og-default.jpg", canonical, hreflangPath } = Astro.props;
 const canonicalUrl = canonical || new URL(Astro.url.pathname, Astro.site).href;
+const hreflangs = hreflangPath ? hreflangUrls(hreflangPath, Astro.site) : [];
 ---
 
 <!-- Fonts -->
@@ -41,8 +45,11 @@ const canonicalUrl = canonical || new URL(Astro.url.pathname, Astro.site).href;
 <!-- Favicon -->
 <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
 
-<!-- Language -->
+<!-- Language / hreflang -->
 <meta property="og:locale:alternate" content="en_US" />
 <meta property="og:locale:alternate" content="uk_UA" />
+{hreflangs.map(({ lang, href }) => (
+  <link rel="alternate" hreflang={lang} href={href} />
+))}
 
 <slot />

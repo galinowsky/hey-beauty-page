@@ -1,0 +1,290 @@
+---
+import Base from "../../layouts/Base.astro";
+import Breadcrumbs from "../Breadcrumbs.astro";
+import JsonLd from "../JsonLd.astro";
+import FAQAccordion from "../FAQAccordion.astro";
+import { buildBreadcrumbList, buildFAQPage } from "../../lib/json-ld";
+import { getCollection } from "astro:content";
+import { assetPath } from "../../utils/asset";
+import { useTranslations, localizePath } from "../../i18n/utils";
+import type { Lang } from "../../i18n/ui";
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const lp = (path: string) => localizePath(path, lang);
+
+const allFaq = await getCollection("faq");
+const hairFaq = allFaq.find((f) => f.data.scope === "service" && f.data.scopeSlug === "wlosy");
+
+const breadcrumbs = [
+  { name: t("services.breadHome"), url: lp("/") },
+  { name: t("hair.offerLabel"),    url: lp("/uslugi/") },
+  { name: t("hair.heroTitle"),     url: lp("/uslugi/wlosy/") },
+];
+
+const hairTitle = lang === "pl"
+  ? "Keratynowe Zabiegi Włosów Kraków — Magdalena Tryba | Hey Beauty Zabłocie"
+  : lang === "en"
+  ? "Keratin Hair Treatments Kraków — Magdalena Tryba | Hey Beauty Zabłocie"
+  : "Кератинові процедури для волосся Краків — Магдалена Триба | Hey Beauty";
+
+const hairDesc = lang === "pl"
+  ? "Prostowanie i regeneracja keratynowa włosów w Krakowie. Specjalistka Magdalena Tryba — efekt do 5 miesięcy. Hey Beauty Zabłocie, ul. Przemysłowa 4. Umów online."
+  : lang === "en"
+  ? "Keratin hair straightening and regeneration in Kraków. Specialist Magdalena Tryba — results up to 5 months. Hey Beauty Zabłocie, Przemysłowa 4. Book online."
+  : "Кератинове випрямлення та відновлення волосся в Кракові. Спеціаліст Магдалена Триба — ефект до 5 місяців. Hey Beauty Забłoцie. Запис онлайн.";
+
+type ServiceEntry = { name: string; desc: string; duration: string; price: string; note: string };
+
+const services: Record<Lang, ServiceEntry[]> = {
+  pl: [
+    { name: "Keratynowe prostowanie włosów", desc: "Trwałe wygładzenie włosów na 3–5 miesięcy. Eliminuje puszenie, skraca czas suszenia o 60%. Formuła bezformaldehydowa — bezpieczna dla każdego rodzaju włosa.", duration: "2,5–4 h", price: "od 450 zł", note: "Cena zależy od długości i grubości włosów" },
+    { name: "Keratynowa regeneracja włosów", desc: "Intensywna odbudowa struktury włosa od wewnątrz. Efekt miękkości, blasku i elastyczności. Idealna dla włosów zniszczonych farbowaniem i stylizacją.", duration: "2–3 h", price: "od 350 zł", note: "Cena zależy od długości i grubości włosów" },
+  ],
+  en: [
+    { name: "Keratin hair straightening", desc: "Permanent smoothing for 3–5 months. Eliminates frizz, cuts drying time by 60%. Formaldehyde-free formula — safe for all hair types.", duration: "2.5–4 h", price: "from 450 PLN", note: "Price depends on hair length and thickness" },
+    { name: "Keratin hair regeneration", desc: "Intensive rebuilding of hair structure from within. Results in softness, shine and elasticity. Ideal for hair damaged by coloring and styling.", duration: "2–3 h", price: "from 350 PLN", note: "Price depends on hair length and thickness" },
+  ],
+  uk: [
+    { name: "Кератинове випрямлення волосся", desc: "Тривале розгладження волосся на 3–5 місяців. Усуває кучерявість, скорочує час сушіння на 60%. Безформальдегідна формула — безпечна для будь-якого типу волосся.", duration: "2,5–4 год", price: "від 450 зл", note: "Ціна залежить від довжини та товщини волосся" },
+    { name: "Кератинова регенерація волосся", desc: "Інтенсивне відновлення структури волосся зсередини. Ефект м'якості, блиску та еластичності. Ідеально для волосся, пошкодженого фарбуванням та укладанням.", duration: "2–3 год", price: "від 350 зл", note: "Ціна залежить від довжини та товщини волосся" },
+  ],
+};
+
+const reviews: Record<Lang, { text: string; name: string; service: string; rating: number }[]> = {
+  pl: [
+    { text: "Polecam usługi Madzi, włosy po keratynie wyglądają jak milion dolarów :)", name: "Izabela", service: "Keratynowe prostowanie", rating: 5 },
+    { text: "Magdalena podeszła do moich włosów z ogromną troską i wiedzą. Efekt przeszedł moje oczekiwania — włosy są gładkie, lśniące i bez puszenia. Na pewno wrócę.", name: "Ewelina", service: "Keratynowa regeneracja", rating: 5 },
+    { text: "Byłam sceptyczna, bo mam bardzo grube i oporne włosy. Madzii udało się to, czego nie mogły zrobić poprzednie salony. Absolutna profesjonalistka.", name: "Lisa", service: "Keratynowe prostowanie", rating: 5 },
+  ],
+  en: [
+    { text: "I recommend Madzia's services — my hair looks like a million dollars after the keratin treatment :)", name: "Izabela", service: "Keratin straightening", rating: 5 },
+    { text: "Magdalena approached my hair with tremendous care and knowledge. The result exceeded my expectations — smooth, shiny and frizz-free. I'll definitely be back.", name: "Ewelina", service: "Keratin regeneration", rating: 5 },
+    { text: "I was sceptical because I have very thick and resistant hair. Magdalena managed what other salons couldn't. An absolute professional.", name: "Lisa", service: "Keratin straightening", rating: 5 },
+  ],
+  uk: [
+    { text: "Рекомендую послуги Мадзі — волосся після кератину виглядає як мільйон доларів :)", name: "Ізабела", service: "Кератинове випрямлення", rating: 5 },
+    { text: "Магдалена підійшла до мого волосся з великою турботою та знаннями. Результат перевершив мої очікування — гладке, блискуче і без кучерів. Обов'язково повернусь.", name: "Евеліна", service: "Кератинова регенерація", rating: 5 },
+    { text: "Я була скептично налаштована, бо маю дуже густе та непіддатливе волосся. Магдалені вдалося те, чого не могли зробити інші салони. Абсолютний професіонал.", name: "Ліза", service: "Кератинове випрямлення", rating: 5 },
+  ],
+};
+
+const currentServices = services[lang];
+const currentReviews = reviews[lang];
+---
+
+<Base title={hairTitle} description={hairDesc} hreflangPath="/uslugi/wlosy/">
+  <JsonLd slot="head" data={buildBreadcrumbList(breadcrumbs, Astro.site)} />
+  {hairFaq && <JsonLd slot="head" data={buildFAQPage(hairFaq.data.items)} />}
+
+  <div class="mx-auto max-w-7xl px-6 pt-8">
+    <Breadcrumbs items={breadcrumbs} />
+  </div>
+
+  <!-- HERO -->
+  <section class="relative overflow-hidden bg-[#0a0a0a] py-32 lg:py-48">
+    {[
+      assetPath("/videos/madzia/hair-1.mp4"),
+      assetPath("/videos/madzia/hair-2.mp4"),
+      assetPath("/videos/madzia/hair-3.mp4"),
+    ].map((src, i) => (
+      <video data-hero-video src={src} autoplay muted loop playsinline aria-hidden="true"
+        class:list={["absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms]", i === 0 ? "opacity-[0.22]" : "opacity-0"]} />
+    ))}
+    <div class="pointer-events-none absolute inset-0 bg-[#0a0a0a]/60"></div>
+    <div class="pointer-events-none absolute inset-0 opacity-[0.04]"
+      style="background-image:url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\"); background-size:256px;"></div>
+
+    <div class="relative mx-auto max-w-7xl px-6" style="z-index:2">
+      <p class="font-ui text-[11px] uppercase tracking-[6px] text-white/30">{t("hair.heroLabel")}</p>
+      <h1 class="mt-6 font-display text-[clamp(5rem,15vw,12rem)] italic leading-[0.9] tracking-tight text-white">
+        {t("hair.heroTitle")}
+      </h1>
+      <p class="mt-8 max-w-lg font-body text-lg leading-relaxed text-white/50">{t("hair.heroText")}</p>
+      <div class="mt-12 flex flex-wrap items-center gap-6">
+        <a href="https://booksy.com/pl-pl/306187_hey-beauty-zablocie_salon-kosmetyczny_8820_krakow"
+          target="_blank" rel="noopener"
+          class="inline-block border border-white/20 bg-white px-10 py-4 font-ui text-[12px] uppercase tracking-[4px] text-black transition-all hover:bg-white/90">
+          {t("common.bookNow")}
+        </a>
+        <span class="font-mono text-xs tracking-[2px] text-white/30">★★★★★ &nbsp;·&nbsp; {t("common.verifiedBooksy")}</span>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const heroVideos = document.querySelectorAll<HTMLVideoElement>("[data-hero-video]");
+    let current = 0;
+    setInterval(() => {
+      heroVideos[current].classList.remove("opacity-[0.22]");
+      heroVideos[current].classList.add("opacity-0");
+      current = (current + 1) % heroVideos.length;
+      heroVideos[current].classList.remove("opacity-0");
+      heroVideos[current].classList.add("opacity-[0.22]");
+    }, 5000);
+  </script>
+
+  <!-- MAGDALENA -->
+  <section class="bg-[#f6f5f3]">
+    <div class="mx-auto max-w-7xl px-6 py-24 lg:py-32">
+      <div class="grid grid-cols-1 gap-16 lg:grid-cols-[1fr_1.6fr] lg:items-center">
+        <div class="relative">
+          <div class="aspect-[3/4] overflow-hidden">
+            <img src={assetPath("/images/team/madzia.jpg")} alt="Magdalena Tryba"
+              class="h-full w-full object-cover object-top grayscale" />
+          </div>
+          <div class="absolute -bottom-4 -right-4 border border-border bg-white px-5 py-3 shadow-sm">
+            <p class="font-ui text-[10px] uppercase tracking-[3px] text-muted">{t("hair.expertCert")}</p>
+            <p class="font-display text-base">{t("hair.expertCertTitle")}</p>
+          </div>
+        </div>
+        <div>
+          <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">{t("hair.expertLabel")}</p>
+          <h2 class="mt-4 font-display text-h1 leading-[1]">{t("hair.expertTitle")}</h2>
+          <p class="mt-1 font-ui text-[13px] uppercase tracking-[3px] text-muted">{t("hair.expertSurname")}</p>
+          <p class="mt-10 text-lg leading-relaxed text-muted">{t("hair.expertBio1")}</p>
+          <p class="mt-5 text-lg leading-relaxed text-muted">{t("hair.expertBio2")}</p>
+          <div class="mt-12 flex gap-12 border-t border-border pt-10">
+            <div>
+              <p class="font-display text-4xl">5★</p>
+              <p class="mt-1 font-ui text-[11px] uppercase tracking-[2px] text-muted">{t("hair.statRating")}</p>
+            </div>
+            <div>
+              <p class="font-display text-4xl">3–5</p>
+              <p class="mt-1 font-ui text-[11px] uppercase tracking-[2px] text-muted">{t("hair.statMonths")}</p>
+            </div>
+            <div>
+              <p class="font-display text-4xl italic">∞</p>
+              <p class="mt-1 font-ui text-[11px] uppercase tracking-[2px] text-muted">{t("hair.statPassion")}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="py-24 lg:py-32">
+    <div class="mx-auto max-w-7xl px-6">
+      <div>
+        <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">{t("hair.offerLabel")}</p>
+        <h2 class="mt-4 font-display text-h2">{t("hair.offerTitle")}</h2>
+        <p class="mt-3 font-mono text-xs tracking-[2px] text-muted/60">{t("hair.offerNote")}</p>
+      </div>
+      <div class="mt-16 grid grid-cols-1 gap-0 divide-y divide-border border-t border-b border-border lg:grid-cols-2 lg:divide-y-0 lg:divide-x">
+        {currentServices.map((s) => (
+          <div class="p-6 lg:p-8">
+            <h3 class="font-display text-2xl">{s.name}</h3>
+            <p class="mt-5 text-base leading-relaxed text-muted">{s.desc}</p>
+            <div class="mt-8 flex items-baseline gap-8">
+              <div>
+                <p class="font-ui text-[10px] uppercase tracking-[2px] text-muted">{t("common.price")}</p>
+                <p class="mt-1 font-display text-3xl">{s.price}</p>
+                <p class="mt-1 text-xs text-muted/60">{s.note}</p>
+              </div>
+              <div>
+                <p class="font-ui text-[10px] uppercase tracking-[2px] text-muted">{t("common.duration")}</p>
+                <p class="mt-1 font-display text-3xl">{s.duration}</p>
+              </div>
+            </div>
+            <a href="https://booksy.com/pl-pl/306187_hey-beauty-zablocie_salon-kosmetyczny_8820_krakow"
+              target="_blank" rel="noopener"
+              class="mt-8 inline-block border border-primary px-8 py-3 font-ui text-[11px] uppercase tracking-[3px] transition-colors hover:bg-primary hover:text-white">
+              {t("hair.bookBtn")}
+            </a>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- VIDEO REEL -->
+  <section class="overflow-hidden bg-[#0a0a0a] py-20">
+    <div class="mb-12 px-6">
+      <p class="font-ui text-[11px] uppercase tracking-[4px] text-white/30">{t("hair.videosLabel")}</p>
+      <h2 class="mt-3 font-display text-h2 italic text-white">{t("hair.videosTitle")}</h2>
+    </div>
+    <div class="flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-6 scrollbar-none"
+      style="scroll-padding-left: 1.5rem; -webkit-overflow-scrolling: touch;">
+      {[
+        assetPath("/videos/madzia/hair-1.mp4"),
+        assetPath("/videos/madzia/hair-2.mp4"),
+        assetPath("/videos/madzia/hair-3.mp4"),
+      ].map((src, i) => (
+        <div class="relative flex-none snap-start overflow-hidden" style="width: min(72vw, 320px); aspect-ratio: 9/16;">
+          <video src={src} autoplay muted loop playsinline class="h-full w-full object-cover"
+            aria-label={`${t("hair.videosLabel")} ${i + 1}`} />
+          <div class="pointer-events-none absolute inset-x-0 bottom-0 h-1/3"
+            style="background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);"></div>
+          <p class="absolute bottom-4 left-4 font-mono text-[10px] tracking-[2px] text-white/50">0{i + 1} / 03</p>
+        </div>
+      ))}
+      <div class="flex-none" style="width: 1.5rem;"></div>
+    </div>
+    <p class="mt-6 px-6 font-mono text-[10px] tracking-[3px] text-white/20">{t("hair.videoScroll")}</p>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="py-24 lg:py-32">
+    <div class="mx-auto max-w-7xl px-6">
+      <div class="text-center">
+        <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">{t("hair.reviewsLabel")}</p>
+        <h2 class="mt-4 font-display text-h2">{t("hair.reviewsTitle")}</h2>
+        <p class="mt-3 font-mono text-xs tracking-[2px] text-muted">★★★★★ &nbsp;·&nbsp; {t("common.verifiedBooksy")}</p>
+      </div>
+      <div class="mt-16 grid grid-cols-1 gap-6 md:grid-cols-3">
+        {currentReviews.map((r) => (
+          <div class="flex flex-col border border-border p-8">
+            <p class="font-display text-3xl leading-none text-muted/20">&ldquo;</p>
+            <p class="mt-3 flex-1 text-sm leading-relaxed text-muted">{r.text}</p>
+            <div class="mt-6 border-t border-border pt-6">
+              <p class="font-ui text-[13px] font-medium">{r.name}</p>
+              <p class="mt-0.5 font-ui text-[11px] uppercase tracking-[2px] text-muted">{r.service}</p>
+              <p class="mt-1 text-xs text-muted/60">{"★".repeat(r.rating)}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+      <p class="mt-10 text-center font-mono text-xs tracking-[2px] text-muted/50">{t("common.sourceBooksy")}</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  {hairFaq && (
+    <section class="py-24 lg:py-32">
+      <div class="mx-auto max-w-3xl px-6">
+        <div class="text-center">
+          <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">{t("hair.faqLabel")}</p>
+          <h2 class="mt-4 font-display text-h2">{t("hair.faqTitle")}</h2>
+        </div>
+        <div class="mt-16">
+          <FAQAccordion items={hairFaq.data.items} />
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- CTA -->
+  <section class="bg-[#0a0a0a] px-6 py-24 text-center">
+    <p class="font-ui text-[11px] uppercase tracking-[4px] text-white/30">{t("hair.ctaLabel")}</p>
+    <h2 class="mt-4 font-display text-[clamp(2rem,5vw,3.5rem)] italic text-white">{t("hair.ctaTitle")}</h2>
+    <p class="mt-4 font-body text-base text-white/40">{t("hair.ctaAddress")}</p>
+    <a href="https://booksy.com/pl-pl/306187_hey-beauty-zablocie_salon-kosmetyczny_8820_krakow"
+      target="_blank" rel="noopener"
+      class="mt-10 inline-block border border-white/20 bg-white px-12 py-5 font-ui text-[12px] uppercase tracking-[5px] text-black transition-all hover:bg-white/90">
+      {t("common.bookOnline")}
+    </a>
+  </section>
+
+  <div class="mx-auto max-w-7xl px-6 py-12">
+    <a href={lp("/uslugi/")} class="font-ui text-[11px] uppercase tracking-[3px] text-muted hover:text-primary">
+      {t("hair.backToServices")}
+    </a>
+  </div>
+</Base>
+
+<style>
+  .scrollbar-none { scrollbar-width: none; -ms-overflow-style: none; }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+</style>

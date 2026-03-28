@@ -9,17 +9,19 @@ interface Props {
   description: string;
   ogImage?: string;
   canonical?: string;
+  hreflangPath?: string; // canonical path without locale prefix, e.g. "/uslugi/"
 }
 
-const { title, description, ogImage, canonical } = Astro.props;
+const { title, description, ogImage, canonical, hreflangPath } = Astro.props;
+const lang = Astro.currentLocale ?? "pl";
 ---
 
 <!doctype html>
-<html lang="pl">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <Head {title} {description} {ogImage} {canonical}>
+    <Head {title} {description} {ogImage} {canonical} {hreflangPath}>
       <slot name="head" />
     </Head>
   </head>
