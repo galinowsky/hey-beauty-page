@@ -24,8 +24,20 @@ All pages pre-rendered at build time. No Cloudflare adapter needed. A beauty sal
 ### 2. JSON content collections (not Markdown)
 This is structured data (prices, coordinates, opening hours), not prose. JSON + Zod schemas give type safety. Markdown would force us to parse frontmatter for every field.
 
-### 3. File-based i18n routing (not Astro's built-in)
-Astro's built-in i18n can prefix paths (/pl/, /en/) but can't translate URL segments (uslugi vs services). We need `/uslugi/lifting-rzes` in Polish and `/en/services/lash-lifting` in English. File-based routing (pages/ for PL, pages/en/ for EN) handles this.
+### 3. File-based i18n routing with translated URL slugs
+Astro's built-in i18n can prefix paths (`/pl/`, `/en/`) but can't translate URL segments. We use file-based routing so each locale has its own page file at the correct translated path:
+
+```
+pages/uslugi/wlosy.astro          → /uslugi/wlosy/          (PL canonical)
+pages/en/services/hair.astro      → /en/services/hair/       (EN)
+pages/uk/posluhy/volossia.astro   → /uk/posluhy/volossia/    (UK)
+```
+
+Every locale page is a 3-line wrapper: `<HairContent lang="uk" />`. All logic lives in `src/components/pages/`. Adding a language means creating N × 3-line wrapper files.
+
+**Slug translation map** lives in `src/i18n/routes.ts`. It's the single source of truth for all URL segment translations. `localizePath(plPath, lang)` and `hreflangUrls(plPath, site)` both read from it — you never manually construct translated URLs anywhere else.
+
+**Language switcher** works by calling `toCanonicalPlPath(currentUrl, currentLang)` to reverse-translate the current URL back to Polish, then `localizePath(plPath, targetLang)` for each target language. This means the switcher stays correct as new pages are added, as long as slugs are in `routes.ts`.
 
 ### 4. Service-location cross-pages (THE SEO PLAY)
 Every service × location combination gets its own page. "Lifting rzęs" at "Hey Beauty 2.0" = `/salony/hey-beauty-2-0/lifting-rzes/`. Each targets a long-tail keyword like "lifting rzęs Śródmieście Kraków". Most salons have 5 pages. We have 60-80+. This is the whole SEO strategy.
@@ -84,6 +96,43 @@ See DESIGN.md. Key principle: everything is a CSS custom property. Swapping font
 | 2026-03-27 | Grain texture on surface sections | Subtle film grain overlay for "industrial" texture. Pure CSS via SVG filter. |
 | 2026-03-27 | Self-hosted salon photos | Prevents Booksy CDN dependency. Grayscale by default, color on hover. |
 | 2026-03-27 | Polish-only for V1 | 60-80 pages × 3 languages = 180-240 variants. Ship PL first, add EN/UK later. |
+| 2026-03-28 | Zero-duplication i18n | Page logic in `src/components/pages/` components with `lang` prop. Locale page files are 3-line wrappers. New language = add translations to `ui.ts` + create wrapper files. |
+| 2026-03-28 | Translated URL slugs | `/en/services/hair/` not `/en/uslugi/wlosy/`. Slug map in `src/i18n/routes.ts`. `localizePath()` and `hreflangUrls()` read from it automatically. Language switcher uses `toCanonicalPlPath()` to reverse-translate before re-localizing. |
+| 2026-03-28 | FAQ translations via separate JSON files | `global-en.json` / `global-uk.json` with `scopeSlug: "en"/"uk"`. Components look up by `scope === "global" && scopeSlug === lang`. Polish FAQ has no scopeSlug (undefined). |
+
+## How to Add a New Page (Recipe)
+
+### New service page (e.g. "manicure")
+
+1. **Content logic** — create `src/components/pages/ManicureContent.astro` with `interface Props { lang: Lang }`. All text goes through `t()`, all links through `lp()`.
+
+2. **Polish page** — `src/pages/uslugi/manicure.astro`:
+   ```astro
+   ---
+   import ManicureContent from "../../components/pages/ManicureContent.astro";
+   ---
+   <ManicureContent lang="pl" />
+   ```
+
+3. **EN page** — `src/pages/en/services/manicure.astro` (same 3 lines, `lang="en"`).
+
+4. **UK page** — `src/pages/uk/posluhy/manicure.astro` (same 3 lines, `lang="uk"`). If the Ukrainian slug differs: `src/pages/uk/posluhy/manikiur.astro`.
+
+5. **Slug map** — add to `src/i18n/routes.ts` if the EN/UK slug differs from Polish:
+   ```ts
+   en: { ..., "manicure": "manicure" },   // same — can be omitted
+   uk: { ..., "manicure": "manikiur" },   // different — must add
+   ```
+
+6. **Translations** — add all `t("manicure.*")` keys to `src/i18n/ui.ts` for all 3 locales.
+
+7. **FAQ** (optional) — create `src/data/faq/manicure.json`, `manicure-en.json`, `manicure-uk.json`.
+
+That's it. The language switcher, hreflang tags, and nav active states all work automatically.
+
+### New top-level route (e.g. `/blog/`)
+
+Same as above, but also add `"blog": "blog"` (or translated slug) to `slugMap` in `routes.ts`, and add nav items to `Header.astro` via `t()` + `lp()`.
 
 ## Related Projects
 

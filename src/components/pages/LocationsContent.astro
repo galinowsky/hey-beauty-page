@@ -1,0 +1,40 @@
+---
+import Base from "../../layouts/Base.astro";
+import Breadcrumbs from "../Breadcrumbs.astro";
+import { getCollection } from "astro:content";
+import LocationCard from "../LocationCard.astro";
+import { useTranslations, localizePath } from "../../i18n/utils";
+import type { Lang } from "../../i18n/ui";
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const lp = (path: string) => localizePath(path, lang);
+
+const locations = await getCollection("locations");
+const sorted = locations.sort((a, b) => a.data.sortOrder - b.data.sortOrder);
+
+const breadcrumbs = [
+  { name: t("salons.breadHome"), url: lp("/") },
+  { name: t("salons.breadSalons"), url: lp("/salony/") },
+];
+---
+
+<Base title={t("salons.pageTitle")} description={t("salons.pageDesc")} hreflangPath="/salony/">
+  <div class="mx-auto max-w-7xl px-6">
+    <div class="pt-8">
+      <Breadcrumbs items={breadcrumbs} />
+    </div>
+    <section class="py-16 lg:py-24">
+      <h1 class="font-display text-h1">{t("salons.title")}</h1>
+      <p class="mt-4 max-w-2xl text-lg text-muted">{t("salons.subtitle")}</p>
+      <div class="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        {sorted.map((loc) => (
+          <LocationCard name={loc.data.name} shortName={loc.data.shortName} slug={loc.data.slug}
+            address={loc.data.address.street} district={loc.data.address.district}
+            rating={loc.data.rating} booksyUrl={loc.data.booksyUrl} />
+        ))}
+      </div>
+    </section>
+  </div>
+</Base>

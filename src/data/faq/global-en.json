@@ -1,0 +1,26 @@
+{
+  "items": [
+    {
+      "question": "How do I book an appointment at Hey Beauty?",
+      "answer": "We take bookings through Booksy. Click the \"Book appointment\" button next to your chosen salon or service and you'll be redirected to our online calendar."
+    },
+    {
+      "question": "How many Hey Beauty locations are there in Kraków?",
+      "answer": "We have 4 salons in Kraków: Hey Beauty 1.0, Hey Beauty 2.0 (City Centre), Hey Beauty 3.0, and Hey Beauty Zabłocie. Each offers a slightly different range of services."
+    },
+    {
+      "question": "Is the first consultation free?",
+      "answer": "Yes! We offer a free cosmetology consultation with a personalised beauty plan tailored to your needs."
+    },
+    {
+      "question": "What languages do you serve clients in?",
+      "answer": "We serve clients in Polish, English, and Ukrainian."
+    },
+    {
+      "question": "Do you have a loyalty programme?",
+      "answer": "Yes! With our loyalty programme, you earn points for every visit that can be exchanged for services and products. Ask for details at the salon."
+    }
+  ],
+  "scope": "global",
+  "scopeSlug": "en"
+}

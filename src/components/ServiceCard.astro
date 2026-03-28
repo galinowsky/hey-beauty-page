@@ -6,13 +6,15 @@ interface Props {
   priceMin: number;
   duration: string;
   image?: string;
+  href?: string;       // override URL (for locale-aware links)
+  learnMoreText?: string;
 }
 
 import { url } from "../utils/asset";
-const { name, slug, description, priceMin, duration, image } = Astro.props;
+const { name, slug, description, priceMin, duration, image, href, learnMoreText = "Dowiedz się więcej →" } = Astro.props;
 ---
 
-<a href={url(`/uslugi/${slug}/`)} class="group block border border-border transition-shadow hover:shadow-sm">
+<a href={href ?? url(`/uslugi/${slug}/`)} class="group block border border-border transition-shadow hover:shadow-sm">
   <!-- Image -->
   <div class="aspect-[4/3] overflow-hidden bg-surface">
     {
@@ -42,7 +44,7 @@ const { name, slug, description, priceMin, duration, image } = Astro.props;
       </span>
     </div>
     <span class="mt-4 inline-block border-b border-accent pb-0.5 font-ui text-[11px] uppercase tracking-[3px] text-accent">
-      Dowiedz się więcej →
+      {learnMoreText}
     </span>
   </div>
 </a>

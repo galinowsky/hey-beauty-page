@@ -10,6 +10,13 @@ export default defineConfig({
   site: isGitHubPages ? "https://galinowsky.github.io" : "http://localhost:4321",
   base: isGitHubPages ? "/hey-beauty-page" : "/",
   output: "static",
+  i18n: {
+    defaultLocale: "pl",
+    locales: ["pl", "en", "uk"],
+    routing: {
+      prefixDefaultLocale: false, // Polish stays at /uslugi/, not /pl/uslugi/
+    },
+  },
   server: {
     host: true, // Expose to local network
   },

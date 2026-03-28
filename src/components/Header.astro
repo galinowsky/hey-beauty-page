@@ -1,19 +1,33 @@
 ---
 import { getCollection } from "astro:content";
 import { assetPath, url } from "../utils/asset";
+import { useTranslations, localizePath, toCanonicalPlPath } from "../i18n/utils";
+import type { Lang } from "../i18n/ui";
 
 const locations = await getCollection("locations");
 const sortedLocations = locations.sort(
   (a, b) => a.data.sortOrder - b.data.sortOrder,
 );
 const currentPath = Astro.url.pathname;
+const lang = (Astro.currentLocale ?? "pl") as Lang;
+const t = useTranslations(lang);
+const lp = (path: string) => localizePath(path, lang);
 
 const navItems = [
-  { href: url("/uslugi/"), label: "Usługi" },
-  { href: url("/salony/"), label: "Salony" },
-  { href: url("/o-nas/"), label: "O nas" },
-  { href: url("/faq/"), label: "FAQ" },
-  { href: url("/kontakt/"), label: "Kontakt" },
+  { href: lp("/uslugi/"), label: t("nav.services") },
+  { href: lp("/salony/"), label: t("nav.salons") },
+  { href: lp("/o-nas/"),  label: t("nav.about") },
+  { href: lp("/faq/"),    label: t("nav.faq") },
+  { href: lp("/kontakt/"),label: t("nav.contact") },
+];
+
+// Language switcher — convert current URL back to canonical PL path,
+// then re-localize to each target language via the slug map.
+const plPath = toCanonicalPlPath(currentPath, lang);
+const langLinks = [
+  { code: "pl", label: "PL", href: localizePath(plPath, "pl") },
+  { code: "en", label: "EN", href: localizePath(plPath, "en") },
+  { code: "uk", label: "УК", href: localizePath(plPath, "uk") },
 ];
 ---
 
@@ -55,10 +69,20 @@ const navItems = [
 
     <!-- Right side -->
     <div class="flex items-center gap-4">
-      <span
-        class="hidden font-ui text-[11px] uppercase tracking-[2px] text-muted md:inline"
-        >EN</span
-      >
+      <!-- Language switcher -->
+      <div class="hidden items-center gap-1 md:flex">
+        {langLinks.map(({ code, label, href }) => (
+          <a
+            href={href}
+            class:list={[
+              "px-2 py-1 font-ui text-[10px] uppercase tracking-[2px] transition-colors",
+              lang === code ? "text-primary" : "text-muted hover:text-primary",
+            ]}
+          >
+            {label}
+          </a>
+        ))}
+      </div>
 
       <!-- Booking CTA -->
       <a
@@ -67,7 +91,7 @@ const navItems = [
         rel="noopener"
         class="hidden bg-primary px-5 py-2 font-ui text-[11px] uppercase tracking-[3px] text-bg transition-opacity hover:opacity-80 sm:inline-block"
       >
-        Umów wizytę
+        {t("nav.book")}
       </a>
 
       <!-- Mobile menu button (animated hamburger → X) -->
@@ -128,7 +152,7 @@ const navItems = [
       <button
         id="mobile-menu-close"
         class="flex size-10 items-center justify-center"
-        aria-label="Zamknij"
+        aria-label={t("nav.close")}
       >
         <svg
           class="size-5"
@@ -184,7 +208,7 @@ const navItems = [
         rel="noopener"
         class="block w-full bg-primary py-4 text-center font-ui text-[12px] uppercase tracking-[3px] text-bg transition-opacity hover:opacity-80"
       >
-        Umów wizytę
+        {t("nav.book")}
       </a>
       <div
         class="mt-6 flex items-center justify-between font-mono text-xs tracking-[2px] text-muted"
