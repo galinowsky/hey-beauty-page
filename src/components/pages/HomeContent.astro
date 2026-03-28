@@ -68,8 +68,10 @@ const description = "Hey Beauty to sieć salonów kosmetycznych w Krakowie. 4 lo
 
     <div class="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 gap-2" style="z-index:2" id="hero-dots">
       {[0,1,2,3].map((i) => (
-        <button class:list={["hero-dot size-1.5 rounded-full transition-all duration-500", i === 0 ? "bg-white scale-125" : "bg-white/40"]}
-          data-index={i} aria-label={`Slajd ${i + 1}`} />
+        <button class:list={["hero-dot relative flex size-11 items-center justify-center", i === 0 ? "" : ""]}
+          data-index={i} aria-label={`Slajd ${i + 1}`}>
+          <span class:list={["hero-dot-pip size-1.5 rounded-full transition-all duration-500", i === 0 ? "bg-white scale-125" : "bg-white/40"]} />
+        </button>
       ))}
     </div>
 
@@ -85,12 +87,12 @@ const description = "Hey Beauty to sieć salonów kosmetycznych w Krakowie. 4 lo
     let timer: ReturnType<typeof setInterval>;
     function goTo(index: number) {
       slides[current].classList.remove("is-active");
-      dots[current].classList.remove("bg-white", "scale-125");
-      dots[current].classList.add("bg-white/40");
+      dots[current].querySelector(".hero-dot-pip")?.classList.remove("bg-white", "scale-125");
+      dots[current].querySelector(".hero-dot-pip")?.classList.add("bg-white/40");
       current = index;
       slides[current].classList.add("is-active");
-      dots[current].classList.add("bg-white", "scale-125");
-      dots[current].classList.remove("bg-white/40");
+      dots[current].querySelector(".hero-dot-pip")?.classList.add("bg-white", "scale-125");
+      dots[current].querySelector(".hero-dot-pip")?.classList.remove("bg-white/40");
     }
     function next() { goTo((current + 1) % slides.length); }
     timer = setInterval(next, 5000);
