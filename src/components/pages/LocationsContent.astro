@@ -32,7 +32,7 @@ const breadcrumbs = [
         {sorted.map((loc) => (
           <LocationCard name={loc.data.name} shortName={loc.data.shortName} slug={loc.data.slug}
             address={loc.data.address.street} district={loc.data.address.district}
-            rating={loc.data.rating} booksyUrl={loc.data.booksyUrl} />
+            rating={loc.data.rating} booksyUrl={loc.data.booksyUrl} image={loc.data.images[0]} />
         ))}
       </div>
     </section>
