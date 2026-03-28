@@ -22,7 +22,11 @@ const faqEntries = await getCollection("faq");
 
 const sortedLocations = locations.sort((a, b) => a.data.sortOrder - b.data.sortOrder);
 const sortedServices = services.sort((a, b) => a.data.sortOrder - b.data.sortOrder);
-const globalFaq = faqEntries.find((f) => f.data.scope === "global");
+const faqScopeSlug = lang === "pl" ? undefined : lang;
+const globalFaq = faqEntries.find((f) =>
+  f.data.scope === "global" &&
+  (lang === "pl" ? !f.data.scopeSlug : f.data.scopeSlug === lang)
+);
 
 const title = "Hey Beauty — Salon Kosmetyczny Kraków | Face · Body · Brows · Nails";
 const description = "Hey Beauty to sieć salonów kosmetycznych w Krakowie. 4 lokalizacje, profesjonalne zabiegi na twarz i ciało, stylizacja brwi i rzęs, pedicure. Umów wizytę online.";
@@ -123,7 +127,9 @@ const description = "Hey Beauty to sieć salonów kosmetycznych w Krakowie. 4 lo
         {sortedServices.map((s) => (
           <ServiceCard name={s.data.name} slug={s.data.slug} description={s.data.description}
             priceMin={s.data.priceRange.min} duration={`${s.data.duration.min} ${t("common.min")}`}
-            image={s.data.image} />
+            image={s.data.image}
+            href={lp(`/uslugi/${s.data.slug}/`)}
+            learnMoreText={t("common.learnMore")} />
         ))}
       </div>
       <div class="mt-12 text-center">

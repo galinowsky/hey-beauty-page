@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import { assetPath, url } from "../utils/asset";
-import { useTranslations, localizePath } from "../i18n/utils";
+import { useTranslations, localizePath, toCanonicalPlPath } from "../i18n/utils";
 import type { Lang } from "../i18n/ui";
 
 const locations = await getCollection("locations");
@@ -21,14 +21,13 @@ const navItems = [
   { href: lp("/kontakt/"),label: t("nav.contact") },
 ];
 
-// Language switcher — strip current locale prefix to get the bare path
-const strippedPath = currentPath
-  .replace(new RegExp(`^${import.meta.env.BASE_URL}`), "/")
-  .replace(/^\/(en|uk)\//, "/");
+// Language switcher — convert current URL back to canonical PL path,
+// then re-localize to each target language via the slug map.
+const plPath = toCanonicalPlPath(currentPath, lang);
 const langLinks = [
-  { code: "pl", label: "PL", href: url(strippedPath) },
-  { code: "en", label: "EN", href: localizePath(strippedPath, "en") },
-  { code: "uk", label: "УК", href: localizePath(strippedPath, "uk") },
+  { code: "pl", label: "PL", href: localizePath(plPath, "pl") },
+  { code: "en", label: "EN", href: localizePath(plPath, "en") },
+  { code: "uk", label: "УК", href: localizePath(plPath, "uk") },
 ];
 ---
 

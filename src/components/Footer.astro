@@ -1,6 +1,8 @@
 ---
 import { getCollection } from "astro:content";
 import { url } from "../utils/asset";
+import { useTranslations, localizePath, toCanonicalPlPath } from "../i18n/utils";
+import type { Lang } from "../i18n/ui";
 
 const locations = await getCollection("locations");
 const services = await getCollection("services");
@@ -10,6 +12,17 @@ const sortedLocations = locations.sort(
 const sortedServices = services
   .sort((a, b) => a.data.sortOrder - b.data.sortOrder)
   .slice(0, 8);
+
+const lang = (Astro.currentLocale ?? "pl") as Lang;
+const t = useTranslations(lang);
+const lp = (path: string) => localizePath(path, lang);
+
+const plPath = toCanonicalPlPath(Astro.url.pathname, lang);
+const langLinks = [
+  { code: "pl", label: "PL", href: localizePath(plPath, "pl") },
+  { code: "en", label: "EN", href: localizePath(plPath, "en") },
+  { code: "uk", label: "УК", href: localizePath(plPath, "uk") },
+];
 ---
 
 <footer class="border-t border-border">
@@ -23,7 +36,7 @@ const sortedServices = services
         Face &middot; Body &middot; Brows &middot; Nails
       </p>
       <p class="mt-6 text-sm leading-relaxed text-muted">
-        Sieć salonów kosmetycznych w Krakowie.
+        {t("footer.brand")}
       </p>
       <div class="mt-4 font-mono text-xs text-muted">
         {sortedLocations.map((l) => l.data.shortName).join(" · ")}
@@ -32,17 +45,15 @@ const sortedServices = services
 
     <!-- Services -->
     <div>
-      <h4
-        class="mb-6 font-ui text-[11px] uppercase tracking-[3px] text-muted"
-      >
-        Usługi
+      <h4 class="mb-6 font-ui text-[11px] uppercase tracking-[3px] text-muted">
+        {t("footer.services")}
       </h4>
       <ul class="space-y-2">
         {
           sortedServices.map((s) => (
             <li>
               <a
-                href={url(`/uslugi/${s.data.slug}/`)}
+                href={lp(`/uslugi/${s.data.slug}/`)}
                 class="text-sm text-muted transition-colors hover:text-primary"
               >
                 {s.data.name}
@@ -55,10 +66,8 @@ const sortedServices = services
 
     <!-- Locations -->
     <div>
-      <h4
-        class="mb-6 font-ui text-[11px] uppercase tracking-[3px] text-muted"
-      >
-        Salony
+      <h4 class="mb-6 font-ui text-[11px] uppercase tracking-[3px] text-muted">
+        {t("footer.salons")}
       </h4>
       <ul class="space-y-2">
         {
@@ -78,10 +87,8 @@ const sortedServices = services
 
     <!-- Contact / Legal -->
     <div>
-      <h4
-        class="mb-6 font-ui text-[11px] uppercase tracking-[3px] text-muted"
-      >
-        Kontakt
+      <h4 class="mb-6 font-ui text-[11px] uppercase tracking-[3px] text-muted">
+        {t("footer.contact")}
       </h4>
       <ul class="space-y-2 text-sm text-muted">
         <li>
@@ -96,7 +103,7 @@ const sortedServices = services
         </li>
         <li>
           <a href={url("/kontakt/")} class="transition-colors hover:text-primary">
-            Kontakt
+            {t("footer.contact")}
           </a>
         </li>
         <li>
@@ -104,12 +111,12 @@ const sortedServices = services
             href={url("/polityka-prywatnosci/")}
             class="transition-colors hover:text-primary"
           >
-            Polityka Prywatności
+            {t("footer.privacy")}
           </a>
         </li>
         <li>
           <a href={url("/regulamin/")} class="transition-colors hover:text-primary">
-            Regulamin
+            {t("footer.terms")}
           </a>
         </li>
       </ul>
@@ -121,6 +128,18 @@ const sortedServices = services
     class="mx-auto flex max-w-7xl items-center justify-between border-t border-border px-6 py-6 text-xs text-muted"
   >
     <span>&copy; {new Date().getFullYear()} Hey Beauty</span>
-    <span class="font-ui uppercase tracking-[2px]">PL | EN | UA</span>
+    <div class="flex items-center gap-1">
+      {langLinks.map(({ code, label, href }) => (
+        <a
+          href={href}
+          class:list={[
+            "px-2 py-1 font-ui text-[10px] uppercase tracking-[2px] transition-colors",
+            lang === code ? "text-primary" : "text-muted hover:text-primary",
+          ]}
+        >
+          {label}
+        </a>
+      ))}
+    </div>
   </div>
 </footer>

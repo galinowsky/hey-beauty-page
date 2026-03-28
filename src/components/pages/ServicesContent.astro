@@ -32,7 +32,9 @@ const breadcrumbs = [
         {sorted.map((s) => (
           <ServiceCard name={s.data.name} slug={s.data.slug} description={s.data.description}
             priceMin={s.data.priceRange.min} duration={`${s.data.duration.min} ${t("common.min")}`}
-            image={s.data.image} />
+            image={s.data.image}
+            href={lp(`/uslugi/${s.data.slug}/`)}
+            learnMoreText={t("common.learnMore")} />
         ))}
       </div>
     </section>
