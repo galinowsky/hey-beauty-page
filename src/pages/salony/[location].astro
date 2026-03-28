@@ -5,6 +5,7 @@ import JsonLd from "../../components/JsonLd.astro";
 import ServiceCard from "../../components/ServiceCard.astro";
 import BookingCTA from "../../components/BookingCTA.astro";
 import { buildBeautySalon, buildBreadcrumbList } from "../../lib/json-ld";
+import { assetPath } from "../../utils/asset";
 
 export async function getStaticPaths() {
   const locations = await getCollection("locations");
@@ -46,6 +47,18 @@ const breadcrumbs = [
 <Page {title} {description} {breadcrumbs}>
   <JsonLd slot="head" data={buildBeautySalon(location.data)} />
   <JsonLd slot="head" data={buildBreadcrumbList(breadcrumbs, Astro.site)} />
+
+  <!-- Location hero image -->
+  {location.data.images[0] && (
+    <div class="aspect-[21/9] w-full overflow-hidden bg-surface">
+      <img
+        src={assetPath(location.data.images[0])}
+        alt={location.data.name}
+        class="h-full w-full object-cover grayscale"
+        loading="eager"
+      />
+    </div>
+  )}
 
   <!-- Location header -->
   <section class="py-16 lg:py-24">
