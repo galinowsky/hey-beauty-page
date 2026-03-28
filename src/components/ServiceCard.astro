@@ -10,7 +10,7 @@ interface Props {
   learnMoreText?: string;
 }
 
-import { url } from "../utils/asset";
+import { url, assetPath } from "../utils/asset";
 const { name, slug, description, priceMin, duration, image, href, learnMoreText = "Dowiedz się więcej →" } = Astro.props;
 ---
 
@@ -20,7 +20,7 @@ const { name, slug, description, priceMin, duration, image, href, learnMoreText 
     {
       image ? (
         <img
-          src={image}
+          src={assetPath(image)}
           alt={name}
           class="h-full w-full object-cover grayscale transition-all duration-500 group-hover:scale-105 group-hover:grayscale-0"
           loading="lazy"
