@@ -45,7 +45,7 @@ const langLinks = [
     </a>
 
     <!-- Desktop Nav with active indicator -->
-    <nav class="hidden items-center gap-8 md:flex">
+    <nav class="hidden items-center gap-4 md:flex lg:gap-8">
       {
         navItems.map((item) => {
           const isActive = currentPath.startsWith(item.href);
@@ -70,7 +70,7 @@ const langLinks = [
     <!-- Right side -->
     <div class="flex items-center gap-4">
       <!-- Language switcher -->
-      <div class="hidden items-center gap-1 md:flex">
+      <div class="hidden items-center gap-1 lg:flex">
         {langLinks.map(({ code, label, href }) => (
           <a
             href={href}
@@ -110,7 +110,7 @@ const langLinks = [
 
   <!-- Version number tabs (desktop) -->
   <div
-    class="mx-auto hidden max-w-7xl border-t border-border px-6 md:block"
+    class="mx-auto hidden max-w-7xl border-t border-border md:block"
   >
     <nav class="flex gap-0 overflow-x-auto">
       {
