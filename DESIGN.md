@@ -45,8 +45,8 @@
 - **Primary text:** `#0A0A0A` — near-black, slightly warm. Never pure #000.
 - **Muted text:** `#71717A` — for captions, metadata, secondary information
 - **Border:** `#E4E4E7` — subtle dividers, card edges
-- **Accent (Oxblood):** `#6B1D2A` — the single point of heat on the monochrome canvas. Use ONLY for primary CTAs (booking buttons), active states, and editorial punctuation. Like a lipstick mark on a white page.
-- **Accent hover:** `#4A1019` — darkened accent for hover/press states
+- **Accent:** `#0A0A0A` — same as primary. Fully monochromatic; no color accent used.
+- **Accent hover:** `#333333` — slightly lighter for hover/press states
 - **Semantic:**
   - Success: `#4A6B5A` (Sage) — booking confirmed, availability
   - Warning: `#C4783A` (Burnt Amber) — limited slots, seasonal notices
@@ -113,7 +113,7 @@
 ## Brand Signatures (what makes Hey Beauty different from every other salon)
 1. **Typography-first hero.** No stock photo above the fold. "Hey Beauty" set massive in Playfair Display. Photography enters on scroll.
 2. **Version numbers in JetBrains Mono.** 1.0, 2.0, 3.0 as visible navigation tabs. Franchise structure as brand theater.
-3. **Oxblood as the only color.** Everything else is black, white, gray, cream. The accent is rare and meaningful.
+3. **Fully monochromatic.** Black, white, gray, cream only. No accent color.
 4. **Sharp corners.** Not the rounded-everything trend. Fashion editorial = sharp edges.
 5. **Monogram emblem.** The "HB" oval from the logo should appear in the footer and as a favicon.
 
@@ -145,6 +145,7 @@ After visiting the actual salons, the design may shift softer/more curved. The s
 | 2026-03-27 | Initial design system created | Created by /design-consultation based on office-hours design doc, competitive research, brand logo analysis |
 | 2026-03-27 | Cormorant Garamond chosen over Playfair Display | Cormorant's softer, more organic feel matches the salon's physical vibe. Playfair was too sharp/aggressive. Font is a single CSS variable — easy to swap later. |
 | 2026-03-27 | Oxblood (#6B1D2A) accent chosen | Single point of heat on monochrome canvas. Subagent described it as "the lipstick stain on the page." |
+| 2026-03-29 | Oxblood accent removed — fully monochromatic | Rejected after review with the salon owner. Accent = #0A0A0A (same as primary). Pure B&W palette. |
 | 2026-03-27 | Typography-only hero (Risk #2) accepted | No salon in Kraków does this. Fashion-house level brand confidence. |
 | 2026-03-27 | JetBrains Mono for version numbers (Risk #3) accepted | Turns franchise naming into distinctive brand element. |
 | 2026-03-27 | Sharp corners over rounded | Editorial/fashion aesthetic demands sharp edges. Rounded = approachable, sharp = authoritative. |
