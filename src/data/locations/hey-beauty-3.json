@@ -5,9 +5,10 @@
   "booksyId": "251875",
   "booksyUrl": "https://booksy.com/pl-pl/251875_hey-beauty-3-0_paznokcie_8820_krakow",
   "address": {
-    "street": "Kraków",
+    "street": "Grzegórzecka 79C, U3",
     "city": "Kraków",
-    "postalCode": "30-000",
+    "postalCode": "31-559",
+    "district": "Śródmieście",
     "country": "PL"
   },
   "coordinates": {

@@ -5,9 +5,10 @@
   "booksyId": "104242",
   "booksyUrl": "https://booksy.com/pl-pl/104242_hey-beauty-1-0_salon-kosmetyczny_8820_krakow",
   "address": {
-    "street": "Kraków",
+    "street": "Ostatnia 1f/u5",
     "city": "Kraków",
-    "postalCode": "30-000",
+    "postalCode": "31-444",
+    "district": "Śródmieście",
     "country": "PL"
   },
   "coordinates": {
