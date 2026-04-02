@@ -1,7 +1,7 @@
 {
   "locationSlug": "hey-beauty-zablocie",
   "serviceSlug": "lifting-rzes",
-  "price": 260,
+  "priceMin": 260,
   "duration": 60,
   "available": true,
   "booksyDirectUrl": "https://booksy.com/pl-pl/306187_hey-beauty-zablocie_salon-kosmetyczny_8820_krakow"

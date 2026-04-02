@@ -1,7 +1,7 @@
 {
   "locationSlug": "hey-beauty-zablocie",
   "serviceSlug": "wlosy",
-  "price": 350,
+  "priceMin": 350,
   "priceNote": "Cena zależy od długości i grubości włosów",
   "duration": 180,
   "available": true,

@@ -1,7 +1,7 @@
 {
   "locationSlug": "hey-beauty-2-0",
   "serviceSlug": "henna-pudrowa",
-  "price": 100,
+  "priceMin": 100,
   "priceNote": "regulacja + farbowanie",
   "duration": 45,
   "available": true,

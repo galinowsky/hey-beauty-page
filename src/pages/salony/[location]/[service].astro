@@ -53,7 +53,7 @@ const otherLocations = allServiceLocations.filter(
 const allLocations = await getCollection("locations");
 
 const title = `${service!.data.name} — ${location!.data.name} | Hey Beauty Kraków`;
-const description = `${service!.data.name} w salonie ${location!.data.name}, ${location!.data.address.street}, Kraków. Cena od ${serviceLocation.data.price} zł. Umów wizytę online.`;
+const description = `${service!.data.name} w salonie ${location!.data.name}, ${location!.data.address.street}, Kraków. Cena od ${serviceLocation.data.priceMin} zł. Umów wizytę online.`;
 const breadcrumbs = [
   { name: "Strona główna", url: "/" },
   { name: "Salony", url: "/salony/" },
@@ -96,7 +96,7 @@ const breadcrumbs = [
           Cena
         </p>
         <p class="mt-1 font-display text-2xl">
-          od {serviceLocation.data.price} zł
+          od {serviceLocation.data.priceMin} zł
         </p>
         {
           serviceLocation.data.priceNote && (
@@ -153,7 +153,7 @@ const breadcrumbs = [
                 </div>
                 <div class="flex items-center gap-4">
                   <span class="font-ui text-sm">
-                    od {sl.data.price} zł
+                    od {sl.data.priceMin} zł
                   </span>
                   {!isCurrent && (
                     <a

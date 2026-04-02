@@ -72,7 +72,8 @@ const serviceLocations = defineCollection({
   schema: z.object({
     locationSlug: z.string(),
     serviceSlug: z.string(),
-    price: z.number(),
+    priceMin: z.number(),
+    priceMax: z.number().optional(),
     priceNote: z.string().optional(),
     duration: z.number(),
     available: z.boolean().default(true),
