@@ -1,0 +1,10 @@
+{
+  "name": "Manicure hybrydowy",
+  "slug": "manicure",
+  "category": "stylizacja-paznokci",
+  "description": "Manicure kombinowany z malowaniem hybrydowym Hard Base. Nadbudowa paznokci bazą, pomalowanie metodą pod skórki. Gwarancja 7 dni.",
+  "duration": { "min": 60, "max": 90 },
+  "priceRange": { "min": 150, "max": 160 },
+  "booksySlug": "manicure-hybrydowy",
+  "sortOrder": 3
+}
