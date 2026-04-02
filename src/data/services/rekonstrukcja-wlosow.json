@@ -1,0 +1,10 @@
+{
+  "name": "Rekonstrukcja włosów",
+  "slug": "rekonstrukcja-wlosow",
+  "category": "wlosy",
+  "description": "Intensywna regeneracja i odbudowa na bazie naturalnej keratyny i oleju. Przywraca włosom siłę, elastyczność i blask.",
+  "duration": { "min": 120, "max": 120 },
+  "priceRange": { "min": 250, "max": 250 },
+  "booksySlug": "rekonstrukcja-wlosow",
+  "sortOrder": 4
+}
