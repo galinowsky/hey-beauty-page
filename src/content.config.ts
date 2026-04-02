@@ -81,6 +81,21 @@ const serviceLocations = defineCollection({
   }),
 });
 
+// ── Specialists ────────────────────────────────────────
+const specialists = defineCollection({
+  loader: glob({ pattern: "*.json", base: "./src/data/specialists" }),
+  schema: z.object({
+    name: z.string(),
+    slug: z.string(),
+    photo: z.string().optional(),
+    bio: z.string().optional(),
+    locationSlug: z.string(),
+    services: z.array(z.string()).default([]),
+    instagram: z.string().url().optional(),
+    sortOrder: z.number().default(0),
+  }),
+});
+
 // ── FAQ ────────────────────────────────────────────────
 const faq = defineCollection({
   loader: glob({ pattern: "*.json", base: "./src/data/faq" }),
@@ -96,4 +111,4 @@ const faq = defineCollection({
   }),
 });
 
-export const collections = { locations, services, serviceLocations, faq };
+export const collections = { locations, services, serviceLocations, specialists, faq };
