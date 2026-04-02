@@ -1,0 +1,10 @@
+{
+  "name": "Masaż Kobido",
+  "slug": "masaz-kobido",
+  "category": "zabiegi-twarzy",
+  "description": "Niechirurgiczny lifting twarzy japońską techniką Kobido. Poprawia owal, ujędrnia skórę i rozluźnia mięśnie mimiczne. Dostępny z maską liftingującą.",
+  "duration": { "min": 75, "max": 90 },
+  "priceRange": { "min": 250, "max": 300 },
+  "booksySlug": "masaz-kobido",
+  "sortOrder": 3
+}

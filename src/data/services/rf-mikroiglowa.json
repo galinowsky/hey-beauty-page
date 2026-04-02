@@ -1,0 +1,10 @@
+{
+  "name": "RF Radiofrekwencja mikroigłowa",
+  "slug": "rf-mikroiglowa",
+  "category": "zabiegi-twarzy",
+  "description": "Połączenie energii radiofrekwencji z mikroigłowaniem. Modeluje owal twarzy, redukuje blizny potrądzikowe, zwęża pory i ujędrnia skórę.",
+  "duration": { "min": 60, "max": 60 },
+  "priceRange": { "min": 400, "max": 700 },
+  "booksySlug": "rf-mikroiglowa",
+  "sortOrder": 2
+}

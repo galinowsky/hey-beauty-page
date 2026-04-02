@@ -1,0 +1,10 @@
+{
+  "name": "Ergolift",
+  "slug": "ergolift",
+  "category": "zabiegi-twarzy",
+  "description": "Endermologia twarzy precyzyjnymi technikami mechanicznymi. Modeluje i ujędrnia twarz, szyję i dekolt.",
+  "duration": { "min": 60, "max": 60 },
+  "priceRange": { "min": 250, "max": 250 },
+  "booksySlug": "ergolift",
+  "sortOrder": 6
+}

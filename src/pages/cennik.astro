@@ -12,9 +12,11 @@ const sortedLocations = [...locations].sort((a, b) => a.data.sortOrder - b.data.
 
 // Category config: display name + sort order
 const categoryConfig: Record<string, { label: string; order: number }> = {
-  wlosy:                { label: "Włosy",        order: 0 },
-  "brwi-i-rzesy":       { label: "Brwi i rzęsy", order: 1 },
-  "stylizacja-paznokci":{ label: "Paznokcie",    order: 2 },
+  wlosy:                    { label: "Włosy",           order: 0 },
+  "brwi-i-rzesy":           { label: "Brwi i rzęsy",   order: 1 },
+  "stylizacja-paznokci":    { label: "Paznokcie",       order: 2 },
+  "zabiegi-twarzy":         { label: "Zabiegi twarzy",  order: 3 },
+  "zabiegi-ciala":          { label: "Zabiegi ciała",   order: 4 },
 };
 
 const locationShort: Record<string, string> = {

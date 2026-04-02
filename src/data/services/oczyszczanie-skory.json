@@ -1,0 +1,10 @@
+{
+  "name": "Oczyszczanie skóry",
+  "slug": "oczyszczanie-skory",
+  "category": "zabiegi-twarzy",
+  "description": "Autorski zabieg oczyszczający łączący peeling kawitacyjny i manualne doczyszczanie. Dostępny również jako Aqua Peel — oczyszczanie wodowe.",
+  "duration": { "min": 75, "max": 75 },
+  "priceRange": { "min": 350, "max": 350 },
+  "booksySlug": "oczyszczanie-skory",
+  "sortOrder": 5
+}
