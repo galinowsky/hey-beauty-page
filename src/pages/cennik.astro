@@ -1,0 +1,430 @@
+---
+import Page from "../layouts/Page.astro";
+import JsonLd from "../components/JsonLd.astro";
+import BookingCTA from "../components/BookingCTA.astro";
+import { getCollection } from "astro:content";
+
+const services = await getCollection("services");
+const serviceLocations = await getCollection("serviceLocations");
+const locations = await getCollection("locations");
+
+const sortedLocations = [...locations].sort((a, b) => a.data.sortOrder - b.data.sortOrder);
+
+// Category config: display name + sort order
+const categoryConfig: Record<string, { label: string; order: number }> = {
+  wlosy:                { label: "Włosy",        order: 0 },
+  "brwi-i-rzesy":       { label: "Brwi i rzęsy", order: 1 },
+  "stylizacja-paznokci":{ label: "Paznokcie",    order: 2 },
+};
+
+const locationShort: Record<string, string> = {
+  "hey-beauty-1-0":      "1.0",
+  "hey-beauty-2-0":      "2.0",
+  "hey-beauty-3-0":      "3.0",
+  "hey-beauty-zablocie": "Zabłocie",
+};
+
+// Build per-service data with all location prices
+const sortedServices = [...services].sort((a, b) => a.data.sortOrder - b.data.sortOrder);
+
+type LocPrice = {
+  locationSlug: string;
+  shortName: string;
+  priceMin: number;
+  priceMax: number;
+  duration: number;
+  booksyUrl: string;
+};
+
+type ServiceRow = {
+  slug: string;
+  name: string;
+  category: string;
+  locationSlugs: string;
+  prices: Record<string, { min: number; max: number; dur: number; url: string }>;
+  locPrices: LocPrice[];
+  allMin: number;
+  allMax: number;
+  allDurMin: number;
+  allDurMax: number;
+  defaultUrl: string;
+};
+
+const serviceRows: ServiceRow[] = sortedServices
+  .map((svc) => {
+    const sls = serviceLocations.filter(
+      (sl) => sl.data.serviceSlug === svc.data.slug && sl.data.available,
+    );
+    if (sls.length === 0) return null;
+
+    const locPrices: LocPrice[] = sls.map((sl) => ({
+      locationSlug: sl.data.locationSlug,
+      shortName: locationShort[sl.data.locationSlug] ?? sl.data.locationSlug,
+      priceMin: sl.data.priceMin,
+      priceMax: sl.data.priceMax ?? sl.data.priceMin,
+      duration: sl.data.duration,
+      booksyUrl: sl.data.booksyDirectUrl ?? "https://booksy.com/pl-pl/111132_hey-beauty-2-0_salon-kosmetyczny_8820_krakow",
+    }));
+
+    const prices: ServiceRow["prices"] = {};
+    for (const lp of locPrices) {
+      prices[lp.locationSlug] = { min: lp.priceMin, max: lp.priceMax, dur: lp.duration, url: lp.booksyUrl };
+    }
+
+    const allMin = Math.min(...locPrices.map((lp) => lp.priceMin));
+    const allMax = Math.max(...locPrices.map((lp) => lp.priceMax));
+    const allDurMin = Math.min(...locPrices.map((lp) => lp.duration));
+    const allDurMax = Math.max(...locPrices.map((lp) => lp.duration));
+
+    return {
+      slug: svc.data.slug,
+      name: svc.data.name,
+      category: svc.data.category,
+      locationSlugs: locPrices.map((lp) => lp.locationSlug).join(" "),
+      prices,
+      locPrices,
+      allMin,
+      allMax,
+      allDurMin,
+      allDurMax,
+      defaultUrl: locPrices[0]!.booksyUrl,
+    };
+  })
+  .filter((r): r is ServiceRow => r !== null);
+
+// Group by category, ordered by categoryConfig.order
+const usedCategories = [...new Set(serviceRows.map((r) => r.category))];
+const categoryGroups = usedCategories
+  .sort((a, b) => (categoryConfig[a]?.order ?? 99) - (categoryConfig[b]?.order ?? 99))
+  .map((cat) => ({
+    cat,
+    label: categoryConfig[cat]?.label ?? cat,
+    rows: serviceRows.filter((r) => r.category === cat),
+  }));
+
+// JSON-LD @graph
+const baseUrl = "https://heybeauty.pl";
+const jsonLdData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    ...sortedLocations.map((loc) => ({
+      "@type": "BeautySalon",
+      "@id": `${baseUrl}/#${loc.data.slug}`,
+      name: loc.data.name,
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: loc.data.address.street,
+        addressLocality: loc.data.address.city,
+        postalCode: loc.data.address.postalCode,
+        addressCountry: "PL",
+      },
+    })),
+    ...serviceRows.flatMap((row) =>
+      row.locPrices.map((lp) => ({
+        "@type": "Service",
+        name: row.name,
+        provider: { "@id": `${baseUrl}/#${lp.locationSlug}` },
+        areaServed: { "@type": "City", name: "Kraków" },
+        offers: {
+          "@type": "Offer",
+          priceCurrency: "PLN",
+          priceSpecification: {
+            "@type": "PriceSpecification",
+            minPrice: lp.priceMin,
+            maxPrice: lp.priceMax,
+            priceCurrency: "PLN",
+          },
+        },
+      })),
+    ),
+  ],
+};
+
+function fmtPrice(min: number, max: number) {
+  return min === max ? `${min} zł` : `${min}–${max} zł`;
+}
+function fmtDur(min: number, max: number) {
+  return min === max ? `${min} min` : `${min}–${max} min`;
+}
+
+const title = "Cennik usług | Hey Beauty Kraków";
+const description =
+  "Sprawdź ceny wszystkich zabiegów w salonach Hey Beauty w Krakowie. Włosy, brwi, paznokcie, pedicure — aktualne ceny w 4 lokalizacjach.";
+const breadcrumbs = [
+  { name: "Strona główna", url: "/" },
+  { name: "Cennik", url: "/cennik/" },
+];
+---
+
+<Page {title} {description} {breadcrumbs}>
+  <JsonLd slot="head" data={jsonLdData} />
+
+  <!-- Page header -->
+  <section class="pb-12 pt-16 lg:pt-24">
+    <p class="font-ui text-[11px] uppercase tracking-[3px] text-muted">Cennik</p>
+    <h1 class="mt-3 font-display text-h1">Cennik usług</h1>
+    <p class="mt-4 max-w-2xl text-lg leading-relaxed text-muted">
+      Aktualne ceny wszystkich zabiegów w salonach Hey Beauty w Krakowie.
+      Ceny na podstawie Booksy — źródła rezerwacji.
+    </p>
+  </section>
+
+  <!-- Filters -->
+  <div
+    id="cennik-filters"
+    class="sticky top-[60px] z-30 border-y border-border bg-bg/95 py-4 backdrop-blur-sm md:top-[100px]"
+  >
+    <!-- Location filter -->
+    <div class="flex flex-wrap gap-2" role="group" aria-label="Filtr lokalizacji">
+      <button
+        data-loc="all"
+        class="filter-loc filter-active font-ui text-[10px] uppercase tracking-[2px] px-4 py-2 border border-primary bg-primary text-bg transition-colors"
+      >
+        Wszystkie
+      </button>
+      {
+        sortedLocations.map((loc) => (
+          <button
+            data-loc={loc.data.slug}
+            class="filter-loc font-ui text-[10px] uppercase tracking-[2px] px-4 py-2 border border-border text-muted transition-colors hover:border-primary hover:text-primary"
+          >
+            {loc.data.shortName}
+          </button>
+        ))
+      }
+    </div>
+
+    <!-- Search + Category -->
+    <div class="mt-3 flex flex-wrap items-center gap-3">
+      <input
+        id="cennik-search"
+        type="search"
+        placeholder="Szukaj usługi..."
+        class="border-b border-border bg-transparent font-ui text-[12px] uppercase tracking-[1px] text-primary placeholder:text-muted/50 focus:border-primary focus:outline-none py-1.5 w-48"
+        autocomplete="off"
+      />
+      <div class="flex flex-wrap gap-2" role="group" aria-label="Filtr kategorii">
+        <button
+          data-cat="all"
+          class="filter-cat filter-active font-ui text-[10px] uppercase tracking-[2px] px-3 py-1.5 border border-primary bg-primary text-bg transition-colors"
+        >
+          Wszystkie
+        </button>
+        {
+          categoryGroups.map((g) => (
+            <button
+              data-cat={g.cat}
+              class="filter-cat font-ui text-[10px] uppercase tracking-[2px] px-3 py-1.5 border border-border text-muted transition-colors hover:border-primary hover:text-primary"
+            >
+              {g.label}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Price list -->
+  <div id="cennik-list" class="mb-16">
+    {
+      categoryGroups.map((group) => (
+        <div data-cat-group={group.cat}>
+          <!-- Category header -->
+          <div class="border-b border-border/50 pb-2 pt-10">
+            <p class="font-ui text-[11px] uppercase tracking-[3px] text-muted">
+              {group.label}
+            </p>
+          </div>
+
+          <!-- Service rows -->
+          {group.rows.map((row) => (
+            <div
+              class="service-row flex items-center gap-4 border-b border-border py-5 transition-colors hover:bg-surface/40"
+              data-service={row.slug}
+              data-cat={row.category}
+              data-locs={row.locationSlugs}
+              data-prices={JSON.stringify(row.prices)}
+              data-all-price={fmtPrice(row.allMin, row.allMax)}
+              data-all-dur={fmtDur(row.allDurMin, row.allDurMax)}
+            >
+              <!-- Name + badges -->
+              <div class="min-w-0 flex-1">
+                <p class="font-display text-xl leading-tight">{row.name}</p>
+                <div class="mt-1.5 flex flex-wrap gap-1.5">
+                  {row.locPrices.map((lp) => (
+                    <span
+                      class="loc-badge font-ui text-[9px] uppercase tracking-[1px] text-muted border border-border px-2 py-0.5"
+                      data-badge-loc={lp.locationSlug}
+                    >
+                      {lp.shortName}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <!-- Price + duration -->
+              <div class="shrink-0 text-right">
+                <p class="price-display font-ui text-sm tabular-nums">
+                  {fmtPrice(row.allMin, row.allMax)}
+                </p>
+                <p class="duration-display mt-0.5 font-ui text-[11px] text-muted">
+                  {fmtDur(row.allDurMin, row.allDurMax)}
+                </p>
+              </div>
+
+              <!-- Book button -->
+              <a
+                href={row.defaultUrl}
+                target="_blank"
+                rel="noopener"
+                class="booking-link hidden shrink-0 bg-primary px-4 py-2.5 font-ui text-[10px] uppercase tracking-[2px] text-bg transition-opacity hover:opacity-80 sm:block"
+              >
+                Umów
+              </a>
+            </div>
+          ))}
+        </div>
+      ))
+    }
+
+    <!-- No results -->
+    <div id="cennik-empty" class="hidden py-16 text-center">
+      <p class="font-ui text-[11px] uppercase tracking-[2px] text-muted">
+        Brak usług pasujących do filtrów
+      </p>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <section class="border-t border-border py-16 text-center">
+    <p class="font-ui text-[11px] uppercase tracking-[3px] text-muted">
+      Masz pytania?
+    </p>
+    <h2 class="mt-3 font-display text-h2">Umów wizytę</h2>
+    <p class="mt-4 text-muted">
+      Rezerwuj przez Booksy — bezpłatnie, bez rejestracji.
+    </p>
+    <div class="mt-8">
+      <BookingCTA
+        url="https://booksy.com/pl-pl/111132_hey-beauty-2-0_salon-kosmetyczny_8820_krakow"
+      />
+    </div>
+  </section>
+</Page>
+
+<script>
+  const locBtns = document.querySelectorAll<HTMLButtonElement>(".filter-loc");
+  const catBtns = document.querySelectorAll<HTMLButtonElement>(".filter-cat");
+  const searchEl = document.getElementById("cennik-search") as HTMLInputElement | null;
+  const rows = document.querySelectorAll<HTMLElement>(".service-row");
+  const catGroups = document.querySelectorAll<HTMLElement>("[data-cat-group]");
+  const emptyEl = document.getElementById("cennik-empty");
+
+  let activeLoc = "all";
+  let activeCat = "all";
+  let searchQ = "";
+
+  function fmtPrice(min: number, max: number): string {
+    return min === max ? `${min} zł` : `${min}–${max} zł`;
+  }
+
+  function apply() {
+    let visible = 0;
+
+    rows.forEach((row) => {
+      const locs = (row.dataset.locs ?? "").split(" ").filter(Boolean);
+      const cat = row.dataset.cat ?? "";
+      const name = row.querySelector<HTMLElement>(".font-display")?.textContent?.toLowerCase() ?? "";
+
+      const locOk = activeLoc === "all" || locs.includes(activeLoc);
+      const catOk = activeCat === "all" || cat === activeCat;
+      const searchOk = searchQ === "" || name.includes(searchQ);
+
+      const show = locOk && catOk && searchOk;
+      row.style.display = show ? "" : "none";
+
+      if (show) {
+        visible++;
+        const priceEl = row.querySelector<HTMLElement>(".price-display");
+        const durEl = row.querySelector<HTMLElement>(".duration-display");
+        const linkEl = row.querySelector<HTMLAnchorElement>(".booking-link");
+        const badges = row.querySelectorAll<HTMLElement>(".loc-badge");
+
+        if (activeLoc === "all") {
+          if (priceEl) priceEl.textContent = row.dataset.allPrice ?? "";
+          if (durEl) durEl.textContent = row.dataset.allDur ?? "";
+          // Show all badges
+          badges.forEach((b) => (b.style.display = ""));
+        } else {
+          const prices: Record<string, { min: number; max: number; dur: number; url: string }> =
+            JSON.parse(row.dataset.prices ?? "{}");
+          const p = prices[activeLoc];
+          if (p) {
+            if (priceEl) priceEl.textContent = fmtPrice(p.min, p.max);
+            if (durEl) durEl.textContent = `${p.dur} min`;
+            if (linkEl) linkEl.href = p.url;
+          }
+          // Show only active location badge
+          badges.forEach((b) => {
+            b.style.display = b.dataset.badgeLoc === activeLoc ? "" : "none";
+          });
+        }
+      }
+    });
+
+    // Hide/show category groups
+    catGroups.forEach((group) => {
+      const hasVisible = [...group.querySelectorAll<HTMLElement>(".service-row")].some(
+        (r) => r.style.display !== "none",
+      );
+      group.style.display = hasVisible ? "" : "none";
+    });
+
+    if (emptyEl) emptyEl.classList.toggle("hidden", visible > 0);
+  }
+
+  function setLocActive(loc: string) {
+    activeLoc = loc;
+    locBtns.forEach((b) => {
+      const isActive = b.dataset.loc === loc;
+      b.classList.toggle("filter-active", isActive);
+      b.classList.toggle("bg-primary", isActive);
+      b.classList.toggle("text-bg", isActive);
+      b.classList.toggle("border-primary", isActive);
+      b.classList.toggle("text-muted", !isActive);
+      b.classList.toggle("border-border", !isActive);
+    });
+  }
+
+  function setCatActive(cat: string) {
+    activeCat = cat;
+    catBtns.forEach((b) => {
+      const isActive = b.dataset.cat === cat;
+      b.classList.toggle("filter-active", isActive);
+      b.classList.toggle("bg-primary", isActive);
+      b.classList.toggle("text-bg", isActive);
+      b.classList.toggle("border-primary", isActive);
+      b.classList.toggle("text-muted", !isActive);
+      b.classList.toggle("border-border", !isActive);
+    });
+  }
+
+  locBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      setLocActive(btn.dataset.loc ?? "all");
+      apply();
+    });
+  });
+
+  catBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      setCatActive(btn.dataset.cat ?? "all");
+      apply();
+    });
+  });
+
+  searchEl?.addEventListener("input", () => {
+    searchQ = searchEl.value.toLowerCase().trim();
+    apply();
+  });
+</script>

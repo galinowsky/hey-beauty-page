@@ -10,6 +10,7 @@ export const ui = {
   pl: {
     // Nav
     "nav.services": "Usługi",
+    "nav.pricing": "Cennik",
     "nav.salons": "Salony",
     "nav.about": "O nas",
     "nav.faq": "FAQ",
@@ -106,6 +107,7 @@ export const ui = {
   en: {
     // Nav
     "nav.services": "Services",
+    "nav.pricing": "Pricing",
     "nav.salons": "Salons",
     "nav.about": "About",
     "nav.faq": "FAQ",
@@ -202,6 +204,7 @@ export const ui = {
   uk: {
     // Nav
     "nav.services": "Послуги",
+    "nav.pricing": "Ціни",
     "nav.salons": "Салони",
     "nav.about": "Про нас",
     "nav.faq": "FAQ",

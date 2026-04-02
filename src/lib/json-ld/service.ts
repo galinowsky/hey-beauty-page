@@ -4,7 +4,8 @@ interface ServiceData {
 }
 
 interface ServiceLocationData {
-  price: number;
+  priceMin: number;
+  priceMax?: number;
 }
 
 interface LocationData {
@@ -31,9 +32,14 @@ export function buildService(
     },
     offers: {
       "@type": "Offer",
-      price: serviceLocation.price,
       priceCurrency: "PLN",
       availability: "https://schema.org/InStock",
+      priceSpecification: {
+        "@type": "PriceSpecification",
+        minPrice: serviceLocation.priceMin,
+        ...(serviceLocation.priceMax ? { maxPrice: serviceLocation.priceMax } : {}),
+        priceCurrency: "PLN",
+      },
     },
   };
 }
