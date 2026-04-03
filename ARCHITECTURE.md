@@ -59,26 +59,100 @@ FAQ accordion uses `<details>` (zero JS). Scroll-reveal animations use CSS `anim
 ```
 src/data/
 ├── locations/           # 4 JSON files (one per salon)
-├── services/            # ~15 JSON files (one per treatment)
-├── service-locations/   # Cross-references: {location}--{service}.json
+├── services/            # 23 JSON files (one per treatment type)
+├── service-locations/   # 33 JSON files: {locationSlug}--{serviceSlug}.json
+├── specialists/         # 8 JSON files (placeholder, photos pending)
 └── faq/                 # Global + per-service FAQ items
 ```
+
+### Data Model
+
+Three tables joined at **build time** via `getCollection()`. No database, no API at runtime.
+
+```
+locations               services                service-locations
+─────────               ────────                ─────────────────
+slug (PK)               slug (PK)               locationSlug (FK → locations)
+name                    name                    serviceSlug  (FK → services)
+shortName               category                priceMin          ← always required
+booksyId                description             priceMax?         ← set when Booksy shows a range
+booksyUrl               duration.min            priceNote?        ← e.g. "cena zależy od długości"
+address                 duration.max            duration          ← minutes (single value, typical)
+coordinates             priceRange.min          available
+openingHours            priceRange.max          booksyDirectUrl?
+rating                  booksySlug
+sortOrder               sortOrder
+```
+
+### Pricing Model
+
+Booksy lists many variants per service (by hair length, stylist tier, add-ons). We model **price ranges** — not individual variants:
+
+- `priceMin` — required, lowest Booksy variant
+- `priceMax` — optional, highest Booksy variant
+- Display rule: `"150 zł"` when min === max, `"150–290 zł"` when different
+- Booking CTA always links to the Booksy page where users pick their variant
+
+### Locations × Services Matrix
+
+| | HB 1.0 | HB 2.0 | HB 3.0 | Zabłocie |
+|---|:---:|:---:|:---:|:---:|
+| Manicure hybrydowy | ✓ | — | ✓ | ✓ |
+| Uzupełnienie żelowe | — | — | — | ✓ |
+| Komplet hybrydowy | — | — | — | ✓ |
+| Pedicure frezarkowy | ✓ | ✓ | ✓ | ✓ |
+| Lifting rzęs | — | ✓ | — | ✓ |
+| Henna pudrowa | — | ✓ | — | ✓ |
+| Regulacja brwi | — | ✓ | — | ✓ |
+| Koloryzacja rzęs | — | ✓ | — | — |
+| Farba brwi | — | ✓ | — | ✓ |
+| Włosy — Keratyna | — | — | — | ✓ |
+| Diamentowa Keratyna | — | — | — | ✓ |
+| Autorski Zabieg HB | — | — | — | ✓ |
+| Botox Premium (włosy) | — | — | — | ✓ |
+| Rekonstrukcja włosów | — | — | — | ✓ |
+| Pakiet Rekonstrukcji | — | — | — | ✓ |
+| Odbudowa Molekularna | — | — | — | ✓ |
+| Dermapen 4.0 | — | ✓ | — | — |
+| RF Radiofrekwencja mikroigłowa | — | ✓ | — | — |
+| Masaż Kobido | — | ✓ | — | — |
+| Konsultacja kosmetologiczna | — | ✓ | — | — |
+| Oczyszczanie skóry | — | ✓ | — | — |
+| Ergolift | — | ✓ | — | — |
+| Fala uderzeniowa STORZ | — | ✓ | — | — |
+
+> Data source: Booksy screenshots (manual). To be replaced by Airtable export — see below.
+
+### Service Categories
+
+| Category slug | Display name | Salon(s) |
+|---|---|---|
+| `wlosy` | Włosy | Zabłocie |
+| `brwi-i-rzesy` | Brwi i rzęsy | HB 2.0, Zabłocie |
+| `stylizacja-paznokci` | Paznokcie | HB 1.0, 2.0, 3.0, Zabłocie |
+| `zabiegi-twarzy` | Zabiegi twarzy | HB 2.0 |
+| `zabiegi-ciala` | Zabiegi ciała | HB 2.0 |
 
 ## Page Generation
 
 ```
-Template                              → Generated Pages
-─────────────────────────────────────────────────────
-pages/index.astro                     → /
-pages/salony/index.astro              → /salony/
-pages/salony/[location].astro         → /salony/hey-beauty-1-0/, etc. (4 pages)
-pages/uslugi/index.astro              → /uslugi/
-pages/uslugi/[service].astro          → /uslugi/lifting-rzes/, etc. (~15 pages)
-pages/salony/[location]/[service].astro → /salony/hey-beauty-2-0/lifting-rzes/ (40-60 pages)
-pages/{static}.astro                  → /o-nas/, /kontakt/, /faq/, /404, etc.
-pages/robots.txt.ts                   → /robots.txt
-pages/llms.txt.ts                     → /llms.txt
+Template                                  → Generated Pages
+────────────────────────────────────────────────────────────
+pages/index.astro                         → /
+pages/cennik.astro                        → /cennik/
+pages/o-nas.astro                         → /o-nas/
+pages/salony/index.astro                  → /salony/
+pages/salony/[location].astro             → /salony/hey-beauty-1-0/, etc. (4 pages)
+pages/uslugi/index.astro                  → /uslugi/
+pages/uslugi/[service].astro              → /uslugi/lifting-rzes/, etc. (23 pages)
+pages/salony/[location]/[service].astro   → /salony/hey-beauty-2-0/lifting-rzes/ (33 pages)
+pages/{static}.astro                      → /kontakt/, /faq/, /404, etc.
+pages/robots.txt.ts                       → /robots.txt
+pages/llms.txt.ts                         → /llms.txt
+en/, uk/                                  → partial English + Ukrainian subtrees
 ```
+
+**Current total: ~65 pre-rendered HTML pages.**
 
 ## Design System
 
@@ -99,6 +173,10 @@ See DESIGN.md. Key principle: everything is a CSS custom property. Swapping font
 | 2026-03-28 | Zero-duplication i18n | Page logic in `src/components/pages/` components with `lang` prop. Locale page files are 3-line wrappers. New language = add translations to `ui.ts` + create wrapper files. |
 | 2026-03-28 | Translated URL slugs | `/en/services/hair/` not `/en/uslugi/wlosy/`. Slug map in `src/i18n/routes.ts`. `localizePath()` and `hreflangUrls()` read from it automatically. Language switcher uses `toCanonicalPlPath()` to reverse-translate before re-localizing. |
 | 2026-03-28 | FAQ translations via separate JSON files | `global-en.json` / `global-uk.json` with `scopeSlug: "en"/"uk"`. Components look up by `scope === "global" && scopeSlug === lang`. Polish FAQ has no scopeSlug (undefined). |
+| 2026-03-28 | `price: number` → `priceMin + priceMax` | Booksy shows price ranges (per hair length, stylist tier). Single price was wrong. priceMax is optional so fixed-price services aren't affected. |
+| 2026-03-28 | Service-location as a separate cross-ref table | Prices live in service-locations, not embedded in services. This allows the same service to have different prices at different locations — and makes the Airtable migration straightforward. |
+| 2026-03-28 | Vanilla JS for cennik filters | Progressive enhancement: prices pre-rendered in HTML, JS updates display via data-* attributes. Page works without JS — prices just don't filter. No framework needed for what is essentially a CSS show/hide. |
+| 2026-03-28 | Airtable as future CMS | Staff can update prices without a code deploy. Booksy export → Airtable → Astro API fetch at build time. Still generates static HTML. |
 
 ## How to Add a New Page (Recipe)
 
@@ -133,6 +211,36 @@ That's it. The language switcher, hreflang tags, and nav active states all work 
 ### New top-level route (e.g. `/blog/`)
 
 Same as above, but also add `"blog": "blog"` (or translated slug) to `slugMap` in `routes.ts`, and add nav items to `Header.astro` via `t()` + `lp()`.
+
+## Planned: Airtable as CMS
+
+**Problem:** Service/price data lives in JSON files → every price change requires a code deploy.
+
+**Plan:** Airtable as the single editable source of truth. Staff updates prices in Airtable → site rebuilds automatically.
+
+### Airtable table structure (mirrors the JSON model)
+
+| Table | Rows | Key fields |
+|---|---|---|
+| Locations | 4 | name, slug, booksyUrl, address |
+| Services | 23+ | name, slug, category, description, duration |
+| ServiceLocations | 33+ | Location (linked), Service (linked), priceMin, priceMax, duration, booksyDirectUrl |
+
+### Migration steps
+
+1. Export all 4 salons from Booksy business dashboard (CSV/Excel)
+2. Import into Airtable — three tables above
+3. In `astro.config.ts` or a prebuild script, `fetch()` from Airtable REST API at build time
+4. Write fetched data to temp JSON files (or pass directly to content collections)
+5. Connect Airtable webhook → Cloudflare Pages deploy hook → auto-rebuild on price changes (~30s)
+
+Result: still 100% static HTML — zero runtime dependency on Airtable.
+
+### What's missing before Airtable migration
+
+- HB 1.0 and HB 3.0 full service lists (currently only manicure + pedicure)
+- Laminacja brwi — price not visible in screenshots
+- Any HB 2.0 services not yet screenshotted (Booksy shows 10+ more under kosmetologia)
 
 ## Related Projects
 
