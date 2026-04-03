@@ -123,10 +123,9 @@ const description = "Hey Beauty to sieć salonów kosmetycznych w Krakowie. 4 lo
     <div class="mx-auto max-w-7xl px-6">
       <div data-reveal>
         <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">{t("home.servicesLabel")}</p>
-        <h2 class="mt-4 font-display text-h2">{t("home.servicesTitle")}</h2>
       </div>
-      <div data-reveal-stagger class="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        {sortedServices.map((s) => (
+      <div data-reveal-stagger class="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        {sortedServices.slice(0, 4).map((s) => (
           <ServiceCard name={s.data.name} slug={s.data.slug} description={s.data.description}
             priceMin={s.data.priceRange.min} duration={`${s.data.duration.min} ${t("common.min")}`}
             image={s.data.image}
