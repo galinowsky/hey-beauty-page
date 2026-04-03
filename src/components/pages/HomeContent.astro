@@ -146,9 +146,19 @@ const description = "Hey Beauty to sieć salonów kosmetycznych w Krakowie. 4 lo
   <!-- ABOUT PREVIEW -->
   <section class="grain bg-surface">
     <div class="mx-auto grid min-h-[600px] max-w-7xl grid-cols-1 md:grid-cols-[1.2fr_1fr]">
-      <div data-reveal class="flex items-end p-12 pb-24 lg:p-20 lg:pb-32">
-        <div>
-          <p class="font-display text-[clamp(2.5rem,5vw,4rem)] italic leading-[1.05] text-primary/20">
+      <div data-reveal class="relative overflow-hidden">
+        <video
+          src="/videos/hb_team.mp4"
+          autoplay
+          muted
+          loop
+          playsinline
+          class="h-full w-full object-cover"
+          style="min-height: 400px;"
+        ></video>
+        <div class="absolute inset-0 bg-black/20"></div>
+        <div class="absolute bottom-0 left-0 p-12 lg:p-20">
+          <p class="font-display text-[clamp(2rem,4vw,3.5rem)] italic leading-[1.05] text-white/60">
             {t("home.aboutQuote")}
           </p>
         </div>
