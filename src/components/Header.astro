@@ -15,7 +15,8 @@ const lp = (path: string) => localizePath(path, lang);
 
 const navItems = [
   { href: lp("/uslugi/"),  label: t("nav.services") },
-  { href: lp("/cennik/"),  label: t("nav.pricing") },
+  // cennik is PL-only (PLN prices, no EN/UK translation)
+  ...(lang === "pl" ? [{ href: lp("/cennik/"), label: t("nav.pricing") }] : []),
   { href: lp("/o-nas/"),   label: t("nav.about") },
   { href: lp("/salony/"),  label: t("nav.salons") },
   { href: lp("/kontakt/"), label: t("nav.contact") },

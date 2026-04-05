@@ -1,0 +1,110 @@
+---
+import Page from "../../../layouts/Page.astro";
+import { getCollection } from "astro:content";
+import JsonLd from "../../../components/JsonLd.astro";
+import FAQAccordion from "../../../components/FAQAccordion.astro";
+import { buildFAQPage, buildBreadcrumbList } from "../../../lib/json-ld";
+import { useTranslations, localizePath, tc } from "../../../i18n/utils";
+
+const lang = "uk" as const;
+const t = useTranslations(lang);
+const lp = (path: string) => localizePath(path, lang);
+
+export async function getStaticPaths() {
+  const services = await getCollection("services");
+  const serviceLocations = await getCollection("serviceLocations");
+  const locations = await getCollection("locations");
+
+  return services.map((service) => {
+    const availability = serviceLocations
+      .filter((sl) => sl.data.serviceSlug === service.data.slug && sl.data.available)
+      .map((sl) => ({
+        serviceLocation: sl,
+        location: locations.find((l) => l.data.slug === sl.data.locationSlug),
+      }))
+      .filter((a) => a.location);
+
+    return {
+      params: { service: service.data.slug },
+      props: { service, availability },
+    };
+  });
+}
+
+const { service, availability } = Astro.props;
+
+const serviceName = tc("services", service.data.slug, "name", lang) ?? service.data.name;
+const serviceDesc = tc("services", service.data.slug, "description", lang) ?? service.data.description;
+
+const allFaq = await getCollection("faq");
+const serviceFaq = allFaq.find(
+  (f) => f.data.scope === "service" && f.data.scopeSlug === service.data.slug,
+);
+
+const title = `${serviceName} Краків — Hey Beauty`;
+const description = `${serviceDesc} ${t("service.availableAt")} ${availability.length} ${t("service.salons")} Hey Beauty. ${t("service.priceFrom")} ${service.data.priceRange.min} ${t("common.currency")}.`;
+const breadcrumbs = [
+  { name: t("breadcrumb.home"), url: lp("/") },
+  { name: t("breadcrumb.services"), url: lp("/uslugi/") },
+  { name: serviceName, url: lp(`/uslugi/${service.data.slug}/`) },
+];
+---
+
+<Page {title} {description} {breadcrumbs}>
+  <JsonLd slot="head" data={buildBreadcrumbList(breadcrumbs, Astro.site)} />
+  {serviceFaq && <JsonLd slot="head" data={buildFAQPage(serviceFaq.data.items)} />}
+
+  <section class="py-16 lg:py-24">
+    <p class="font-ui text-[11px] uppercase tracking-[3px] text-muted">{service.data.category}</p>
+    <h1 class="mt-4 font-display text-h1">
+      {serviceName}<span class="text-muted"> Краків</span>
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg leading-relaxed text-muted">{serviceDesc}</p>
+    <p class="mt-4 font-ui text-sm">
+      <span class="text-muted">{t("service.priceFrom")}</span>
+      <span class="font-display text-2xl ml-1">{service.data.priceRange.min} {t("common.currency")}</span>
+      <span class="text-muted ml-2">·</span>
+      <span class="text-muted ml-2">
+        {service.data.duration.min}{service.data.duration.min !== service.data.duration.max && `-${service.data.duration.max}`} {t("common.min")}
+      </span>
+    </p>
+  </section>
+
+  {availability.length > 0 && (
+    <section class="border-t border-border py-16">
+      <h2 class="font-display text-h3">{t("service.availableAt")} {availability.length} {t("service.salons")}</h2>
+      <div class="mt-8 divide-y divide-border">
+        {availability.map(({ serviceLocation: sl, location: loc }) => (
+          <div class="flex items-center justify-between py-5">
+            <div>
+              <span class="font-mono text-xs text-muted">{loc!.data.shortName}</span>
+              <span class="ml-2 font-medium">{loc!.data.name}</span>
+              <p class="mt-1 text-sm text-muted">{loc!.data.address.street}</p>
+            </div>
+            <div class="flex items-center gap-6">
+              <span class="font-ui text-sm">{t("service.priceFrom")} {sl.data.priceMin} {t("common.currency")}</span>
+              <a
+                href={lp(`/salony/${sl.data.locationSlug}/${service.data.slug}/`)}
+                class="bg-accent px-4 py-2 font-ui text-[10px] uppercase tracking-[2px] text-white transition-colors hover:bg-accent-hover"
+              >{t("service.details")}</a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
+
+  {serviceFaq && (
+    <section class="border-t border-border py-16">
+      <h2 class="font-display text-h3">{t("service.faqTitle")}</h2>
+      <div class="mt-8"><FAQAccordion items={serviceFaq.data.items} /></div>
+    </section>
+  )}
+
+  <section class="border-t border-border py-16">
+    <h2 class="font-display text-h3">{t("service.otherServices")}</h2>
+    <p class="mt-2 text-sm text-muted">
+      <a href={lp("/uslugi/")} class="border-b border-accent text-accent">{t("service.seeAllLink")}</a>
+    </p>
+  </section>
+</Page>
