@@ -8,7 +8,7 @@ import FAQAccordion from "../FAQAccordion.astro";
 import BookingCTA from "../BookingCTA.astro";
 import { buildOrganization, buildFAQPage } from "../../lib/json-ld";
 import { assetPath } from "../../utils/asset";
-import { useTranslations, localizePath } from "../../i18n/utils";
+import { useTranslations, localizePath, tc } from "../../i18n/utils";
 import type { Lang } from "../../i18n/ui";
 
 interface Props { lang: Lang }
@@ -123,11 +123,14 @@ const description = "Hey Beauty to sieć salonów kosmetycznych w Krakowie. 4 lo
     <div class="mx-auto max-w-7xl px-6">
       <div data-reveal>
         <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">{t("home.servicesLabel")}</p>
-        <h2 class="mt-4 font-display text-h2">Usługi które oferujemy</h2>
+        <h2 class="mt-4 font-display text-h2">{t("home.servicesHeading")}</h2>
       </div>
       <div data-reveal-stagger class="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
         {sortedServices.slice(0, 4).map((s) => (
-          <ServiceCard name={s.data.name} slug={s.data.slug} description={s.data.description}
+          <ServiceCard
+            name={tc("services", s.data.slug, "name", lang) ?? s.data.name}
+            slug={s.data.slug}
+            description={tc("services", s.data.slug, "description", lang) ?? s.data.description}
             priceMin={s.data.priceRange.min} duration={`${s.data.duration.min} ${t("common.min")}`}
             image={s.data.image}
             href={lp(`/uslugi/${s.data.slug}/`)}
@@ -182,22 +185,20 @@ const description = "Hey Beauty to sieć salonów kosmetycznych w Krakowie. 4 lo
         <h2 class="mt-4 font-display text-h2">{t("home.reviewsTitle")}</h2>
         <p class="mt-4 font-mono text-xs tracking-[2px] text-muted">{t("home.reviewsRating")}</p>
       </div>
-      <div data-reveal-stagger class="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <div data-reveal-stagger class="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2">
         {[
           { text: "Czułam się jak na spotkaniu z koleżanką, a przy okazji dowiedziałam się jaki jest stan mojej skóry, jakie kremy powinnam stosować i co ze sobą łączyć. Mamy obraną wstępną strategię dalszego postępowania i nie mogę się doczekać efektów i kolejnego spotkania. Bardzo polecam.", name: "Daria", service: "Konsultacja kosmetyczna", location: "HB 2.0", rating: 5 },
           { text: "Wrażenie niesamowicie pozytywne. Profesjonalne podejście, wyczerpujące odpowiedzi na nurtujące pytania. Ponadto miło, sympatycznie, relaksująco i klimatycznie. Jak najbardziej polecam!", name: "Małgorzata", service: "Oczyszczanie wodorowe", location: "HB 1.0", rating: 5 },
           { text: "Zabieg przeprowadzony bardzo sprawnie, dostałam dużo informacji o tym jak zadbać o twarz po zabiegu i na co dzień. Pani Paulina szczegółowo informowała mnie o każdym kroku — sprawiła, że zabieg był na tyle przyjemny, na ile przyjemne może być wbijanie igieł do twarzy ;)", name: "Paulina", service: "Dermapen 4.0", location: "HB 2.0", rating: 5 },
           { text: "Pani Marta samodzielnie dobrała preparaty, wiedząc co potrzeba na moje problemy skórne. Efekt był dokładnie taki jak zamierzony — z czystym sumieniem mogę polecić, szczególnie Panią Martę.", name: "Marta", service: "Zabieg dopasowany indywidualnie", location: "HB 3.0", rating: 5 },
-          { text: "Rewelacja, bardzo polecam. Dawno nie czułam się tak zaopiekowana. Azjatycki masaż twarzy to coś, do czego zdecydowanie wrócę.", name: "Karina", service: "Azjatycki masaż twarzy", location: "HB 1.0", rating: 5 },
-          { text: "Bardzo miła atmosfera i profesjonalizm na najwyższym poziomie. Zabieg wykonano komfortowo, z pełnym wyjaśnieniem każdego etapu. Zdecydowanie polecam i na pewno wrócę.", name: "Kasia", service: "Oczyszczanie wodorowe", location: "HB 3.0", rating: 5 },
         ].map((review) => (
-          <div class="flex flex-col border border-border p-8">
+          <div class="group flex flex-col border border-border p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)]">
             <p class="font-display text-3xl text-muted/20 leading-none">&ldquo;</p>
             <p class="mt-3 flex-1 text-sm leading-relaxed text-muted">{review.text}</p>
             <div class="mt-6 border-t border-border pt-6">
               <p class="font-ui text-[13px] font-medium">{review.name}</p>
               <p class="mt-0.5 font-ui text-[11px] uppercase tracking-[2px] text-muted">{review.service} &middot; {review.location}</p>
-              <p class="mt-1 text-xs text-muted/60">{"★".repeat(review.rating)}</p>
+              <p class="mt-1 text-xs text-muted/40 transition-colors duration-300 group-hover:text-primary">{"★".repeat(review.rating)}</p>
             </div>
           </div>
         ))}
