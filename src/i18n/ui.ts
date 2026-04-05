@@ -95,6 +95,64 @@ export const ui = {
     "hair.backToServices": "← Wszystkie usługi",
     "hair.bookBtn": "Umów →",
 
+    // Service detail page
+    "service.priceFrom": "Cena od",
+    "service.availableAt": "Dostępne w",
+    "service.salons": "salonach",
+    "service.faqTitle": "Najczęściej zadawane pytania",
+    "service.otherServices": "Inne zabiegi",
+    "service.details": "Szczegóły",
+    "service.seeAllLink": "Zobacz pełną ofertę →",
+
+    // Location detail page
+    "location.openingHours": "Godziny otwarcia",
+    "location.servicesAt": "Usługi w",
+    "location.booksyReviews": "opinii na Booksy",
+
+    // Breadcrumbs
+    "breadcrumb.home": "Strona główna",
+    "breadcrumb.services": "Usługi",
+    "breadcrumb.salons": "Salony",
+
+    // Homepage extras
+    "home.servicesHeading": "Usługi które oferujemy",
+
+    // About page
+    "about.label": "O nas",
+    "about.intro": "Sieć salonów kosmetycznych w Krakowie, łączących profesjonalizm z luksusową atmosferą. Pełen zakres usług — od stylizacji brwi i rzęs, przez zabiegi pielęgnacyjne, po manicure i pedicure.",
+    "about.philosophyLabel": "Nasza filozofia",
+    "about.philosophyTitle": "Luksus w codzienności",
+    "about.philosophyText": "Wierzymy, że każda kobieta zasługuje na chwilę luksusu. Nasze salony inspirowane są stylem \"Soft Industrial Luxury\" — połączeniem surowych materiałów z ciepłem i elegancją.",
+    "about.whyLabel": "Dlaczego my?",
+    "about.whyTitle": "Jakość ponad wszystko",
+    "about.why1": "5.0 na Booksy — setki opinii",
+    "about.why2": "4 lokalizacje w centrum Krakowa",
+    "about.why3": "Profesjonalny zespół specjalistek",
+    "about.why4": "Darmowa konsultacja kosmetologiczna",
+    "about.why5": "Program lojalnościowy",
+    "about.teamLabel": "Zespół",
+    "about.teamTitle": "Nasze specjalistki",
+    "about.ctaLabel": "Gotowa?",
+    "about.ctaTitle": "Zapraszamy",
+    "about.ctaText": "Umów swoją pierwszą wizytę i przekonaj się sama.",
+    "about.pageTitle": "O Hey Beauty — Salon Kosmetyczny Kraków",
+    "about.pageDesc": "Poznaj Hey Beauty. Sieć salonów kosmetycznych w Krakowie łączących profesjonalizm z luksusową atmosferą.",
+
+    // FAQ page
+    "faq.pageTitle": "FAQ — Najczęściej Zadawane Pytania | Hey Beauty Kraków",
+    "faq.pageDesc": "Odpowiedzi na najczęściej zadawane pytania o salonach Hey Beauty w Krakowie.",
+    "faq.heading": "Najczęściej zadawane pytania",
+    "faq.intro": "Masz pytania? Znajdziesz tutaj odpowiedzi na najczęstsze zapytania o nasze salony i usługi.",
+
+    // Contact page
+    "contact.pageTitle": "Kontakt — Hey Beauty Salon Kosmetyczny Kraków",
+    "contact.pageDesc": "Skontaktuj się z Hey Beauty. Adresy, godziny otwarcia i rezerwacje online przez Booksy.",
+    "contact.heading": "Kontakt",
+    "contact.intro": "Rezerwuj wizytę online przez Booksy lub odwiedź nas w jednym z 4 salonów w Krakowie.",
+    "contact.hours": "Godziny otwarcia",
+    "contact.book": "Rezerwuj",
+    "contact.social": "Social media",
+
     // Footer
     "footer.brand": "Sieć salonów kosmetycznych w Krakowie.",
     "footer.services": "Usługi",
@@ -192,6 +250,64 @@ export const ui = {
     "hair.backToServices": "← All services",
     "hair.bookBtn": "Book →",
 
+    // Service detail page
+    "service.priceFrom": "from",
+    "service.availableAt": "Available at",
+    "service.salons": "salons",
+    "service.faqTitle": "Frequently asked questions",
+    "service.otherServices": "Other services",
+    "service.details": "Details",
+    "service.seeAllLink": "See all services →",
+
+    // Location detail page
+    "location.openingHours": "Opening hours",
+    "location.servicesAt": "Services at",
+    "location.booksyReviews": "reviews on Booksy",
+
+    // Breadcrumbs
+    "breadcrumb.home": "Home",
+    "breadcrumb.services": "Services",
+    "breadcrumb.salons": "Salons",
+
+    // Homepage extras
+    "home.servicesHeading": "Services we offer",
+
+    // About page
+    "about.label": "About us",
+    "about.intro": "A network of beauty salons in Kraków, combining professionalism with a luxurious atmosphere. Full range of services — from brow and lash styling, through skincare treatments, to manicure and pedicure.",
+    "about.philosophyLabel": "Our philosophy",
+    "about.philosophyTitle": "Everyday luxury",
+    "about.philosophyText": "We believe every woman deserves a moment of luxury. Our salons are inspired by a 'Soft Industrial Luxury' aesthetic — raw materials combined with warmth and elegance.",
+    "about.whyLabel": "Why us?",
+    "about.whyTitle": "Quality above all",
+    "about.why1": "5.0 on Booksy — hundreds of reviews",
+    "about.why2": "4 locations in central Kraków",
+    "about.why3": "Professional specialist team",
+    "about.why4": "Free cosmetic consultation",
+    "about.why5": "Loyalty programme",
+    "about.teamLabel": "Team",
+    "about.teamTitle": "Our specialists",
+    "about.ctaLabel": "Ready?",
+    "about.ctaTitle": "Welcome",
+    "about.ctaText": "Book your first appointment and see for yourself.",
+    "about.pageTitle": "About Hey Beauty — Beauty Salon Kraków",
+    "about.pageDesc": "Meet Hey Beauty. A network of beauty salons in Kraków combining professionalism with a luxurious atmosphere.",
+
+    // FAQ page
+    "faq.pageTitle": "FAQ — Frequently Asked Questions | Hey Beauty Kraków",
+    "faq.pageDesc": "Answers to the most frequently asked questions about Hey Beauty salons in Kraków.",
+    "faq.heading": "Frequently asked questions",
+    "faq.intro": "Have questions? Find answers to the most common questions about our salons and services.",
+
+    // Contact page
+    "contact.pageTitle": "Contact — Hey Beauty Beauty Salon Kraków",
+    "contact.pageDesc": "Contact Hey Beauty. Addresses, opening hours and online booking via Booksy.",
+    "contact.heading": "Contact",
+    "contact.intro": "Book online via Booksy or visit one of our 4 salons in Kraków.",
+    "contact.hours": "Opening hours",
+    "contact.book": "Book",
+    "contact.social": "Social media",
+
     // Footer
     "footer.brand": "A network of beauty salons in Kraków.",
     "footer.services": "Services",
@@ -288,6 +404,64 @@ export const ui = {
     "hair.faqTitle": "Часті запитання",
     "hair.backToServices": "← Всі послуги",
     "hair.bookBtn": "Записатись →",
+
+    // Service detail page
+    "service.priceFrom": "від",
+    "service.availableAt": "Доступно в",
+    "service.salons": "салонах",
+    "service.faqTitle": "Часті запитання",
+    "service.otherServices": "Інші послуги",
+    "service.details": "Деталі",
+    "service.seeAllLink": "Всі послуги →",
+
+    // Location detail page
+    "location.openingHours": "Години роботи",
+    "location.servicesAt": "Послуги в",
+    "location.booksyReviews": "відгуків на Booksy",
+
+    // Breadcrumbs
+    "breadcrumb.home": "Головна",
+    "breadcrumb.services": "Послуги",
+    "breadcrumb.salons": "Салони",
+
+    // Homepage extras
+    "home.servicesHeading": "Послуги які ми пропонуємо",
+
+    // About page
+    "about.label": "Про нас",
+    "about.intro": "Мережа салонів краси в Кракові, що поєднує професіоналізм з розкішною атмосферою. Повний спектр послуг — від стилізації брів і вій, через процедури для обличчя і тіла, до манікюру та педикюру.",
+    "about.philosophyLabel": "Наша філософія",
+    "about.philosophyTitle": "Розкіш у повсякденності",
+    "about.philosophyText": "Ми віримо, що кожна жінка заслуговує на мить розкоші. Наші салони натхнені стилем «Soft Industrial Luxury» — поєднанням суворих матеріалів з теплом і елегантністю.",
+    "about.whyLabel": "Чому ми?",
+    "about.whyTitle": "Якість перш за все",
+    "about.why1": "5.0 на Booksy — сотні відгуків",
+    "about.why2": "4 локації в центрі Кракова",
+    "about.why3": "Професійна команда спеціалістів",
+    "about.why4": "Безкоштовна косметологічна консультація",
+    "about.why5": "Програма лояльності",
+    "about.teamLabel": "Команда",
+    "about.teamTitle": "Наші спеціалісти",
+    "about.ctaLabel": "Готова?",
+    "about.ctaTitle": "Запрошуємо",
+    "about.ctaText": "Запишіться на перший візит і переконайтесь самі.",
+    "about.pageTitle": "Про Hey Beauty — Салон краси Краків",
+    "about.pageDesc": "Познайомтесь з Hey Beauty. Мережа салонів краси в Кракові, що поєднує професіоналізм з розкішною атмосферою.",
+
+    // FAQ page
+    "faq.pageTitle": "FAQ — Часті запитання | Hey Beauty Краків",
+    "faq.pageDesc": "Відповіді на найпоширеніші запитання про салони Hey Beauty у Кракові.",
+    "faq.heading": "Часті запитання",
+    "faq.intro": "Маєш питання? Знайди відповіді на найпоширеніші запитання про наші салони та послуги.",
+
+    // Contact page
+    "contact.pageTitle": "Контакт — Салон краси Hey Beauty Краків",
+    "contact.pageDesc": "Зв'яжіться з Hey Beauty. Адреси, години роботи та онлайн-запис через Booksy.",
+    "contact.heading": "Контакт",
+    "contact.intro": "Записуйтесь онлайн через Booksy або завітайте до одного з 4 салонів у Кракові.",
+    "contact.hours": "Години роботи",
+    "contact.book": "Записатись",
+    "contact.social": "Соціальні мережі",
 
     // Footer
     "footer.brand": "Мережа салонів краси в Кракові.",

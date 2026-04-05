@@ -3,7 +3,7 @@ import Base from "../../layouts/Base.astro";
 import Breadcrumbs from "../Breadcrumbs.astro";
 import { getCollection } from "astro:content";
 import ServiceCard from "../ServiceCard.astro";
-import { useTranslations, localizePath } from "../../i18n/utils";
+import { useTranslations, localizePath, tc } from "../../i18n/utils";
 import type { Lang } from "../../i18n/ui";
 
 interface Props { lang: Lang }
@@ -30,7 +30,10 @@ const breadcrumbs = [
       <p class="mt-4 max-w-2xl text-lg text-muted">{t("services.subtitle")}</p>
       <div class="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {sorted.map((s) => (
-          <ServiceCard name={s.data.name} slug={s.data.slug} description={s.data.description}
+          <ServiceCard
+            name={tc("services", s.data.slug, "name", lang) ?? s.data.name}
+            slug={s.data.slug}
+            description={tc("services", s.data.slug, "description", lang) ?? s.data.description}
             priceMin={s.data.priceRange.min} duration={`${s.data.duration.min} ${t("common.min")}`}
             image={s.data.image}
             href={lp(`/uslugi/${s.data.slug}/`)}

@@ -1,5 +1,26 @@
 import { ui, type Lang, type UIKey } from "./ui";
 import { translatePath, toPlPath } from "./routes";
+import enContent from "./content/en.json";
+import ukContent from "./content/uk.json";
+
+const contentMap: Record<string, Record<string, Record<string, Record<string, string>>>> = {
+  en: enContent as any,
+  uk: ukContent as any,
+};
+
+/**
+ * Get a translated content field by section/slug/field.
+ * Returns undefined for PL (use source data) or if no translation exists.
+ *
+ * tc("services", "dermapen", "name", "en") → "Dermapen 4.0"
+ * tc("services", "dermapen", "name", "pl") → undefined (use source)
+ */
+export function tc(
+  section: string, slug: string, field: string, lang: Lang
+): string | undefined {
+  if (lang === "pl") return undefined;
+  return contentMap[lang]?.[section]?.[slug]?.[field];
+}
 
 export function useTranslations(lang: Lang) {
   return function t(key: UIKey): string {

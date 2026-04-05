@@ -1,0 +1,111 @@
+{
+  "services": {
+    "autorski-zabieg-hb": {
+      "name": "Hey Beauty Signature Treatment",
+      "description": "Our exclusive HEY BEAUTY signature facial — a bespoke treatment developed by Hey Beauty specialists. A comprehensive experience tailored to your skin's individual needs."
+    },
+    "botox-premium-wlosy": {
+      "name": "Hair Botox Premium",
+      "description": "Up to 80% smoothing and straightening with lasting protection and deep nourishment. This intensive hair treatment restores strength, silkiness, and resilience from within."
+    },
+    "dermapen": {
+      "name": "Dermapen 4.0",
+      "description": "Microneedling with the latest generation Dermapen device. Evens skin tone, reduces scarring, and stimulates natural renewal. Available as a standalone treatment or extended with a chemical peel."
+    },
+    "diamentowa-keratyna": {
+      "name": "Diamond Keratin",
+      "description": "Keratin hair straightening using the Diamond Keratin method. Eliminates frizz, smooths the hair shaft, and restores structural integrity."
+    },
+    "ergolift": {
+      "name": "Ergolift",
+      "description": "Facial endermology using precise mechanical techniques. Sculpts and firms the face, neck, and décolleté."
+    },
+    "fala-uderzeniowa": {
+      "name": "STORZ Shockwave Therapy",
+      "description": "STORZ® acoustic shockwave treatment that reduces cellulite, firms the skin, and improves circulation. Delivered as a course of 6 sessions."
+    },
+    "farba-brwi": {
+      "name": "Brow Tinting",
+      "description": "Professional brow shaping with specialist tint application. Available with full brow architecture or as a simple shape-and-tint service."
+    },
+    "henna-pudrowa": {
+      "name": "Powder Henna",
+      "description": "Professional brow styling with luxurious Moroccan henna. Enhances your natural brow shape with a soft, powdery finish that lasts up to two weeks."
+    },
+    "koloryzacja-rzes": {
+      "name": "Lash Tinting",
+      "description": "Specialist lash tint for a more intense gaze — no mascara needed. Results last 3–4 weeks."
+    },
+    "komplet-hybrydowy": {
+      "name": "Hybrid Set",
+      "description": "Hybrid manicure and hybrid pedicure in a single appointment — complete care for hands and feet."
+    },
+    "konsultacja-kosmetologiczna": {
+      "name": "Skin Consultation",
+      "description": "A full skin assessment including interview, analysis, and a personalised care plan. Your first consultation is complimentary."
+    },
+    "lifting-rzes": {
+      "name": "Lash Lift",
+      "description": "Lash lift with a keratin nourishing treatment, including specialist lash tinting. Naturally curled, defined lashes that last 6–8 weeks."
+    },
+    "manicure": {
+      "name": "Hybrid Manicure",
+      "description": "Combination manicure with Hard Base hybrid colour. Nail build-up and precision application to the cuticle line. 7-day guarantee."
+    },
+    "masaz-kobido": {
+      "name": "Kobido Massage",
+      "description": "A non-surgical facial lift using the Japanese Kobido technique. Redefines the facial contour, firms the skin, and releases deep muscle tension."
+    },
+    "oczyszczanie-skory": {
+      "name": "Skin Purifying Treatment",
+      "description": "Our signature cleansing ritual combining cavitation peeling, manual deep-cleansing, and effective hydration. Available in a classic version or enhanced with an algae mask."
+    },
+    "odbudowa-molekularna": {
+      "name": "Nashi Molecular Rebuilding",
+      "description": "An advanced Nashi regenerative treatment that works at the molecular level, rebuilding damaged hair fibres from the inside out."
+    },
+    "pakiet-rekonstrukcji": {
+      "name": "Reconstruction Package",
+      "description": "Book 3 reconstruction treatments and receive the 4th free. The ideal choice for hair in need of intensive, long-term repair."
+    },
+    "pedicure": {
+      "name": "Drill Pedicure",
+      "description": "Comprehensive foot care including machine filing and nail treatment. Available with hybrid polish or as a Premium SPA Pedicure with an exfoliating scrub."
+    },
+    "regulacja-brwi": {
+      "name": "Brow Shaping",
+      "description": "Professional brow shaping with defined arch mapping. Precise styling with thread or tweezers. Available with or without full brow architecture."
+    },
+    "rekonstrukcja-wlosow": {
+      "name": "Hair Reconstruction",
+      "description": "Intensive repair and rebuilding treatment based on natural keratin and oil. Restores elasticity, shine, and resistance to damage."
+    },
+    "rf-mikroiglowa": {
+      "name": "Microneedling RF Radiofrequency",
+      "description": "A synergistic combination of radiofrequency energy and microneedling. Redefines facial contours, reduces wrinkles, and improves skin firmness."
+    },
+    "uzupelnienie-zelowe": {
+      "name": "Gel Infill",
+      "description": "Gel infill with hybrid colour application. Available in short, medium, and long nail options."
+    },
+    "wlosy": {
+      "name": "Hair — Keratin",
+      "description": "Keratin straightening and regenerating treatments for perfectly smooth, luminous hair lasting up to 5 months. Available exclusively at Hey Beauty Zabłocie."
+    }
+  },
+  "locations": {
+    "hey-beauty-1-0": {
+      "name": "HEY BEAUTY 1.0"
+    },
+    "hey-beauty-2-0": {
+      "name": "HEY BEAUTY 2.0"
+    },
+    "hey-beauty-3-0": {
+      "name": "HEY BEAUTY 3.0"
+    },
+    "hey-beauty-zablocie": {
+      "name": "HEY BEAUTY ZABŁOCIE"
+    }
+  },
+  "specialists": {}
+}

@@ -1,0 +1,47 @@
+---
+import Base from "../../layouts/Base.astro";
+import Breadcrumbs from "../Breadcrumbs.astro";
+import { getCollection } from "astro:content";
+import JsonLd from "../JsonLd.astro";
+import FAQAccordion from "../FAQAccordion.astro";
+import { buildFAQPage, buildBreadcrumbList } from "../../lib/json-ld";
+import { useTranslations, localizePath } from "../../i18n/utils";
+import type { Lang } from "../../i18n/ui";
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const lp = (path: string) => localizePath(path, lang);
+
+const faqEntries = await getCollection("faq");
+const allItems = faqEntries.flatMap((f) => f.data.items);
+
+const title = t("faq.pageTitle");
+const description = t("faq.pageDesc");
+const breadcrumbs = [
+  { name: t("breadcrumb.home"), url: lp("/") },
+  { name: "FAQ", url: lp("/faq/") },
+];
+---
+
+<Base {title} {description} hreflangPath="/faq/">
+  <JsonLd slot="head" data={buildFAQPage(allItems)} />
+  <JsonLd slot="head" data={buildBreadcrumbList(breadcrumbs, Astro.site)} />
+
+  <div class="mx-auto max-w-7xl px-6">
+    <div class="pt-8">
+      <Breadcrumbs items={breadcrumbs} />
+    </div>
+
+    <section class="py-16 lg:py-24">
+      <h1 class="font-display text-h1">{t("faq.heading")}</h1>
+      <p class="mt-4 max-w-2xl text-lg text-muted">{t("faq.intro")}</p>
+    </section>
+
+    <section class="pb-24">
+      <div class="mx-auto max-w-3xl">
+        <FAQAccordion items={allItems} />
+      </div>
+    </section>
+  </div>
+</Base>

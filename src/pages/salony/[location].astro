@@ -6,6 +6,10 @@ import ServiceCard from "../../components/ServiceCard.astro";
 import BookingCTA from "../../components/BookingCTA.astro";
 import { buildBeautySalon, buildBreadcrumbList } from "../../lib/json-ld";
 import { assetPath } from "../../utils/asset";
+import { useTranslations, localizePath, tc } from "../../i18n/utils";
+import type { Lang } from "../../i18n/ui";
+
+interface Props { lang?: Lang; location: any; locationServices: any[] }
 
 export async function getStaticPaths() {
   const locations = await getCollection("locations");
@@ -33,14 +37,17 @@ export async function getStaticPaths() {
   });
 }
 
+const lang = (Astro.props.lang ?? "pl") as Lang;
 const { location, locationServices } = Astro.props;
+const t = useTranslations(lang);
+const lp = (path: string) => localizePath(path, lang);
 
-const title = `${location.data.name} — Salon Kosmetyczny Kraków`;
-const description = `Salon ${location.data.name}, ${location.data.address.street}, Kraków. ${location.data.rating ? `Ocena ${location.data.rating.value}/5 (${location.data.rating.count} opinii).` : ""} Umów wizytę online.`;
+const title = `${location.data.name} — Hey Beauty Kraków`;
+const description = `${location.data.name}, ${location.data.address.street}, Kraków. ${location.data.rating ? `${location.data.rating.value}/5 (${location.data.rating.count} ${t("location.booksyReviews")}).` : ""}`;
 const breadcrumbs = [
-  { name: "Strona główna", url: "/" },
-  { name: "Salony", url: "/salony/" },
-  { name: location.data.shortName, url: `/salony/${location.data.slug}/` },
+  { name: t("breadcrumb.home"), url: lp("/") },
+  { name: t("breadcrumb.salons"), url: lp("/salony/") },
+  { name: location.data.shortName, url: lp(`/salony/${location.data.slug}/`) },
 ];
 ---
 
@@ -48,7 +55,6 @@ const breadcrumbs = [
   <JsonLd slot="head" data={buildBeautySalon(location.data)} />
   <JsonLd slot="head" data={buildBreadcrumbList(breadcrumbs, Astro.site)} />
 
-  <!-- Location hero image -->
   {location.data.images[0] && (
     <div class="aspect-[21/9] w-full overflow-hidden bg-surface">
       <img
@@ -60,7 +66,6 @@ const breadcrumbs = [
     </div>
   )}
 
-  <!-- Location header -->
   <section class="py-16 lg:py-24">
     <span class="font-mono text-sm tracking-[2px] text-muted">
       HB {location.data.shortName}
@@ -71,24 +76,18 @@ const breadcrumbs = [
       <p>
         {location.data.address.postalCode}
         {location.data.address.city}
-        {
-          location.data.address.district && (
-            <span>, {location.data.address.district}</span>
-          )
-        }
+        {location.data.address.district && <span>, {location.data.address.district}</span>}
       </p>
     </div>
-    {
-      location.data.rating && (
-        <p class="mt-4 font-ui text-sm">
-          {"★".repeat(Math.round(location.data.rating.value))}{" "}
-          {location.data.rating.value.toFixed(1)}
-          <span class="text-muted">
-            ({location.data.rating.count} opinii na Booksy)
-          </span>
-        </p>
-      )
-    }
+    {location.data.rating && (
+      <p class="mt-4 font-ui text-sm">
+        {"★".repeat(Math.round(location.data.rating.value))}{" "}
+        {location.data.rating.value.toFixed(1)}
+        <span class="text-muted">
+          ({location.data.rating.count} {t("location.booksyReviews")})
+        </span>
+      </p>
+    )}
     <BookingCTA
       url={location.data.booksyUrl}
       locationName={location.data.name}
@@ -96,47 +95,40 @@ const breadcrumbs = [
     />
   </section>
 
-  <!-- Opening hours -->
-  {
-    location.data.openingHours.length > 0 && (
-      <section class="border-t border-border py-16">
-        <h2 class="font-display text-h3">Godziny otwarcia</h2>
-        <div class="mt-6 space-y-2">
-          {location.data.openingHours.map((h) => (
-            <div class="flex justify-between max-w-xs text-sm">
-              <span>{h.dayOfWeek}</span>
-              <span class="text-muted">
-                {h.opens} - {h.closes}
-              </span>
-            </div>
-          ))}
-        </div>
-      </section>
-    )
-  }
+  {location.data.openingHours.length > 0 && (
+    <section class="border-t border-border py-16">
+      <h2 class="font-display text-h3">{t("location.openingHours")}</h2>
+      <div class="mt-6 space-y-2">
+        {location.data.openingHours.map((h) => (
+          <div class="flex justify-between max-w-xs text-sm">
+            <span>{h.dayOfWeek}</span>
+            <span class="text-muted">{h.opens} - {h.closes}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
 
-  <!-- Services at this location -->
-  {
-    locationServices.length > 0 && (
-      <section class="border-t border-border py-16 lg:py-24">
-        <h2 class="font-display text-h2">
-          Usługi w {location.data.shortName}
-        </h2>
-        <div class="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {locationServices.map(({ service, serviceLocation }) =>
-            service ? (
-              <ServiceCard
-                name={service.data.name}
-                slug={`${location.data.slug}/${service.data.slug}`}
-                description={service.data.description}
-                priceMin={serviceLocation.data.priceMin}
-                duration={`${serviceLocation.data.duration} min`}
-                image={service.data.image}
-              />
-            ) : null,
-          )}
-        </div>
-      </section>
-    )
-  }
+  {locationServices.length > 0 && (
+    <section class="border-t border-border py-16 lg:py-24">
+      <h2 class="font-display text-h2">
+        {t("location.servicesAt")} {location.data.shortName}
+      </h2>
+      <div class="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {locationServices.map(({ service, serviceLocation }) =>
+          service ? (
+            <ServiceCard
+              name={tc("services", service.data.slug, "name", lang) ?? service.data.name}
+              slug={`${location.data.slug}/${service.data.slug}`}
+              description={tc("services", service.data.slug, "description", lang) ?? service.data.description}
+              priceMin={serviceLocation.data.priceMin}
+              duration={`${serviceLocation.data.duration} ${t("common.min")}`}
+              image={service.data.image}
+              learnMoreText={t("common.learnMore")}
+            />
+          ) : null,
+        )}
+      </div>
+    </section>
+  )}
 </Page>
