@@ -3,8 +3,14 @@
   "slug": "fala-uderzeniowa",
   "category": "zabiegi-ciala",
   "description": "Zabieg fali uderzeniowej STORZ® działający dzięki energii fal akustycznych. Redukuje cellulit, modeluje sylwetkę i poprawia elastyczność skóry. Dostępny na poszczególne partie lub w pakietach 5 i 10 zabiegów.",
-  "duration": { "min": 30, "max": 75 },
-  "priceRange": { "min": 280, "max": 2250 },
+  "duration": {
+    "min": 30,
+    "max": 75
+  },
+  "priceRange": {
+    "min": 280,
+    "max": 2250
+  },
   "booksySlug": "fala-uderzeniowa",
-  "sortOrder": 1
+  "sortOrder": 8
 }

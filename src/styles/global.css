@@ -206,3 +206,11 @@ h1, h2, h3 {
   transform: translateX(-50%);
   top: 0;
 }
+
+/* Zoom hair image to crop white background edges */
+img[src*="hair.jpeg"] {
+  transform: scale(1.45);
+}
+img[src*="hair.jpeg"]:is(.group:hover *) {
+  transform: scale(1.52);
+}

@@ -3,8 +3,14 @@
   "slug": "botox-premium-wlosy",
   "category": "wlosy",
   "description": "Wygładzenie i wyprost do 80%, ochrona włókna włosa i trwałość. Intensywna regeneracja z keratyną i aminokwasami. Cena zależy od długości włosów.",
-  "duration": { "min": 150, "max": 210 },
-  "priceRange": { "min": 300, "max": 400 },
+  "duration": {
+    "min": 150,
+    "max": 210
+  },
+  "priceRange": {
+    "min": 300,
+    "max": 400
+  },
   "booksySlug": "botox-premium",
-  "sortOrder": 3
+  "sortOrder": 6
 }

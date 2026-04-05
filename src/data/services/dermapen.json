@@ -3,8 +3,15 @@
   "slug": "dermapen",
   "category": "zabiegi-twarzy",
   "description": "Mikroigłowanie najnowszą generacją urządzenia Dermapen. Wyrównuje koloryt, redukuje blizny i pobudza skórę do odnowy. Dostępny jako zabieg podstawowy lub rozszerzony z peelingiem chemicznym.",
-  "duration": { "min": 60, "max": 75 },
-  "priceRange": { "min": 700, "max": 2500 },
+  "duration": {
+    "min": 60,
+    "max": 75
+  },
+  "priceRange": {
+    "min": 700,
+    "max": 2500
+  },
   "booksySlug": "dermapen",
-  "sortOrder": 1
+  "sortOrder": 3,
+  "image": "/images/dermapen.jpeg"
 }

@@ -3,8 +3,14 @@
   "slug": "henna-pudrowa",
   "category": "brwi-i-rzesy",
   "description": "Profesjonalna regulacja z luksusową henną marokańską. Podkreśl naturalny kształt brwi z długotrwałym efektem.",
-  "duration": { "min": 45, "max": 45 },
-  "priceRange": { "min": 100, "max": 110 },
+  "duration": {
+    "min": 45,
+    "max": 45
+  },
+  "priceRange": {
+    "min": 100,
+    "max": 110
+  },
   "booksySlug": "henna-pudrowa",
-  "sortOrder": 1
+  "sortOrder": 9
 }

@@ -3,8 +3,14 @@
   "slug": "uzupelnienie-zelowe",
   "category": "stylizacja-paznokci",
   "description": "Uzupełnienie żelu z malowaniem hybrydowym (kolor). Dostępne w opcjach short/medium i long.",
-  "duration": { "min": 90, "max": 135 },
-  "priceRange": { "min": 180, "max": 200 },
+  "duration": {
+    "min": 90,
+    "max": 135
+  },
+  "priceRange": {
+    "min": 180,
+    "max": 200
+  },
   "booksySlug": "uzupelnienie-zelowe",
-  "sortOrder": 4
+  "sortOrder": 17
 }

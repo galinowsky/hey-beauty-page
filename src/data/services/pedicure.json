@@ -3,8 +3,14 @@
   "slug": "pedicure",
   "category": "stylizacja-paznokci",
   "description": "Zabieg obejmuje frezowanie stóp, opracowanie paznokci. Dostępne warianty z hybrydą, klasyczny i dla mężczyzn.",
-  "duration": { "min": 45, "max": 90 },
-  "priceRange": { "min": 150, "max": 190 },
+  "duration": {
+    "min": 45,
+    "max": 90
+  },
+  "priceRange": {
+    "min": 150,
+    "max": 190
+  },
   "booksySlug": "pedicure",
-  "sortOrder": 2
+  "sortOrder": 14
 }

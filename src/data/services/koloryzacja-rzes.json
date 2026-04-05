@@ -3,8 +3,14 @@
   "slug": "koloryzacja-rzes",
   "category": "brwi-i-rzesy",
   "description": "Koloryzacja rzęs specjalistyczną farbą — intensywniejsze spojrzenie bez maskary.",
-  "duration": { "min": 15, "max": 15 },
-  "priceRange": { "min": 35, "max": 35 },
+  "duration": {
+    "min": 15,
+    "max": 15
+  },
+  "priceRange": {
+    "min": 35,
+    "max": 35
+  },
   "booksySlug": "koloryzacja-rzes",
-  "sortOrder": 4
+  "sortOrder": 10
 }
