@@ -231,8 +231,12 @@ a[data-card].is-active img[data-media-item] {
   filter: grayscale(0);
 }
 
-/* Review card: stars highlight */
-[data-card].is-active .text-muted\/40 {
+/* Review card: star rating color (outside Tailwind layers for full cascade control) */
+[data-stars] {
+  color: color-mix(in oklab, var(--color-muted) 40%, transparent);
+}
+.group:hover [data-stars],
+[data-card].is-active [data-stars] {
   color: var(--color-primary);
 }
 

@@ -211,7 +211,7 @@ const description = "Hey Beauty to sieć salonów kosmetycznych w Krakowie. 4 lo
             <div class="mt-6 border-t border-border pt-6">
               <p class="font-ui text-[13px] font-medium">{review.name}</p>
               <p class="mt-0.5 font-ui text-[11px] uppercase tracking-[2px] text-muted">{review.service} &middot; {review.location}</p>
-              <p class="mt-1 text-xs text-muted/40 transition-colors duration-300 group-hover:text-primary">{"★".repeat(review.rating)}</p>
+              <p class="mt-1 text-xs transition-colors duration-300" data-stars>{"★".repeat(review.rating)}</p>
             </div>
           </div>
         ))}
