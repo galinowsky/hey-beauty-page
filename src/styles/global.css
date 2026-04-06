@@ -222,14 +222,6 @@ h1, h2, h3 {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.07);
 }
 
-/* Location card: grayscale by default, color on hover or mobile active */
-div[data-card] img[data-media-item] {
-  filter: grayscale(1);
-}
-.group:hover img[data-media-item],
-[data-card].is-active img[data-media-item] {
-  filter: grayscale(0) !important;
-}
 
 /* Service card: scale image + remove grayscale */
 a[data-card].is-active {
