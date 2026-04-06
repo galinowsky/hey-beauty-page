@@ -47,7 +47,13 @@ const lang = Astro.currentLocale ?? "pl";
         const cards = document.querySelectorAll<HTMLElement>('[data-card]');
         const observer = new IntersectionObserver((entries) => {
           entries.forEach(entry => {
-            entry.target.classList.toggle('is-active', entry.isIntersecting);
+            const card = entry.target as HTMLElement;
+            card.classList.toggle('is-active', entry.isIntersecting);
+            // Directly set filter on location card images (div[data-card]) to bypass Tailwind cascade
+            if (card.tagName === 'DIV') {
+              const img = card.querySelector<HTMLImageElement>('img[data-media-item]');
+              if (img) img.style.filter = entry.isIntersecting ? 'grayscale(0)' : 'grayscale(1)';
+            }
           });
         }, { threshold: 0.5, rootMargin: '-20% 0px -20% 0px' });
         cards.forEach(card => observer.observe(card));
