@@ -1,7 +1,9 @@
 {
   "name": "Patrycja",
   "slug": "patrycja",
-  "locationSlug": "hey-beauty-2-0",
+  "specialty": "mani",
+  "locationSlug": "hey-beauty-3-0",
   "services": [],
+  "featured": true,
   "sortOrder": 5
 }

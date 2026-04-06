@@ -1,7 +1,9 @@
 {
   "name": "Ewelina",
   "slug": "ewelina",
+  "specialty": "brwi",
   "locationSlug": "hey-beauty-2-0",
   "services": [],
-  "sortOrder": 3
+  "featured": true,
+  "sortOrder": 4
 }

@@ -1,7 +1,9 @@
 {
   "name": "Kaska",
   "slug": "kaska",
+  "specialty": "kosmetolog",
   "locationSlug": "hey-beauty-2-0",
   "services": [],
-  "sortOrder": 1
+  "featured": true,
+  "sortOrder": 2
 }

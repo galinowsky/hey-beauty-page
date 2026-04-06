@@ -107,5 +107,12 @@
       "name": "HEY BEAUTY ZABŁOCIE"
     }
   },
-  "specialists": {}
+  "specialists": {
+    "beata": { "specialty": "Nails" },
+    "kaska": { "specialty": "Cosmetologist" },
+    "ania": { "specialty": "Podiatrist" },
+    "ewelina": { "specialty": "Brows" },
+    "patrycja": { "specialty": "Manicure" },
+    "madzia": { "specialty": "Hair" }
+  }
 }

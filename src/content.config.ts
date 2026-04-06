@@ -89,9 +89,13 @@ const specialists = defineCollection({
     slug: z.string(),
     photo: z.string().optional(),
     bio: z.string().optional(),
+    specialty: z.string().optional(),
     locationSlug: z.string(),
     services: z.array(z.string()).default([]),
     instagram: z.string().url().optional(),
+    booksyStafferUrl: z.string().url().optional(),
+    videoUrl: z.string().optional(),
+    featured: z.boolean().default(false),
     sortOrder: z.number().default(0),
   }),
 });

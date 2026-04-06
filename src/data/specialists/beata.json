@@ -1,7 +1,10 @@
 {
   "name": "Beata",
   "slug": "beata",
-  "locationSlug": "hey-beauty-2-0",
+  "specialty": "paznokcie",
+  "locationSlug": "hey-beauty-1-0",
   "services": [],
-  "sortOrder": 6
+  "booksyStafferUrl": "https://booksy.com/pl-pl/111132_hey-beauty-2-0_salon-kosmetyczny_8820_krakow/staffer/182911",
+  "featured": true,
+  "sortOrder": 1
 }

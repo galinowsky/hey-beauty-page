@@ -1,7 +1,9 @@
 {
   "name": "Ania",
   "slug": "ania",
+  "specialty": "podolog",
   "locationSlug": "hey-beauty-2-0",
   "services": [],
-  "sortOrder": 7
+  "featured": true,
+  "sortOrder": 3
 }

@@ -107,5 +107,12 @@
       "name": "HEY BEAUTY ЗАБŁОЦIE"
     }
   },
-  "specialists": {}
+  "specialists": {
+    "beata": { "specialty": "Нігті" },
+    "kaska": { "specialty": "Косметолог" },
+    "ania": { "specialty": "Подолог" },
+    "ewelina": { "specialty": "Брови" },
+    "patrycja": { "specialty": "Манікюр" },
+    "madzia": { "specialty": "Волосся" }
+  }
 }

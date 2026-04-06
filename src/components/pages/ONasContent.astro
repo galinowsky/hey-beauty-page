@@ -2,8 +2,10 @@
 import Base from "../../layouts/Base.astro";
 import Breadcrumbs from "../Breadcrumbs.astro";
 import BookingCTA from "../BookingCTA.astro";
+import JsonLd from "../JsonLd.astro";
 import { getCollection } from "astro:content";
-import { useTranslations, localizePath } from "../../i18n/utils";
+import { useTranslations, localizePath, tc } from "../../i18n/utils";
+import { assetPath } from "../../utils/asset";
 import type { Lang } from "../../i18n/ui";
 
 interface Props { lang: Lang }
@@ -14,9 +16,10 @@ const lp = (path: string) => localizePath(path, lang);
 const specialists = await getCollection("specialists");
 const locations = await getCollection("locations");
 
-const sortedSpecialists = [...specialists].sort(
-  (a, b) => a.data.sortOrder - b.data.sortOrder,
-);
+const featured = specialists
+  .filter((s) => s.data.featured)
+  .sort((a, b) => a.data.sortOrder - b.data.sortOrder);
+
 const locationName: Record<string, string> = Object.fromEntries(
   locations.map((l) => [l.data.slug, l.data.shortName]),
 );
@@ -28,25 +31,64 @@ const breadcrumbs = [
   { name: t("nav.about"), url: lp("/o-nas/") },
 ];
 
+// JSON-LD Person structured data for featured specialists
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": featured
+    .filter((s) => s.data.booksyStafferUrl)
+    .map((s) => ({
+      "@type": "Person",
+      name: s.data.name,
+      jobTitle: tc("specialists", s.data.slug, "specialty", lang) ?? s.data.specialty,
+      worksFor: { "@type": "Organization", name: "Hey Beauty" },
+      ...(s.data.booksyStafferUrl ? { sameAs: [s.data.booksyStafferUrl] } : {}),
+    })),
+};
+
 const whyItems = [t("about.why1"), t("about.why2"), t("about.why3"), t("about.why4"), t("about.why5")];
 ---
 
 <Base {title} {description} hreflangPath="/o-nas/">
+  <JsonLd slot="head" data={personJsonLd} />
+
   <div class="mx-auto max-w-7xl px-6">
     <div class="pt-8">
       <Breadcrumbs items={breadcrumbs} />
     </div>
+  </div>
 
-    <!-- Hero -->
-    <section class="pb-12 pt-16 lg:pt-24">
-      <p class="font-ui text-[11px] uppercase tracking-[3px] text-muted">{t("about.label")}</p>
-      <h1 class="mt-3 font-display text-h1">Hey Beauty</h1>
-      <p class="mt-4 max-w-3xl text-lg leading-relaxed text-muted">{t("about.intro")}</p>
-    </section>
+  <!-- VIDEO HERO -->
+  <section class="grain bg-surface">
+    <div class="mx-auto grid min-h-[600px] max-w-7xl grid-cols-1 md:grid-cols-[1.2fr_1fr]">
+      <div data-reveal class="relative overflow-hidden">
+        <video
+          src={assetPath("/videos/hb_team.mp4")}
+          autoplay
+          muted
+          loop
+          playsinline
+          class="h-full w-full object-cover"
+          style="min-height: 400px;"
+        ></video>
+        <div class="absolute inset-0 bg-black/20"></div>
+        <div class="absolute bottom-0 left-0 p-12 lg:p-20">
+          <p class="font-display text-[clamp(2rem,4vw,3.5rem)] italic leading-[1.05] text-white/60">
+            {t("home.aboutQuote")}
+          </p>
+        </div>
+      </div>
+      <div data-reveal class="flex flex-col justify-center p-12 lg:p-20">
+        <p class="font-ui text-[11px] uppercase tracking-[3px] text-muted">{t("about.label")}</p>
+        <h1 class="mt-3 font-display text-h1">Hey Beauty</h1>
+        <p class="mt-8 text-lg leading-relaxed text-muted">{t("about.intro")}</p>
+      </div>
+    </div>
+  </section>
 
-    <!-- Philosophy + Why us -->
-    <section class="border-t border-border py-16">
-      <div class="grid grid-cols-1 gap-16 md:grid-cols-2">
+  <!-- PHILOSOPHY + WHY US -->
+  <section class="py-24 lg:py-32">
+    <div class="mx-auto max-w-7xl px-6">
+      <div data-reveal class="grid grid-cols-1 gap-16 md:grid-cols-2">
         <div>
           <p class="font-ui text-[11px] uppercase tracking-[3px] text-muted">{t("about.philosophyLabel")}</p>
           <h2 class="mt-3 font-display text-h3">{t("about.philosophyTitle")}</h2>
@@ -67,21 +109,41 @@ const whyItems = [t("about.why1"), t("about.why2"), t("about.why3"), t("about.wh
           </ul>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Team grid -->
-    <section class="border-t border-border py-16">
-      <p class="font-ui text-[11px] uppercase tracking-[3px] text-muted">{t("about.teamLabel")}</p>
-      <h2 class="mt-3 font-display text-h2">{t("about.teamTitle")}</h2>
-      <div class="mt-12 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
-        {sortedSpecialists.map((s) => (
+  <!-- TOP STYLISTKI -->
+  <section class="grain bg-surface py-24 lg:py-32">
+    <div class="mx-auto max-w-7xl px-6">
+      <div data-reveal>
+        <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">{t("about.teamLabel")}</p>
+        <h2 class="mt-4 font-display text-h2">{t("about.teamTitle")}</h2>
+      </div>
+      <div data-reveal-stagger class="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {featured.map((s) => (
           <div class="group">
             <div class="relative aspect-[3/4] overflow-hidden bg-surface">
+              {s.data.videoUrl && (
+                <video
+                  data-hover-video
+                  src={assetPath(s.data.videoUrl)}
+                  muted
+                  loop
+                  playsinline
+                  preload="none"
+                  class="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                ></video>
+              )}
               {s.data.photo ? (
                 <img
-                  src={s.data.photo}
+                  src={assetPath(s.data.photo)}
                   alt={s.data.name}
-                  class="h-full w-full object-cover grayscale transition-transform duration-500 group-hover:scale-105"
+                  class:list={[
+                    "h-full w-full object-cover transition-all duration-500",
+                    s.data.videoUrl
+                      ? "group-hover:opacity-0"
+                      : "grayscale group-hover:grayscale-0",
+                  ]}
                 />
               ) : (
                 <div class="flex h-full w-full items-end p-5">
@@ -91,30 +153,59 @@ const whyItems = [t("about.why1"), t("about.why2"), t("about.why3"), t("about.wh
                 </div>
               )}
             </div>
-            <div class="mt-3">
+            <div class="mt-4">
               <p class="font-display text-xl">{s.data.name}</p>
-              {locationName[s.data.locationSlug] && (
-                <p class="mt-1 font-ui text-[10px] uppercase tracking-[2px] text-muted">
-                  HB {locationName[s.data.locationSlug]}
+              {s.data.specialty && (
+                <p class="mt-1 font-ui text-[11px] uppercase tracking-[2px] text-muted">
+                  {tc("specialists", s.data.slug, "specialty", lang) ?? s.data.specialty}
+                  {locationName[s.data.locationSlug] && (
+                    <span> &middot; HB {locationName[s.data.locationSlug]}</span>
+                  )}
                 </p>
               )}
               {s.data.bio && (
-                <p class="mt-2 text-sm leading-relaxed text-muted">{s.data.bio}</p>
+                <p class="mt-2 text-sm leading-relaxed text-muted">
+                  {tc("specialists", s.data.slug, "bio", lang) ?? s.data.bio}
+                </p>
+              )}
+              {s.data.booksyStafferUrl && (
+                <a
+                  href={s.data.booksyStafferUrl}
+                  target="_blank"
+                  rel="noopener"
+                  class="mt-4 inline-block border border-primary px-6 py-2.5 font-ui text-[11px] uppercase tracking-[3px] transition-colors hover:bg-primary hover:text-bg"
+                >
+                  {t("about.bookStylist")}
+                </a>
               )}
             </div>
           </div>
         ))}
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- CTA -->
-    <section class="border-t border-border py-16 text-center">
-      <p class="font-ui text-[11px] uppercase tracking-[3px] text-muted">{t("about.ctaLabel")}</p>
-      <h2 class="mt-3 font-display text-h2">{t("about.ctaTitle")}</h2>
-      <p class="mt-4 text-muted">{t("about.ctaText")}</p>
-      <div class="mt-8">
-        <BookingCTA url="https://booksy.com/pl-pl/111132_hey-beauty-2-0_salon-kosmetyczny_8820_krakow" />
+  <script>
+    if (matchMedia('(hover: hover)').matches) {
+      document.querySelectorAll<HTMLVideoElement>('[data-hover-video]').forEach(video => {
+        const card = video.closest('.group');
+        card?.addEventListener('mouseenter', () => { video.play().catch(() => {}); });
+        card?.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; });
+      });
+    }
+  </script>
+
+  <!-- CTA -->
+  <section class="py-24 lg:py-32">
+    <div class="mx-auto max-w-7xl px-6 text-center">
+      <div data-reveal>
+        <p class="font-ui text-[11px] uppercase tracking-[3px] text-muted">{t("about.ctaLabel")}</p>
+        <h2 class="mt-3 font-display text-h2">{t("about.ctaTitle")}</h2>
+        <p class="mt-4 text-muted">{t("about.ctaText")}</p>
+        <div class="mt-8">
+          <BookingCTA url="https://booksy.com/pl-pl/111132_hey-beauty-2-0_salon-kosmetyczny_8820_krakow" />
+        </div>
       </div>
-    </section>
-  </div>
+    </div>
+  </section>
 </Base>
