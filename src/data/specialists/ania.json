@@ -1,9 +1,14 @@
 {
-  "name": "Ania",
+  "name": "Anna",
   "slug": "ania",
   "specialty": "podolog",
+  "specialtyUrl": "/uslugi/pedicure/",
   "locationSlug": "hey-beauty-2-0",
   "services": [],
+  "booksyStafferUrl": "https://booksy.com/pl-pl/111132_hey-beauty-2-0_salon-kosmetyczny_8820_krakow/staffer/497536",
+  "bio": "Certyfikowana podolog, która dba o zdrowie i komfort stóp. Łączy wiedzę medyczną z precyzyjną techniką. Specjalizuje się w pedicure leczniczym i profilaktyce wrastających paznokci.",
+  "photo": "/images/hero-stylist-2.avif",
+  "videoUrl": "/videos/ania_podolog.mp4",
   "featured": true,
-  "sortOrder": 3
+  "sortOrder": 4
 }

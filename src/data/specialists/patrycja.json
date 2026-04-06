@@ -2,8 +2,13 @@
   "name": "Patrycja",
   "slug": "patrycja",
   "specialty": "mani",
+  "specialtyUrl": "/uslugi/manicure/",
   "locationSlug": "hey-beauty-3-0",
   "services": [],
+  "booksyStafferUrl": "https://booksy.com/pl-pl/251875_hey-beauty-3-0_paznokcie_8820_krakow/staffer/571012",
+  "bio": "Perfekcjonistka manicure hybrydowego i uzupełnień żelowych. Znana z nieskazitelnych aplikacji pod kutikułę. Jej prace mówią same za siebie — precyzja i czystość wykonania to jej znak rozpoznawczy.",
+  "photo": "/images/hero-stylist-4.avif",
+  "videoUrl": "/videos/patrycja_paznokcie.mp4",
   "featured": true,
-  "sortOrder": 5
+  "sortOrder": 6
 }

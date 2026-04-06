@@ -90,6 +90,7 @@ const specialists = defineCollection({
     photo: z.string().optional(),
     bio: z.string().optional(),
     specialty: z.string().optional(),
+    specialtyUrl: z.string().optional(),
     locationSlug: z.string(),
     services: z.array(z.string()).default([]),
     instagram: z.string().url().optional(),

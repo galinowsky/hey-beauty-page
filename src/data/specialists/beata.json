@@ -2,9 +2,12 @@
   "name": "Beata",
   "slug": "beata",
   "specialty": "paznokcie",
+  "specialtyUrl": "/uslugi/manicure/",
   "locationSlug": "hey-beauty-1-0",
   "services": [],
   "booksyStafferUrl": "https://booksy.com/pl-pl/111132_hey-beauty-2-0_salon-kosmetyczny_8820_krakow/staffer/182911",
+  "bio": "Specjalistka od stylizacji paznokci z wieloletnim doświadczeniem. Stawia na precyzję i trwałość — każdy manicure traktuje jak małe dzieło sztuki. Fanka minimalistycznych wzorów i nowych technik żelowych.",
+  "photo": "/images/hero-stylist.avif",
   "featured": true,
-  "sortOrder": 1
+  "sortOrder": 3
 }

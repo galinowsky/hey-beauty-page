@@ -2,8 +2,13 @@
   "name": "Ewelina",
   "slug": "ewelina",
   "specialty": "brwi",
+  "specialtyUrl": "/uslugi/regulacja-brwi/",
   "locationSlug": "hey-beauty-2-0",
   "services": [],
+  "booksyStafferUrl": "https://booksy.com/pl-pl/111132_hey-beauty-2-0_salon-kosmetyczny_8820_krakow/staffer/209667",
+  "bio": "Mistrzyni stylizacji brwi — od hennej pudrowej po architekturę brwi. Każdą formę dopasowuje do rysów twarzy klientki. Regularnie szkoli się u najlepszych brow artistów w Polsce.",
+  "photo": "/images/hero-stylist-3.webp",
+  "videoUrl": "/videos/ewelina_brwi.mp4",
   "featured": true,
-  "sortOrder": 4
+  "sortOrder": 5
 }

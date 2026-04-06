@@ -1,9 +1,14 @@
 {
-  "name": "Kaska",
+  "name": "Katarzyna",
   "slug": "kaska",
   "specialty": "kosmetolog",
+  "specialtyUrl": "/uslugi/",
   "locationSlug": "hey-beauty-2-0",
   "services": [],
+  "booksyStafferUrl": "https://booksy.com/pl-pl/111132_hey-beauty-2-0_salon-kosmetyczny_8820_krakow/staffer/205754",
+  "bio": "Dyplomowana kosmetolog z pasją do pielęgnacji skóry. Specjalizuje się w zabiegach anti-aging i mikronakłuwaniu. Wierzy, że piękna skóra zaczyna się od dobrej diagnostyki i indywidualnego podejścia.",
+  "photo": "/images/kaska-hero.jpg",
+  "videoUrl": "/videos/kaska_blizny.mp4",
   "featured": true,
-  "sortOrder": 2
+  "sortOrder": 1
 }

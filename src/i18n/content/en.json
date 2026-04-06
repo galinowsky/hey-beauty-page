@@ -108,11 +108,11 @@
     }
   },
   "specialists": {
-    "beata": { "specialty": "Nails" },
-    "kaska": { "specialty": "Cosmetologist" },
-    "ania": { "specialty": "Podiatrist" },
-    "ewelina": { "specialty": "Brows" },
-    "patrycja": { "specialty": "Manicure" },
-    "madzia": { "specialty": "Hair" }
+    "beata": { "specialty": "Nails", "bio": "Nail styling specialist with years of experience. She values precision and durability, treating every manicure as a small work of art. A fan of minimalist designs and new gel techniques." },
+    "kaska": { "specialty": "Cosmetologist", "bio": "Qualified cosmetologist with a passion for skincare. She specialises in anti-ageing treatments and microneedling. Believes beautiful skin starts with proper diagnosis and a personalised approach." },
+    "ania": { "specialty": "Podologist", "bio": "Certified podologist who cares for the health and comfort of your feet. Combines medical knowledge with precise technique. Specialises in therapeutic pedicure and ingrown nail prevention." },
+    "ewelina": { "specialty": "Brows", "bio": "A true brow artist, from powder henna to full brow architecture. She tailors every shape to the client's facial features. Regularly trains with Poland's top brow specialists." },
+    "patrycja": { "specialty": "Manicure", "bio": "A perfectionist of hybrid manicure and gel infills. Known for flawless cuticle-line application. Her work speaks for itself — precision and clean execution are her signature." },
+    "madzia": { "specialty": "Hair", "bio": "Expert in keratin straightening and hair reconstruction. She restores shine to even the most damaged strands. Combines professional treatments with personalised at-home care recommendations." }
   }
 }

@@ -124,15 +124,20 @@ const whyItems = [t("about.why1"), t("about.why2"), t("about.why3"), t("about.wh
           <div class="group">
             <div class="relative aspect-[3/4] overflow-hidden bg-surface">
               {s.data.videoUrl && (
-                <video
-                  data-hover-video
-                  src={assetPath(s.data.videoUrl)}
-                  muted
-                  loop
-                  playsinline
-                  preload="none"
-                  class="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                ></video>
+                <>
+                  <video
+                    data-hover-video
+                    src={assetPath(s.data.videoUrl)}
+                    muted
+                    loop
+                    playsinline
+                    preload="none"
+                    class="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                  ></video>
+                  <div data-play-hint class="absolute bottom-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/40 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-0">
+                    <svg class="h-3.5 w-3.5 text-white/80" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                  </div>
+                </>
               )}
               {s.data.photo ? (
                 <img
@@ -157,9 +162,15 @@ const whyItems = [t("about.why1"), t("about.why2"), t("about.why3"), t("about.wh
               <p class="font-display text-xl">{s.data.name}</p>
               {s.data.specialty && (
                 <p class="mt-1 font-ui text-[11px] uppercase tracking-[2px] text-muted">
-                  {tc("specialists", s.data.slug, "specialty", lang) ?? s.data.specialty}
+                  {s.data.specialtyUrl ? (
+                    <a href={lp(s.data.specialtyUrl)} class="transition-colors hover:text-primary">
+                      {tc("specialists", s.data.slug, "specialty", lang) ?? s.data.specialty}
+                    </a>
+                  ) : (
+                    tc("specialists", s.data.slug, "specialty", lang) ?? s.data.specialty
+                  )}
                   {locationName[s.data.locationSlug] && (
-                    <span> &middot; HB {locationName[s.data.locationSlug]}</span>
+                    <span> &middot; <a href={lp(`/salony/${s.data.locationSlug}/`)} class="transition-colors hover:text-primary">HB {locationName[s.data.locationSlug]}</a></span>
                   )}
                 </p>
               )}
@@ -186,12 +197,44 @@ const whyItems = [t("about.why1"), t("about.why2"), t("about.why3"), t("about.wh
   </section>
 
   <script>
-    if (matchMedia('(hover: hover)').matches) {
-      document.querySelectorAll<HTMLVideoElement>('[data-hover-video]').forEach(video => {
-        const card = video.closest('.group');
-        card?.addEventListener('mouseenter', () => { video.play().catch(() => {}); });
-        card?.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; });
+    const videos = document.querySelectorAll<HTMLVideoElement>('[data-hover-video]');
+
+    // Desktop/tablet: hover to play (harmless on touch devices)
+    videos.forEach(video => {
+      const card = video.closest('.group');
+      card?.addEventListener('mouseenter', () => { video.play().catch(() => {}); });
+      card?.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; });
+    });
+
+    // Mobile (single-column < 768px): auto-play on scroll into view
+    if (window.innerWidth < 768) {
+      videos.forEach(video => {
+        video.classList.remove('group-hover:opacity-100');
       });
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const video = entry.target as HTMLVideoElement;
+          const photo = video.parentElement?.querySelector('img') as HTMLElement | null;
+          const hint = video.parentElement?.querySelector('[data-play-hint]') as HTMLElement | null;
+          if (entry.isIntersecting) {
+            video.play().catch(() => {});
+            video.classList.remove('opacity-0');
+            video.classList.add('opacity-100');
+            if (photo) photo.classList.add('opacity-0');
+            if (hint) hint.classList.add('opacity-0');
+          } else {
+            video.pause();
+            video.currentTime = 0;
+            video.classList.remove('opacity-100');
+            video.classList.add('opacity-0');
+            if (photo) photo.classList.remove('opacity-0');
+            if (hint) hint.classList.remove('opacity-0');
+          }
+        });
+      }, { threshold: 0.5 });
+
+      videos.forEach(video => observer.observe(video));
     }
   </script>
 

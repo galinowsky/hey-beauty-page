@@ -1,9 +1,14 @@
 {
-  "name": "Madzia",
+  "name": "Magdalena",
   "slug": "madzia",
   "specialty": "włosy",
+  "specialtyUrl": "/uslugi/wlosy/",
   "locationSlug": "hey-beauty-zablocie",
   "services": [],
+  "booksyStafferUrl": "https://booksy.com/pl-pl/306187_hey-beauty-zablocie_salon-kosmetyczny_8820_krakow/staffer/698077",
+  "bio": "Ekspertka od keratynowego prostowania i rekonstrukcji włosów. Przywraca blask nawet najbardziej zniszczonym pasmom. Łączy profesjonalne zabiegi z indywidualnym doborem kosmetyków do pielęgnacji domowej.",
+  "photo": "/images/Madzia-hero.jpeg",
+  "videoUrl": "/videos/madzia/hair-1.mp4",
   "featured": true,
-  "sortOrder": 6
+  "sortOrder": 2
 }
