@@ -32,5 +32,26 @@ const lang = Astro.currentLocale ?? "pl";
       <slot />
     </main>
     <Footer />
+    <script>
+      // Global: stop container pulse when images load
+      document.querySelectorAll<HTMLElement>('[data-media-container]').forEach(container => {
+        const img = container.querySelector<HTMLImageElement>('img[data-media-item]');
+        if (!img) return;
+        const done = () => container.classList.replace('media-loading', 'media-loaded');
+        if (img.complete && img.naturalHeight > 0) done();
+        else img.addEventListener('load', done, { once: true });
+      });
+
+      // Mobile (< 768px): activate card hover effects on scroll into center
+      if (window.innerWidth < 768) {
+        const cards = document.querySelectorAll<HTMLElement>('[data-card]');
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            entry.target.classList.toggle('is-active', entry.isIntersecting);
+          });
+        }, { threshold: 0.5 });
+        cards.forEach(card => observer.observe(card));
+      }
+    </script>
   </body>
 </html>

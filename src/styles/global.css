@@ -95,24 +95,32 @@ h1, h2, h3 {
   }
 }
 
+/* Fallback: browsers without scroll-driven animations get a simple fade-in */
 [data-reveal] {
   opacity: 0;
   animation: reveal-up 0.8s var(--ease-enter) forwards;
-  animation-timeline: view();
-  animation-range: entry 0% entry 30%;
 }
 
-/* Stagger children */
 [data-reveal-stagger] > * {
   opacity: 0;
   animation: reveal-up 0.6s var(--ease-enter) forwards;
-  animation-timeline: view();
-  animation-range: entry 0% entry 25%;
 }
 [data-reveal-stagger] > *:nth-child(1) { animation-delay: 0ms; }
 [data-reveal-stagger] > *:nth-child(2) { animation-delay: 80ms; }
 [data-reveal-stagger] > *:nth-child(3) { animation-delay: 160ms; }
 [data-reveal-stagger] > *:nth-child(4) { animation-delay: 240ms; }
+
+/* Upgrade: browsers with scroll-driven animations get scroll-triggered reveal */
+@supports (animation-timeline: view()) {
+  [data-reveal] {
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+  [data-reveal-stagger] > * {
+    animation-timeline: view();
+    animation-range: entry 0% entry 25%;
+  }
+}
 
 /* Hero entrance animation */
 @keyframes hero-fade {
@@ -161,11 +169,39 @@ h1, h2, h3 {
   z-index: 2;
 }
 
+/* ── Media Loading Pulse ── */
+/* Soft breathing animation on containers while images/videos load.
+   Only the CONTAINER pulses. Media inside is untouched — no opacity
+   manipulation that could conflict with hover/reveal transitions. */
+@keyframes media-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+.media-loading {
+  animation: media-pulse 2s ease-in-out infinite;
+}
+
+.media-loaded {
+  animation: none;
+}
+
+/* Hero video overlay pulse — visible over the dark tint while video buffers */
+@keyframes hero-overlay-pulse {
+  0%, 100% { background-color: rgba(0, 0, 0, 0.35); }
+  50% { background-color: rgba(0, 0, 0, 0.15); }
+}
+
+.animate-hero-pulse {
+  animation: hero-overlay-pulse 2s ease-in-out infinite;
+}
+
 /* ── Subtle Hover Lift on Cards ── */
 .hover-lift {
   transition: transform 0.4s var(--ease-enter), box-shadow 0.4s var(--ease-enter);
 }
-.hover-lift:hover {
+.hover-lift:hover,
+.hover-lift.is-active {
   transform: translateY(-4px);
   box-shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.08);
 }
@@ -175,8 +211,29 @@ h1, h2, h3 {
   filter: grayscale(100%);
   transition: filter 0.6s var(--ease-move);
 }
-.img-reveal:hover {
+.img-reveal:hover,
+.is-active .img-reveal {
   filter: grayscale(0%);
+}
+
+/* ── Mobile active state for cards (mirrors hover) ── */
+[data-card].is-active {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.07);
+}
+
+/* Service card: scale image + remove grayscale */
+a[data-card].is-active {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+a[data-card].is-active img[data-media-item] {
+  transform: scale(1.05);
+  filter: grayscale(0);
+}
+
+/* Review card: stars highlight */
+[data-card].is-active .text-muted\/40 {
+  color: var(--color-primary);
 }
 
 /* Selection */

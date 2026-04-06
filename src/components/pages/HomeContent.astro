@@ -101,6 +101,18 @@ const description = "Hey Beauty to sieć salonów kosmetycznych w Krakowie. 4 lo
     });
   </script>
 
+  <script>
+    // Hero video: pulse overlay while loading, fade to normal tint when ready
+    document.querySelectorAll<HTMLVideoElement>('[data-hero-video]').forEach(video => {
+      const overlay = video.parentElement?.querySelector<HTMLElement>('[data-hero-overlay]');
+      if (!overlay) return;
+      const done = () => { overlay.classList.remove('animate-hero-pulse'); };
+      if (video.readyState >= 3) return; // already loaded, no pulse needed
+      overlay.classList.add('animate-hero-pulse');
+      video.addEventListener('canplay', done, { once: true });
+    });
+  </script>
+
   <!-- LOCATIONS -->
   <section class="grain bg-surface py-24 lg:py-32">
     <div class="mx-auto max-w-7xl px-6">
@@ -149,7 +161,7 @@ const description = "Hey Beauty to sieć salonów kosmetycznych w Krakowie. 4 lo
   <!-- ABOUT PREVIEW -->
   <section class="grain bg-surface">
     <div class="mx-auto grid min-h-[600px] max-w-7xl grid-cols-1 md:grid-cols-[1.2fr_1fr]">
-      <div data-reveal class="relative overflow-hidden">
+      <div data-reveal class="relative overflow-hidden bg-surface" style="min-height: 400px;">
         <video
           src={assetPath("/videos/hb_team.mp4")}
           autoplay
@@ -158,8 +170,9 @@ const description = "Hey Beauty to sieć salonów kosmetycznych w Krakowie. 4 lo
           playsinline
           class="h-full w-full object-cover"
           style="min-height: 400px;"
+          data-hero-video
         ></video>
-        <div class="absolute inset-0 bg-black/20"></div>
+        <div class="absolute inset-0 bg-black/20 transition-opacity duration-500" data-hero-overlay></div>
         <div class="absolute bottom-0 left-0 p-12 lg:p-20">
           <p class="font-display text-[clamp(2rem,4vw,3.5rem)] italic leading-[1.05] text-white/60">
             {t("home.aboutQuote")}
@@ -192,7 +205,7 @@ const description = "Hey Beauty to sieć salonów kosmetycznych w Krakowie. 4 lo
           { text: "Zabieg przeprowadzony bardzo sprawnie, dostałam dużo informacji o tym jak zadbać o twarz po zabiegu i na co dzień. Pani Paulina szczegółowo informowała mnie o każdym kroku — sprawiła, że zabieg był na tyle przyjemny, na ile przyjemne może być wbijanie igieł do twarzy ;)", name: "Paulina", service: "Dermapen 4.0", location: "HB 2.0", rating: 5 },
           { text: "Pani Marta samodzielnie dobrała preparaty, wiedząc co potrzeba na moje problemy skórne. Efekt był dokładnie taki jak zamierzony — z czystym sumieniem mogę polecić, szczególnie Panią Martę.", name: "Marta", service: "Zabieg dopasowany indywidualnie", location: "HB 3.0", rating: 5 },
         ].map((review) => (
-          <div class="group flex flex-col border border-border p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)]">
+          <div class="group flex flex-col border border-border p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)]" data-card>
             <p class="font-display text-3xl text-muted/20 leading-none">&ldquo;</p>
             <p class="mt-3 flex-1 text-sm leading-relaxed text-muted">{review.text}</p>
             <div class="mt-6 border-t border-border pt-6">

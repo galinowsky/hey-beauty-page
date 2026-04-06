@@ -60,7 +60,7 @@ const whyItems = [t("about.why1"), t("about.why2"), t("about.why3"), t("about.wh
   <!-- VIDEO HERO -->
   <section class="grain bg-surface">
     <div class="mx-auto grid min-h-[600px] max-w-7xl grid-cols-1 md:grid-cols-[1.2fr_1fr]">
-      <div data-reveal class="relative overflow-hidden">
+      <div data-reveal class="relative overflow-hidden bg-surface" style="min-height: 400px;">
         <video
           src={assetPath("/videos/hb_team.mp4")}
           autoplay
@@ -69,18 +69,19 @@ const whyItems = [t("about.why1"), t("about.why2"), t("about.why3"), t("about.wh
           playsinline
           class="h-full w-full object-cover"
           style="min-height: 400px;"
+          data-hero-video
         ></video>
-        <div class="absolute inset-0 bg-black/20"></div>
+        <div class="absolute inset-0 bg-black/20 transition-opacity duration-500" data-hero-overlay></div>
         <div class="absolute bottom-0 left-0 p-12 lg:p-20">
           <p class="font-display text-[clamp(2rem,4vw,3.5rem)] italic leading-[1.05] text-white/60">
             {t("home.aboutQuote")}
           </p>
         </div>
       </div>
-      <div data-reveal class="flex flex-col justify-center p-12 lg:p-20">
+      <div data-reveal class="flex flex-col justify-center px-6 py-10 md:p-12 lg:p-20">
         <p class="font-ui text-[11px] uppercase tracking-[3px] text-muted">{t("about.label")}</p>
         <h1 class="mt-3 font-display text-h1">Hey Beauty</h1>
-        <p class="mt-8 text-lg leading-relaxed text-muted">{t("about.intro")}</p>
+        <p class="mt-6 text-lg leading-relaxed text-muted md:mt-8">{t("about.intro")}</p>
       </div>
     </div>
   </section>
@@ -121,13 +122,14 @@ const whyItems = [t("about.why1"), t("about.why2"), t("about.why3"), t("about.wh
       </div>
       <div data-reveal-stagger class="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {featured.map((s) => (
-          <div class="group">
-            <div class="relative aspect-[3/4] overflow-hidden bg-surface">
+          <div class="group" data-card>
+            <div class="media-loading relative aspect-[3/4] overflow-hidden bg-surface" data-media-container>
               {s.data.videoUrl && (
                 <>
                   <video
                     data-hover-video
                     src={assetPath(s.data.videoUrl)}
+                    poster={s.data.photo ? assetPath(s.data.photo) : undefined}
                     muted
                     loop
                     playsinline
@@ -143,6 +145,8 @@ const whyItems = [t("about.why1"), t("about.why2"), t("about.why3"), t("about.wh
                 <img
                   src={assetPath(s.data.photo)}
                   alt={s.data.name}
+                  loading="lazy"
+                  data-media-item
                   class:list={[
                     "h-full w-full object-cover transition-all duration-500",
                     s.data.videoUrl
@@ -158,10 +162,10 @@ const whyItems = [t("about.why1"), t("about.why2"), t("about.why3"), t("about.wh
                 </div>
               )}
             </div>
-            <div class="mt-4">
+            <div class="mt-5 px-1 md:mt-4 md:px-0">
               <p class="font-display text-xl">{s.data.name}</p>
               {s.data.specialty && (
-                <p class="mt-1 font-ui text-[11px] uppercase tracking-[2px] text-muted">
+                <p class="mt-1.5 font-ui text-[11px] uppercase tracking-[2px] text-muted">
                   {s.data.specialtyUrl ? (
                     <a href={lp(s.data.specialtyUrl)} class="transition-colors hover:text-primary">
                       {tc("specialists", s.data.slug, "specialty", lang) ?? s.data.specialty}
@@ -175,7 +179,7 @@ const whyItems = [t("about.why1"), t("about.why2"), t("about.why3"), t("about.wh
                 </p>
               )}
               {s.data.bio && (
-                <p class="mt-2 text-sm leading-relaxed text-muted">
+                <p class="mt-3 text-sm leading-relaxed text-muted">
                   {tc("specialists", s.data.slug, "bio", lang) ?? s.data.bio}
                 </p>
               )}
@@ -184,7 +188,7 @@ const whyItems = [t("about.why1"), t("about.why2"), t("about.why3"), t("about.wh
                   href={s.data.booksyStafferUrl}
                   target="_blank"
                   rel="noopener"
-                  class="mt-4 inline-block border border-primary px-6 py-2.5 font-ui text-[11px] uppercase tracking-[3px] transition-colors hover:bg-primary hover:text-bg"
+                  class="mt-5 inline-block border border-primary px-6 py-2.5 font-ui text-[11px] uppercase tracking-[3px] transition-colors hover:bg-primary hover:text-bg"
                 >
                   {t("about.bookStylist")}
                 </a>
@@ -197,6 +201,33 @@ const whyItems = [t("about.why1"), t("about.why2"), t("about.why3"), t("about.wh
   </section>
 
   <script>
+    // ── Hero video: pulse overlay while loading ──
+    document.querySelectorAll<HTMLVideoElement>('[data-hero-video]').forEach(video => {
+      const overlay = video.parentElement?.querySelector<HTMLElement>('[data-hero-overlay]');
+      if (!overlay) return;
+      if (video.readyState >= 3) return;
+      overlay.classList.add('animate-hero-pulse');
+      video.addEventListener('canplay', () => overlay.classList.remove('animate-hero-pulse'), { once: true });
+    });
+
+    // ── Media loading: stop container pulse when loaded ──
+    document.querySelectorAll<HTMLElement>('[data-media-container]').forEach(container => {
+      const media = container.querySelector<HTMLImageElement | HTMLVideoElement>('[data-media-item]');
+      if (!media) {
+        container.classList.remove('media-loading');
+        return;
+      }
+      const done = () => container.classList.replace('media-loading', 'media-loaded');
+      if (media instanceof HTMLImageElement) {
+        if (media.complete && media.naturalHeight > 0) done();
+        else media.addEventListener('load', done, { once: true });
+      } else {
+        if (media.readyState >= 3) done();
+        else media.addEventListener('canplay', done, { once: true });
+      }
+    });
+
+    // ── Specialist hover videos ──
     const videos = document.querySelectorAll<HTMLVideoElement>('[data-hover-video]');
 
     // Desktop/tablet: hover to play (harmless on touch devices)
@@ -218,11 +249,16 @@ const whyItems = [t("about.why1"), t("about.why2"), t("about.why3"), t("about.wh
           const photo = video.parentElement?.querySelector('img') as HTMLElement | null;
           const hint = video.parentElement?.querySelector('[data-play-hint]') as HTMLElement | null;
           if (entry.isIntersecting) {
-            video.play().catch(() => {});
-            video.classList.remove('opacity-0');
-            video.classList.add('opacity-100');
-            if (photo) photo.classList.add('opacity-0');
-            if (hint) hint.classList.add('opacity-0');
+            // Try to play; if blocked (Low Power Mode), keep photo visible
+            video.play().then(() => {
+              video.classList.remove('opacity-0');
+              video.classList.add('opacity-100');
+              if (photo) photo.classList.add('opacity-0');
+              if (hint) hint.classList.add('opacity-0');
+            }).catch(() => {
+              // Autoplay blocked (Low Power Mode, data saver, etc.)
+              // Keep photo and play hint visible — user can tap to play
+            });
           } else {
             video.pause();
             video.currentTime = 0;
@@ -235,6 +271,29 @@ const whyItems = [t("about.why1"), t("about.why2"), t("about.why3"), t("about.wh
       }, { threshold: 0.5 });
 
       videos.forEach(video => observer.observe(video));
+
+      // Tap-to-play fallback: if autoplay is blocked, user can tap the card
+      videos.forEach(video => {
+        const card = video.closest('.group');
+        const photo = video.parentElement?.querySelector('img') as HTMLElement | null;
+        const hint = video.parentElement?.querySelector('[data-play-hint]') as HTMLElement | null;
+        card?.addEventListener('click', () => {
+          if (video.paused) {
+            video.play().then(() => {
+              video.classList.remove('opacity-0');
+              video.classList.add('opacity-100');
+              if (photo) photo.classList.add('opacity-0');
+              if (hint) hint.classList.add('opacity-0');
+            }).catch(() => {});
+          } else {
+            video.pause();
+            video.classList.remove('opacity-100');
+            video.classList.add('opacity-0');
+            if (photo) photo.classList.remove('opacity-0');
+            if (hint) hint.classList.remove('opacity-0');
+          }
+        });
+      });
     }
   </script>
 

@@ -16,9 +16,9 @@ const { name, shortName, slug, address, district, rating, booksyUrl, image } =
   Astro.props;
 ---
 
-<div class="hover-lift flex flex-col border border-border">
+<div class="hover-lift flex flex-col border border-border" data-card>
   <!-- Image -->
-  <div class="aspect-[16/10] overflow-hidden bg-surface">
+  <div class:list={["aspect-[16/10] overflow-hidden bg-surface", image && "media-loading"]} data-media-container>
     {
       image ? (
         <img
@@ -26,6 +26,7 @@ const { name, shortName, slug, address, district, rating, booksyUrl, image } =
           alt={name}
           class="h-full w-full object-cover img-reveal"
           loading="lazy"
+          data-media-item
         />
       ) : (
         <div class="flex h-full flex-col items-center justify-center gap-2">
