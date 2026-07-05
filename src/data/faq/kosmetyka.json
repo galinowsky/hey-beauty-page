@@ -1,0 +1,30 @@
+{
+  "scope": "service",
+  "scopeSlug": "kosmetyka",
+  "items": [
+    {
+      "question": "Jakie usługi kosmetyczne oferuje Hey Beauty?",
+      "answer": "Oferujemy pełen zakres usług kosmetycznych: stylizacja brwi (henna, laminacja, regulacja), stylizacja rzęs (lifting, laminacja, przedłużanie), manicure hybrydowy, pedicure, depilacja woskiem i wiele więcej."
+    },
+    {
+      "question": "Jak długo utrzymuje się manicure hybrydowy?",
+      "answer": "Prawidłowo wykonany manicure hybrydowy utrzymuje się od 2 do 4 tygodni, w zależności od tempa wzrostu paznokci i pielęgnacji domowej. Zalecamy wizytę co 3 tygodnie."
+    },
+    {
+      "question": "Czym jest laminacja brwi?",
+      "answer": "Laminacja brwi to zabieg modelujący, który nadaje brwiom pożądany kształt i kierunek. Efekt utrzymuje się 4-6 tygodni. Zabieg jest bezbolesny i trwa około 45 minut. Można go łączyć z henną brwi."
+    },
+    {
+      "question": "Czy mogę przyjść bez rezerwacji?",
+      "answer": "Zalecamy rezerwację przez Booksy, żeby zagwarantować Ci termin. W przypadku wolnych miejsc przyjmujemy też klientki bez rezerwacji — zadzwoń do wybranego salonu, żeby sprawdzić dostępność."
+    },
+    {
+      "question": "Czy usługi kosmetyczne dostępne są we wszystkich salonach?",
+      "answer": "Tak, podstawowe usługi kosmetyczne (brwi, rzęsy, manicure, pedicure) dostępne są we wszystkich 4 lokalizacjach Hey Beauty w Krakowie. Sprawdź cennik konkretnego salonu, bo oferta może się nieznacznie różnić."
+    },
+    {
+      "question": "Ile kosztuje stylizacja brwi w Hey Beauty?",
+      "answer": "Ceny stylizacji brwi zależą od rodzaju zabiegu i lokalizacji. Regulacja brwi od 30 zł, henna brwi od 50 zł, laminacja brwi od 120 zł. Aktualne ceny znajdziesz w cenniku lub na Booksy."
+    }
+  ]
+}

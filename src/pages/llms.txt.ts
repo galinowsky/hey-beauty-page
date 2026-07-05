@@ -9,7 +9,7 @@ export const GET: APIRoute = async () => {
     (a, b) => a.data.sortOrder - b.data.sortOrder,
   );
   const sortedServices = services.sort(
-    (a, b) => a.data.sortOrder - b.data.sortOrder,
+    (a, b) => (a.data.sortOrder ?? 0) - (b.data.sortOrder ?? 0) || a.data.name.localeCompare(b.data.name, "pl"),
   );
 
   const text = `# Hey Beauty
@@ -32,7 +32,7 @@ ${sortedLocations
 ${sortedServices
   .map(
     (s) =>
-      `- ${s.data.name}: ${s.data.description} (od ${s.data.priceRange.min} zł, ${s.data.duration.min} min)`,
+      `- ${s.data.name}: ${s.data.description} (${s.data.priceRange.min !== null ? `od ${s.data.priceRange.min} zł` : "cena indyw."}, ${s.data.duration.min} min)`,
   )
   .join("\n")}
 

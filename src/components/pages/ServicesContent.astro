@@ -1,9 +1,12 @@
 ---
 import Base from "../../layouts/Base.astro";
 import Breadcrumbs from "../Breadcrumbs.astro";
+import JsonLd from "../JsonLd.astro";
+import FAQAccordion from "../FAQAccordion.astro";
+import { buildBreadcrumbList, buildFAQPage } from "../../lib/json-ld";
 import { getCollection } from "astro:content";
-import ServiceCard from "../ServiceCard.astro";
-import { useTranslations, localizePath, tc } from "../../i18n/utils";
+import { assetPath } from "../../utils/asset";
+import { useTranslations, localizePath } from "../../i18n/utils";
 import type { Lang } from "../../i18n/ui";
 
 interface Props { lang: Lang }
@@ -12,34 +15,196 @@ const t = useTranslations(lang);
 const lp = (path: string) => localizePath(path, lang);
 
 const services = await getCollection("services");
-const sorted = services.sort((a, b) => a.data.sortOrder - b.data.sortOrder);
+const faqEntries = await getCollection("faq");
+
+// Count services per category
+const counts = {
+  kosmetologia: services.filter((s) => s.data.category === "kosmetologia").length,
+  kosmetyka: services.filter((s) => s.data.category === "kosmetyka").length,
+  wlosy: services.filter((s) => s.data.category === "wlosy").length,
+};
+
+// FAQ for the hub page (use global FAQ)
+const faqSlug = lang === "pl" ? undefined : lang;
+const globalFaq = faqEntries.find((f) =>
+  f.data.scope === "global" &&
+  (lang === "pl" ? !f.data.scopeSlug : f.data.scopeSlug === lang)
+);
 
 const breadcrumbs = [
   { name: t("services.breadHome"), url: lp("/") },
   { name: t("services.breadServices"), url: lp("/uslugi/") },
 ];
+
+// Category cards config
+const categories = {
+  pl: [
+    {
+      slug: "kosmetologia",
+      href: "/uslugi/kosmetologia/",
+      label: "Kosmetologia",
+      description: "Profesjonalne zabiegi na twarz i ciało. Oczyszczanie, peelingi chemiczne, mezoterapia, dermapen, lifting i zabiegi anti-aging.",
+      image: "/images/inspiration-2.jpeg",
+    },
+    {
+      slug: "kosmetyka",
+      href: "/uslugi/kosmetyka/",
+      label: "Kosmetyka",
+      description: "Stylizacja brwi i rzęs, manicure hybrydowy, pedicure, depilacja woskiem. Codzienne piękno w profesjonalnym wydaniu.",
+      image: "/images/inspiration-1.jpeg",
+    },
+    {
+      slug: "wlosy",
+      href: "/uslugi/wlosy/",
+      label: "Włosy",
+      description: "Keratynowe prostowanie i regeneracja włosów. Efekt gładkości i blasku na miesiące. Specjalistka Magdalena Tryba.",
+      image: "/images/team/madzia.jpg",
+    },
+  ],
+  en: [
+    {
+      slug: "kosmetologia",
+      href: "/uslugi/kosmetologia/",
+      label: "Cosmetology",
+      description: "Professional face and body treatments. Cleansing, chemical peels, mesotherapy, dermapen, lifting and anti-aging.",
+      image: "/images/inspiration-2.jpeg",
+    },
+    {
+      slug: "kosmetyka",
+      href: "/uslugi/kosmetyka/",
+      label: "Beauty",
+      description: "Brow and lash styling, hybrid manicure, pedicure, wax depilation. Everyday beauty at a professional level.",
+      image: "/images/inspiration-1.jpeg",
+    },
+    {
+      slug: "wlosy",
+      href: "/uslugi/wlosy/",
+      label: "Hair",
+      description: "Keratin straightening and regeneration. Smooth, shiny hair for months. Specialist Magdalena Tryba.",
+      image: "/images/team/madzia.jpg",
+    },
+  ],
+  uk: [
+    {
+      slug: "kosmetologia",
+      href: "/uslugi/kosmetologia/",
+      label: "Косметологія",
+      description: "Професійні процедури для обличчя і тіла. Очищення, хімічні пілінги, мезотерапія, дермапен, ліфтинг та антивікові процедури.",
+      image: "/images/inspiration-2.jpeg",
+    },
+    {
+      slug: "kosmetyka",
+      href: "/uslugi/kosmetyka/",
+      label: "Косметика",
+      description: "Стилізація брів і вій, гібридний манікюр, педикюр, депіляція воском. Щоденна краса на професійному рівні.",
+      image: "/images/inspiration-1.jpeg",
+    },
+    {
+      slug: "wlosy",
+      href: "/uslugi/wlosy/",
+      label: "Волосся",
+      description: "Кератинове випрямлення та відновлення. Гладке, блискуче волосся на місяці. Спеціалістка Магдалена Триба.",
+      image: "/images/team/madzia.jpg",
+    },
+  ],
+} as const;
+
+const currentCategories = categories[lang];
+
+const seoText = {
+  pl: "Hey Beauty oferuje profesjonalne usługi kosmetyczne w 4 salonach w Krakowie. Od zaawansowanych zabiegów kosmetologicznych, przez codzienną pielęgnację, po specjalistyczne zabiegi keratynowe na włosy. Każda usługa wykonywana jest przez doświadczone specjalistki z indywidualnym podejściem do klientki.",
+  en: "Hey Beauty offers professional beauty services across 4 salons in Kraków. From advanced cosmetology treatments, through everyday beauty care, to specialist keratin hair treatments. Every service is performed by experienced specialists with an individual approach to each client.",
+  uk: "Hey Beauty пропонує професійні косметичні послуги в 4 салонах у Кракові. Від передових косметологічних процедур, через щоденний догляд, до спеціалістичних кератинових процедур для волосся. Кожна послуга виконується досвідченими спеціалістками з індивідуальним підходом.",
+} as const;
 ---
 
 <Base title={t("services.pageTitle")} description={t("services.pageDesc")} hreflangPath="/uslugi/">
+  <JsonLd slot="head" data={buildBreadcrumbList(breadcrumbs, Astro.site)} />
+  {globalFaq && <JsonLd slot="head" data={buildFAQPage(globalFaq.data.items)} />}
+
   <div class="mx-auto max-w-7xl px-6">
     <div class="pt-8">
       <Breadcrumbs items={breadcrumbs} />
     </div>
-    <section class="py-16 lg:py-24">
-      <h1 class="font-display text-h1">{t("services.title")}</h1>
-      <p class="mt-4 max-w-2xl text-lg text-muted">{t("services.subtitle")}</p>
-      <div class="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {sorted.map((s) => (
-          <ServiceCard
-            name={tc("services", s.data.slug, "name", lang) ?? s.data.name}
-            slug={s.data.slug}
-            description={tc("services", s.data.slug, "description", lang) ?? s.data.description}
-            priceMin={s.data.priceRange.min} duration={`${s.data.duration.min} ${t("common.min")}`}
-            image={s.data.image}
-            href={lp(`/uslugi/${s.data.slug}/`)}
-            learnMoreText={t("common.learnMore")} />
+
+    <!-- Hero -->
+    <section class="pb-12 pt-16 lg:pt-24">
+      <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">{t("services.breadServices")}</p>
+      <h1 class="mt-4 font-display text-h1">{t("services.title")}</h1>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-muted">{t("services.subtitle")}</p>
+    </section>
+
+    <!-- Category Cards -->
+    <section class="pb-16">
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+        {currentCategories.map((cat) => (
+          <a
+            href={lp(cat.href)}
+            class="group relative flex flex-col overflow-hidden border border-border transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)]"
+          >
+            <div class="relative aspect-[4/3] overflow-hidden">
+              <img
+                src={assetPath(cat.image)}
+                alt={cat.label}
+                class="h-full w-full object-cover grayscale transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
+              />
+              <div class="absolute inset-0 bg-black/20 transition-opacity duration-300 group-hover:bg-black/10"></div>
+              <div class="absolute bottom-0 left-0 p-6">
+                <p class="font-display text-3xl text-white">{cat.label}</p>
+              </div>
+            </div>
+            <div class="flex flex-1 flex-col p-6">
+              <p class="flex-1 text-sm leading-relaxed text-muted">{cat.description}</p>
+              <div class="mt-4 flex items-center justify-between">
+                <span class="font-mono text-[10px] tracking-[2px] text-muted/50">
+                  {counts[cat.slug as keyof typeof counts]} {lang === "pl" ? "usług" : lang === "en" ? "services" : "послуг"}
+                </span>
+                <span class="font-ui text-[11px] uppercase tracking-[2px] text-primary transition-transform duration-300 group-hover:translate-x-1">
+                  {t("common.learnMore")}
+                </span>
+              </div>
+            </div>
+          </a>
         ))}
       </div>
     </section>
+
+    <!-- SEO text -->
+    <section class="border-t border-border py-16">
+      <div class="mx-auto max-w-3xl">
+        <p class="text-base leading-relaxed text-muted">{seoText[lang]}</p>
+      </div>
+    </section>
+
+    <!-- Cennik link -->
+    {lang === "pl" && (
+      <section class="border-t border-border py-12 text-center">
+        <p class="font-ui text-[11px] uppercase tracking-[3px] text-muted">
+          Szukasz konkretnych cen?
+        </p>
+        <a
+          href="/cennik/"
+          class="mt-4 inline-block border border-primary px-8 py-3 font-ui text-[11px] uppercase tracking-[3px] transition-colors hover:bg-primary hover:text-bg"
+        >
+          Zobacz pełny cennik
+        </a>
+      </section>
+    )}
   </div>
+
+  <!-- FAQ -->
+  {globalFaq && (
+    <section class="py-24 lg:py-32">
+      <div class="mx-auto max-w-3xl px-6">
+        <div class="text-center">
+          <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">FAQ</p>
+          <h2 class="mt-4 font-display text-h2">{t("home.faqTitle")}</h2>
+        </div>
+        <div class="mt-16">
+          <FAQAccordion items={globalFaq.data.items} />
+        </div>
+      </div>
+    </section>
+  )}
 </Base>

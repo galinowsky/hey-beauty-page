@@ -39,8 +39,14 @@ Every locale page is a 3-line wrapper: `<HairContent lang="uk" />`. All logic li
 
 **Language switcher** works by calling `toCanonicalPlPath(currentUrl, currentLang)` to reverse-translate the current URL back to Polish, then `localizePath(plPath, targetLang)` for each target language. This means the switcher stays correct as new pages are added, as long as slugs are in `routes.ts`.
 
-### 4. Service-location cross-pages (THE SEO PLAY)
-Every service × location combination gets its own page. "Lifting rzęs" at "Hey Beauty 2.0" = `/salony/hey-beauty-2-0/lifting-rzes/`. Each targets a long-tail keyword like "lifting rzęs Śródmieście Kraków". Most salons have 5 pages. We have 60-80+. This is the whole SEO strategy.
+### 4. Category pages + salon pages (THE SEO PLAY, v2)
+**Superseded 2026-04-12 — CEO decision.** The original plan was one page per service × location (60-80+ pages targeting long-tail keywords like "lifting rzęs Śródmieście Kraków"). That's gone. The framework now is: **3 service categories** (`kosmetologia`, `kosmetyka`, `wlosy` — `inne` exists in the schema but has no dedicated page) × **4 location pages**, with pricing filtered by category + location inside `/cennik/` rather than one page per combination.
+
+- `/uslugi/{category}/` — category landing page (services in that category, across all locations)
+- `/salony/{location}/` — salon page (services at that location)
+- `/cennik/` — the actual service×location price matrix, filtered client-side by category/location
+
+Long-tail service×location keyword targeting is no longer the strategy; category + location breadth is. If long-tail SEO is revisited later, it would need dedicated pages again — this is a deliberate trade of page count for lower maintenance (388 flat Airtable rows drive everything instead of hand-maintained per-combination pages).
 
 ### 5. Booksy data committed to git (not fetched at build)
 A scraper populates `src/data/` JSON files. These are committed. The site builds without Booksy API access. Changes are visible in git diffs. Data can be manually corrected after scraping.
@@ -59,30 +65,36 @@ FAQ accordion uses `<details>` (zero JS). Scroll-reveal animations use CSS `anim
 ```
 src/data/
 ├── locations/           # 4 JSON files (one per salon)
-├── services/            # 23 JSON files (one per treatment type)
-├── service-locations/   # 33 JSON files: {locationSlug}--{serviceSlug}.json
 ├── specialists/         # 8 JSON files (placeholder, photos pending)
-└── faq/                 # Global + per-service FAQ items
+└── faq/                 # Global + per-category FAQ items (kosmetologia.json, kosmetyka.json, ...)
+
+src/loaders/
+└── airtable.ts           # airtableServicesLoader() + airtableServiceLocationsLoader()
+                           # replaces the old services/ and service-locations/ JSON dirs entirely
 ```
+
+Services and service-locations are no longer JSON files in git — they're fetched from Airtable at build time (see `docs/cms-plan.md`).
 
 ### Data Model
 
-Three tables joined at **build time** via `getCollection()`. No database, no API at runtime.
+Three collections joined at **build time** via `getCollection()`. Locations are static JSON; services and service-locations come from the Airtable loaders. No database, no API at runtime (Airtable is only hit during `astro build`/`astro dev`).
 
 ```
-locations               services                service-locations
-─────────               ────────                ─────────────────
+locations               services (Airtable)     service-locations (Airtable)
+─────────               ────────────────────    ─────────────────────────────
 slug (PK)               slug (PK)               locationSlug (FK → locations)
 name                    name                    serviceSlug  (FK → services)
-shortName               category                priceMin          ← always required
-booksyId                description             priceMax?         ← set when Booksy shows a range
-booksyUrl               duration.min            priceNote?        ← e.g. "cena zależy od długości"
-address                 duration.max            duration          ← minutes (single value, typical)
-coordinates             priceRange.min          available
-openingHours            priceRange.max          booksyDirectUrl?
-rating                  booksySlug
-sortOrder               sortOrder
+shortName               category                priceMin          ← nullable
+booksyId                description             priceMax?         ← nullable, optional
+booksyUrl               duration.min/max        duration          ← minutes
+address                 priceRange.min/max      available
+coordinates             sortOrder
+openingHours
+rating
+sortOrder
 ```
+
+`category` is one of `kosmetologia | kosmetyka | wlosy | inne` (CEO-confirmed taxonomy, 2026-04-12). Only the first three have a dedicated category page today — see decision #4 above.
 
 ### Pricing Model
 
@@ -93,45 +105,20 @@ Booksy lists many variants per service (by hair length, stylist tier, add-ons). 
 - Display rule: `"150 zł"` when min === max, `"150–290 zł"` when different
 - Booking CTA always links to the Booksy page where users pick their variant
 
-### Locations × Services Matrix
+### Locations × Categories Matrix
 
-| | HB 1.0 | HB 2.0 | HB 3.0 | Zabłocie |
-|---|:---:|:---:|:---:|:---:|
-| Manicure hybrydowy | ✓ | — | ✓ | ✓ |
-| Uzupełnienie żelowe | — | — | — | ✓ |
-| Komplet hybrydowy | — | — | — | ✓ |
-| Pedicure frezarkowy | ✓ | ✓ | ✓ | ✓ |
-| Lifting rzęs | — | ✓ | — | ✓ |
-| Henna pudrowa | — | ✓ | — | ✓ |
-| Regulacja brwi | — | ✓ | — | ✓ |
-| Koloryzacja rzęs | — | ✓ | — | — |
-| Farba brwi | — | ✓ | — | ✓ |
-| Włosy — Keratyna | — | — | — | ✓ |
-| Diamentowa Keratyna | — | — | — | ✓ |
-| Autorski Zabieg HB | — | — | — | ✓ |
-| Botox Premium (włosy) | — | — | — | ✓ |
-| Rekonstrukcja włosów | — | — | — | ✓ |
-| Pakiet Rekonstrukcji | — | — | — | ✓ |
-| Odbudowa Molekularna | — | — | — | ✓ |
-| Dermapen 4.0 | — | ✓ | — | — |
-| RF Radiofrekwencja mikroigłowa | — | ✓ | — | — |
-| Masaż Kobido | — | ✓ | — | — |
-| Konsultacja kosmetologiczna | — | ✓ | — | — |
-| Oczyszczanie skóry | — | ✓ | — | — |
-| Ergolift | — | ✓ | — | — |
-| Fala uderzeniowa STORZ | — | ✓ | — | — |
-
-> Data source: Booksy screenshots (manual). To be replaced by Airtable export — see below.
+Superseded — locations no longer map to individual services in this doc, they map to categories. All 388 service×location combinations (which services exist at which salon, at what price) live in Airtable, not here. `/cennik/` is the live, always-current source; don't hand-maintain a matrix in markdown that Airtable already owns.
 
 ### Service Categories
 
-| Category slug | Display name | Salon(s) |
-|---|---|---|
-| `wlosy` | Włosy | Zabłocie |
-| `brwi-i-rzesy` | Brwi i rzęsy | HB 2.0, Zabłocie |
-| `stylizacja-paznokci` | Paznokcie | HB 1.0, 2.0, 3.0, Zabłocie |
-| `zabiegi-twarzy` | Zabiegi twarzy | HB 2.0 |
-| `zabiegi-ciala` | Zabiegi ciała | HB 2.0 |
+| Category slug | Display name | Has a dedicated `/uslugi/{slug}/` page? |
+|---|---|:---:|
+| `kosmetologia` | Kosmetologia | ✓ |
+| `kosmetyka` | Kosmetyka | ✓ |
+| `wlosy` | Włosy | ✓ |
+| `inne` | Inne | — (catch-all in Airtable schema, no page yet) |
+
+CEO-confirmed taxonomy, replacing the earlier 5-category split (`wlosy`, `brwi-i-rzesy`, `stylizacja-paznokci`, `zabiegi-twarzy`, `zabiegi-ciala`) shown in older versions of this doc.
 
 ## Page Generation
 
@@ -139,20 +126,19 @@ Booksy lists many variants per service (by hair length, stylist tier, add-ons). 
 Template                                  → Generated Pages
 ────────────────────────────────────────────────────────────
 pages/index.astro                         → /
-pages/cennik.astro                        → /cennik/
+pages/cennik.astro                        → /cennik/                          (price matrix, filterable by category + location)
 pages/o-nas.astro                         → /o-nas/
 pages/salony/index.astro                  → /salony/
-pages/salony/[location].astro             → /salony/hey-beauty-1-0/, etc. (4 pages)
+pages/salony/[location].astro             → /salony/hey-beauty-1-0/, etc.     (4 pages)
 pages/uslugi/index.astro                  → /uslugi/
-pages/uslugi/[service].astro              → /uslugi/lifting-rzes/, etc. (23 pages)
-pages/salony/[location]/[service].astro   → /salony/hey-beauty-2-0/lifting-rzes/ (33 pages)
+pages/uslugi/{category}.astro             → /uslugi/kosmetologia/, etc.       (3 pages: kosmetologia, kosmetyka, wlosy)
 pages/{static}.astro                      → /kontakt/, /faq/, /404, etc.
 pages/robots.txt.ts                       → /robots.txt
 pages/llms.txt.ts                         → /llms.txt
-en/, uk/                                  → partial English + Ukrainian subtrees
+en/, uk/                                  → partial English + Ukrainian subtrees, same category-page shape
 ```
 
-**Current total: ~65 pre-rendered HTML pages.**
+**Current total: 41 pre-rendered HTML pages** (down from ~65 — see decision #4 above; the per-service and per-service-location pages were removed in favor of category pages).
 
 ## Design System
 
@@ -177,34 +163,33 @@ See DESIGN.md. Key principle: everything is a CSS custom property. Swapping font
 | 2026-03-28 | Service-location as a separate cross-ref table | Prices live in service-locations, not embedded in services. This allows the same service to have different prices at different locations — and makes the Airtable migration straightforward. |
 | 2026-03-28 | Vanilla JS for cennik filters | Progressive enhancement: prices pre-rendered in HTML, JS updates display via data-* attributes. Page works without JS — prices just don't filter. No framework needed for what is essentially a CSS show/hide. |
 | 2026-03-28 | Airtable as future CMS | Staff can update prices without a code deploy. Booksy export → Airtable → Astro API fetch at build time. Still generates static HTML. |
+| 2026-04-12 | Decap CMS scrapped, Airtable-only | See `docs/cms-plan.md`. Page structure still in flux, CMS added complexity without value. Airtable already covers the one thing that changes on its own — pricing. |
+| 2026-04-12 | Airtable content loaders shipped | 55 JSON files (`services/`, `service-locations/`) replaced by `src/loaders/airtable.ts`, fetching 388 flat records at build time. |
+| 2026-04-12 | Per-service × per-location pages → 3 category pages | CEO decision. Dropped the 60-80 page long-tail SEO play for `kosmetologia`/`kosmetyka`/`wlosy` category pages + a filterable `/cennik/` price matrix. Page count 65 → 41. See decision #4. |
 
 ## How to Add a New Page (Recipe)
 
-### New service page (e.g. "manicure")
+### New category page (e.g. a future "inne" page)
 
-1. **Content logic** — create `src/components/pages/ManicureContent.astro` with `interface Props { lang: Lang }`. All text goes through `t()`, all links through `lp()`.
+1. **Content logic** — create/extend `src/components/pages/CategoryContent.astro` with `interface Props { lang: Lang; category: string }`. All text goes through `t()`, all links through `lp()`. Services are pulled from the `services`/`serviceLocations` collections filtered by `category`, not per-page content.
 
-2. **Polish page** — `src/pages/uslugi/manicure.astro`:
+2. **Polish page** — `src/pages/uslugi/{category}.astro`:
    ```astro
    ---
-   import ManicureContent from "../../components/pages/ManicureContent.astro";
+   import CategoryContent from "../../components/pages/CategoryContent.astro";
    ---
-   <ManicureContent lang="pl" />
+   <CategoryContent lang="pl" category="inne" />
    ```
 
-3. **EN page** — `src/pages/en/services/manicure.astro` (same 3 lines, `lang="en"`).
+3. **EN page** — `src/pages/en/services/{slug}.astro` (same shape, `lang="en"`).
 
-4. **UK page** — `src/pages/uk/posluhy/manicure.astro` (same 3 lines, `lang="uk"`). If the Ukrainian slug differs: `src/pages/uk/posluhy/manikiur.astro`.
+4. **UK page** — `src/pages/uk/posluhy/{slug}.astro` (same shape, `lang="uk"`). Use the Ukrainian slug if it differs.
 
-5. **Slug map** — add to `src/i18n/routes.ts` if the EN/UK slug differs from Polish:
-   ```ts
-   en: { ..., "manicure": "manicure" },   // same — can be omitted
-   uk: { ..., "manicure": "manikiur" },   // different — must add
-   ```
+5. **Slug map** — add to `src/i18n/routes.ts` if the EN/UK slug differs from Polish.
 
-6. **Translations** — add all `t("manicure.*")` keys to `src/i18n/ui.ts` for all 3 locales.
+6. **Translations** — add `t("services.{category}.*")` keys to `src/i18n/ui.ts` for all 3 locales.
 
-7. **FAQ** (optional) — create `src/data/faq/manicure.json`, `manicure-en.json`, `manicure-uk.json`.
+7. **FAQ** (optional) — create `src/data/faq/{category}.json`, `{category}-en.json`, `{category}-uk.json` (see `faq/kosmetologia.json` / `faq/kosmetyka.json` for the pattern).
 
 That's it. The language switcher, hreflang tags, and nav active states all work automatically.
 
@@ -212,35 +197,24 @@ That's it. The language switcher, hreflang tags, and nav active states all work 
 
 Same as above, but also add `"blog": "blog"` (or translated slug) to `slugMap` in `routes.ts`, and add nav items to `Header.astro` via `t()` + `lp()`.
 
-## Planned: Airtable as CMS
+### Adding/removing a service or changing a price
 
-**Problem:** Service/price data lives in JSON files → every price change requires a code deploy.
+Nothing in this repo. Edit the record in Airtable (base `appxLApX6BHtnXE4h`, Services table `tblEx5r6lgbKKrdJl`) and rebuild — see `docs/cms-plan.md`.
 
-**Plan:** Airtable as the single editable source of truth. Staff updates prices in Airtable → site rebuilds automatically.
+## Airtable as CMS (shipped 2026-04-12)
 
-### Airtable table structure (mirrors the JSON model)
+Service/price data used to live in JSON files → every price change required a code deploy. Now Airtable is the single editable source of truth; a rebuild picks up whatever's in Airtable.
 
-| Table | Rows | Key fields |
-|---|---|---|
-| Locations | 4 | name, slug, booksyUrl, address |
-| Services | 23+ | name, slug, category, description, duration |
-| ServiceLocations | 33+ | Location (linked), Service (linked), priceMin, priceMax, duration, booksyDirectUrl |
+### Airtable table structure
 
-### Migration steps
+| Table | ID | Rows | Key fields |
+|---|---|---|---|
+| Services | `tblEx5r6lgbKKrdJl` | 388 (flat: one row per service×location) | name, slug, category, priceMin, priceMax, duration, booksyDirectUrl |
+| Salons | `tblLXo7SbbaSkGzQj` | 4 | name, slug, booksyUrl, address |
 
-1. Export all 4 salons from Booksy business dashboard (CSV/Excel)
-2. Import into Airtable — three tables above
-3. In `astro.config.ts` or a prebuild script, `fetch()` from Airtable REST API at build time
-4. Write fetched data to temp JSON files (or pass directly to content collections)
-5. Connect Airtable webhook → Cloudflare Pages deploy hook → auto-rebuild on price changes (~30s)
+`src/loaders/airtable.ts` fetches both at build time and normalizes the flat 388 rows into deduplicated `services` (176 unique) + `serviceLocations` (388) content collections. Auth via `AIRTABLE_API_KEY` (PAT, `data.records:read` scope) in `.env` — see `.env.example`.
 
-Result: still 100% static HTML — zero runtime dependency on Airtable.
-
-### What's missing before Airtable migration
-
-- HB 1.0 and HB 3.0 full service lists (currently only manicure + pedicure)
-- Laminacja brwi — price not visible in screenshots
-- Any HB 2.0 services not yet screenshotted (Booksy shows 10+ more under kosmetologia)
+**Not yet wired:** an Airtable webhook → Cloudflare Pages deploy hook for auto-rebuild on price edits. Today, a price change in Airtable needs a manual rebuild/redeploy to go live. This is the natural next step once the site is actually deployed (see `TODOS.md`).
 
 ## Related Projects
 

@@ -14,9 +14,40 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 const lp = (path: string) => localizePath(path, lang);
 
+const allServices = await getCollection("services");
+const serviceLocations = await getCollection("serviceLocations");
+const locations = await getCollection("locations");
 const allFaq = await getCollection("faq");
 const hairFaqSlug = lang === "pl" ? "wlosy" : `wlosy-${lang}`;
 const hairFaq = allFaq.find((f) => f.data.scope === "service" && f.data.scopeSlug === hairFaqSlug);
+
+// Fetch hair services from Airtable
+const hairServices = allServices
+  .filter((s) => s.data.category === "wlosy")
+  .sort((a, b) => (a.data.sortOrder ?? 0) - (b.data.sortOrder ?? 0) || a.data.name.localeCompare(b.data.name, "pl"));
+
+// Build service data with prices from serviceLocations
+const hairServiceData = hairServices.map((svc) => {
+  const sls = serviceLocations.filter(
+    (sl) => sl.data.serviceSlug === svc.data.slug && sl.data.available,
+  );
+  const prices = sls.map((sl) => sl.data.priceMin).filter((p): p is number => p !== null);
+  const minPrice = prices.length > 0 ? Math.min(...prices) : null;
+  const dur = svc.data.duration;
+
+  return {
+    name: svc.data.name,
+    slug: svc.data.slug,
+    description: svc.data.description,
+    duration: dur.min === dur.max ? `${dur.min} min` : `${dur.min}–${dur.max} min`,
+    price: minPrice !== null
+      ? `${lang === "pl" ? "od" : lang === "en" ? "from" : "від"} ${minPrice} ${lang === "pl" ? "zł" : "PLN"}`
+      : (lang === "pl" ? "Cena ustalana indywidualnie" : lang === "en" ? "Price on consultation" : "Ціна індивідуально"),
+    note: lang === "pl" ? "Cena zależy od długości i grubości włosów"
+      : lang === "en" ? "Price depends on hair length and thickness"
+      : "Ціна залежить від довжини та товщини волосся",
+  };
+});
 
 const breadcrumbs = [
   { name: t("services.breadHome"), url: lp("/") },
@@ -36,22 +67,6 @@ const hairDesc = lang === "pl"
   ? "Keratin hair straightening and regeneration in Kraków. Specialist Magdalena Tryba — results up to 5 months. Hey Beauty Zabłocie, Przemysłowa 4. Book online."
   : "Кератинове випрямлення та відновлення волосся в Кракові. Спеціаліст Магдалена Триба — ефект до 5 місяців. Hey Beauty Забłoцie. Запис онлайн.";
 
-type ServiceEntry = { name: string; desc: string; duration: string; price: string; note: string };
-
-const services: Record<Lang, ServiceEntry[]> = {
-  pl: [
-    { name: "Keratynowe prostowanie włosów", desc: "Trwałe wygładzenie włosów na 3–5 miesięcy. Eliminuje puszenie, skraca czas suszenia o 60%. Formuła bezformaldehydowa — bezpieczna dla każdego rodzaju włosa.", duration: "2,5–4 h", price: "od 450 zł", note: "Cena zależy od długości i grubości włosów" },
-    { name: "Keratynowa regeneracja włosów", desc: "Intensywna odbudowa struktury włosa od wewnątrz. Efekt miękkości, blasku i elastyczności. Idealna dla włosów zniszczonych farbowaniem i stylizacją.", duration: "2–3 h", price: "od 350 zł", note: "Cena zależy od długości i grubości włosów" },
-  ],
-  en: [
-    { name: "Keratin hair straightening", desc: "Permanent smoothing for 3–5 months. Eliminates frizz, cuts drying time by 60%. Formaldehyde-free formula — safe for all hair types.", duration: "2.5–4 h", price: "from 450 PLN", note: "Price depends on hair length and thickness" },
-    { name: "Keratin hair regeneration", desc: "Intensive rebuilding of hair structure from within. Results in softness, shine and elasticity. Ideal for hair damaged by coloring and styling.", duration: "2–3 h", price: "from 350 PLN", note: "Price depends on hair length and thickness" },
-  ],
-  uk: [
-    { name: "Кератинове випрямлення волосся", desc: "Тривале розгладження волосся на 3–5 місяців. Усуває кучерявість, скорочує час сушіння на 60%. Безформальдегідна формула — безпечна для будь-якого типу волосся.", duration: "2,5–4 год", price: "від 450 зл", note: "Ціна залежить від довжини та товщини волосся" },
-    { name: "Кератинова регенерація волосся", desc: "Інтенсивне відновлення структури волосся зсередини. Ефект м'якості, блиску та еластичності. Ідеально для волосся, пошкодженого фарбуванням та укладанням.", duration: "2–3 год", price: "від 350 зл", note: "Ціна залежить від довжини та товщини волосся" },
-  ],
-};
 
 const reviews: Record<Lang, { text: string; name: string; service: string; rating: number }[]> = {
   pl: [
@@ -71,7 +86,6 @@ const reviews: Record<Lang, { text: string; name: string; service: string; ratin
   ],
 };
 
-const currentServices = services[lang];
 const currentReviews = reviews[lang];
 ---
 
@@ -174,10 +188,10 @@ const currentReviews = reviews[lang];
         <p class="mt-3 font-mono text-xs tracking-[2px] text-muted/60">{t("hair.offerNote")}</p>
       </div>
       <div class="-mx-6 mt-16 grid grid-cols-1 gap-0 divide-y divide-border border-t border-b border-border lg:grid-cols-2 lg:divide-y-0 lg:divide-x">
-        {currentServices.map((s) => (
+        {hairServiceData.map((s) => (
           <div class="px-6 py-8 lg:px-8 lg:py-10">
             <h3 class="font-display text-2xl">{s.name}</h3>
-            <p class="mt-5 text-base leading-relaxed text-muted">{s.desc}</p>
+            {s.description && <p class="mt-5 text-base leading-relaxed text-muted">{s.description}</p>}
             <div class="mt-8 flex items-baseline gap-8">
               <div>
                 <p class="font-ui text-[10px] uppercase tracking-[2px] text-muted">{t("common.price")}</p>

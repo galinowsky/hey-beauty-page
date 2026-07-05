@@ -2,13 +2,12 @@
 import Base from "../../layouts/Base.astro";
 import { getCollection } from "astro:content";
 import JsonLd from "../JsonLd.astro";
-import ServiceCard from "../ServiceCard.astro";
 import LocationCard from "../LocationCard.astro";
 import FAQAccordion from "../FAQAccordion.astro";
 import BookingCTA from "../BookingCTA.astro";
 import { buildOrganization, buildFAQPage } from "../../lib/json-ld";
 import { assetPath } from "../../utils/asset";
-import { useTranslations, localizePath, tc } from "../../i18n/utils";
+import { useTranslations, localizePath } from "../../i18n/utils";
 import type { Lang } from "../../i18n/ui";
 
 interface Props { lang: Lang }
@@ -17,11 +16,28 @@ const t = useTranslations(lang);
 const lp = (path: string) => localizePath(path, lang);
 
 const locations = await getCollection("locations");
-const services = await getCollection("services");
 const faqEntries = await getCollection("faq");
 
 const sortedLocations = locations.sort((a, b) => a.data.sortOrder - b.data.sortOrder);
-const sortedServices = services.sort((a, b) => a.data.sortOrder - b.data.sortOrder);
+// Category cards for homepage
+const homeCats = {
+  pl: [
+    { href: "/uslugi/kosmetologia/", label: "Kosmetologia", desc: "Zabiegi na twarz i ciało", image: "/images/inspiration-2.jpeg" },
+    { href: "/uslugi/kosmetyka/", label: "Kosmetyka", desc: "Brwi, rzęsy, manicure, pedicure", image: "/images/inspiration-1.jpeg" },
+    { href: "/uslugi/wlosy/", label: "Włosy", desc: "Keratynowe prostowanie i regeneracja", image: "/images/team/madzia.jpg" },
+  ],
+  en: [
+    { href: "/uslugi/kosmetologia/", label: "Cosmetology", desc: "Face & body treatments", image: "/images/inspiration-2.jpeg" },
+    { href: "/uslugi/kosmetyka/", label: "Beauty", desc: "Brows, lashes, manicure, pedicure", image: "/images/inspiration-1.jpeg" },
+    { href: "/uslugi/wlosy/", label: "Hair", desc: "Keratin straightening & regeneration", image: "/images/team/madzia.jpg" },
+  ],
+  uk: [
+    { href: "/uslugi/kosmetologia/", label: "Косметологія", desc: "Процедури для обличчя і тіла", image: "/images/inspiration-2.jpeg" },
+    { href: "/uslugi/kosmetyka/", label: "Косметика", desc: "Брови, вії, манікюр, педикюр", image: "/images/inspiration-1.jpeg" },
+    { href: "/uslugi/wlosy/", label: "Волосся", desc: "Кератинове випрямлення та відновлення", image: "/images/team/madzia.jpg" },
+  ],
+} as const;
+const currentCats = homeCats[lang];
 const faqScopeSlug = lang === "pl" ? undefined : lang;
 const globalFaq = faqEntries.find((f) =>
   f.data.scope === "global" &&
@@ -137,16 +153,29 @@ const description = "Hey Beauty to sieć salonów kosmetycznych w Krakowie. 4 lo
         <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">{t("home.servicesLabel")}</p>
         <h2 class="mt-4 font-display text-h2">{t("home.servicesHeading")}</h2>
       </div>
-      <div data-reveal-stagger class="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-        {sortedServices.slice(0, 4).map((s) => (
-          <ServiceCard
-            name={tc("services", s.data.slug, "name", lang) ?? s.data.name}
-            slug={s.data.slug}
-            description={tc("services", s.data.slug, "description", lang) ?? s.data.description}
-            priceMin={s.data.priceRange.min} duration={`${s.data.duration.min} ${t("common.min")}`}
-            image={s.data.image}
-            href={lp(`/uslugi/${s.data.slug}/`)}
-            learnMoreText={t("common.learnMore")} />
+      <div data-reveal-stagger class="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3">
+        {currentCats.map((cat) => (
+          <a
+            href={lp(cat.href)}
+            class="group relative flex flex-col overflow-hidden border border-border transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)]"
+          >
+            <div class="relative aspect-[4/3] overflow-hidden">
+              <img
+                src={assetPath(cat.image)}
+                alt={cat.label}
+                class="h-full w-full object-cover grayscale transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
+              />
+              <div class="absolute inset-0 bg-black/20 transition-opacity duration-300 group-hover:bg-black/10"></div>
+              <div class="absolute bottom-0 left-0 p-6">
+                <p class="font-display text-3xl text-white">{cat.label}</p>
+              </div>
+            </div>
+            <div class="flex items-center justify-between p-6">
+              <p class="text-sm text-muted">{cat.desc}</p>
+              <span class="font-ui text-[11px] text-primary transition-transform duration-300 group-hover:translate-x-1">→</span>
+            </div>
+          </a>
         ))}
       </div>
       <div class="mt-12 text-center">

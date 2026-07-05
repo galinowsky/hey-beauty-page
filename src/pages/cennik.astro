@@ -10,13 +10,12 @@ const locations = await getCollection("locations");
 
 const sortedLocations = [...locations].sort((a, b) => a.data.sortOrder - b.data.sortOrder);
 
-// Category config: display name + sort order
+// Category config: display name + sort order (Airtable CEO-confirmed taxonomy)
+// "inne" excluded from frontend display
 const categoryConfig: Record<string, { label: string; order: number }> = {
-  wlosy:                    { label: "Włosy",           order: 0 },
-  "brwi-i-rzesy":           { label: "Brwi i rzęsy",   order: 1 },
-  "stylizacja-paznokci":    { label: "Paznokcie",       order: 2 },
-  "zabiegi-twarzy":         { label: "Zabiegi twarzy",  order: 3 },
-  "zabiegi-ciala":          { label: "Zabiegi ciała",   order: 4 },
+  kosmetologia: { label: "Kosmetologia", order: 0 },
+  kosmetyka:    { label: "Kosmetyka",    order: 1 },
+  wlosy:        { label: "Włosy",        order: 2 },
 };
 
 const locationShort: Record<string, string> = {
@@ -27,13 +26,15 @@ const locationShort: Record<string, string> = {
 };
 
 // Build per-service data with all location prices
-const sortedServices = [...services].sort((a, b) => a.data.sortOrder - b.data.sortOrder);
+const sortedServices = [...services]
+  .filter((s) => s.data.category !== "inne")
+  .sort((a, b) => (a.data.sortOrder ?? 0) - (b.data.sortOrder ?? 0) || a.data.name.localeCompare(b.data.name, "pl"));
 
 type LocPrice = {
   locationSlug: string;
   shortName: string;
-  priceMin: number;
-  priceMax: number;
+  priceMin: number | null;
+  priceMax: number | null;
   duration: number;
   booksyUrl: string;
 };
@@ -43,10 +44,10 @@ type ServiceRow = {
   name: string;
   category: string;
   locationSlugs: string;
-  prices: Record<string, { min: number; max: number; dur: number; url: string }>;
+  prices: Record<string, { min: number | null; max: number | null; dur: number; url: string }>;
   locPrices: LocPrice[];
-  allMin: number;
-  allMax: number;
+  allMin: number | null;
+  allMax: number | null;
   allDurMin: number;
   allDurMax: number;
   defaultUrl: string;
@@ -59,22 +60,27 @@ const serviceRows: ServiceRow[] = sortedServices
     );
     if (sls.length === 0) return null;
 
-    const locPrices: LocPrice[] = sls.map((sl) => ({
-      locationSlug: sl.data.locationSlug,
-      shortName: locationShort[sl.data.locationSlug] ?? sl.data.locationSlug,
-      priceMin: sl.data.priceMin,
-      priceMax: sl.data.priceMax ?? sl.data.priceMin,
-      duration: sl.data.duration,
-      booksyUrl: sl.data.booksyDirectUrl ?? "https://booksy.com/pl-pl/111132_hey-beauty-2-0_salon-kosmetyczny_8820_krakow",
-    }));
+    const locPrices: LocPrice[] = sls.map((sl) => {
+      const loc = locations.find((l) => l.data.slug === sl.data.locationSlug);
+      return {
+        locationSlug: sl.data.locationSlug,
+        shortName: locationShort[sl.data.locationSlug] ?? sl.data.locationSlug,
+        priceMin: sl.data.priceMin,
+        priceMax: sl.data.priceMax ?? sl.data.priceMin,
+        duration: sl.data.duration,
+        booksyUrl: loc?.data.booksyUrl ?? "",
+      };
+    });
 
     const prices: ServiceRow["prices"] = {};
     for (const lp of locPrices) {
       prices[lp.locationSlug] = { min: lp.priceMin, max: lp.priceMax, dur: lp.duration, url: lp.booksyUrl };
     }
 
-    const allMin = Math.min(...locPrices.map((lp) => lp.priceMin));
-    const allMax = Math.max(...locPrices.map((lp) => lp.priceMax));
+    const validPrices = locPrices.map((lp) => lp.priceMin).filter((p): p is number => p !== null);
+    const validMaxPrices = locPrices.map((lp) => lp.priceMax).filter((p): p is number => p !== null);
+    const allMin = validPrices.length > 0 ? Math.min(...validPrices) : null;
+    const allMax = validMaxPrices.length > 0 ? Math.max(...validMaxPrices) : null;
     const allDurMin = Math.min(...locPrices.map((lp) => lp.duration));
     const allDurMax = Math.max(...locPrices.map((lp) => lp.duration));
 
@@ -122,28 +128,33 @@ const jsonLdData = {
       },
     })),
     ...serviceRows.flatMap((row) =>
-      row.locPrices.map((lp) => ({
-        "@type": "Service",
-        name: row.name,
-        provider: { "@id": `${baseUrl}/#${lp.locationSlug}` },
-        areaServed: { "@type": "City", name: "Kraków" },
-        offers: {
-          "@type": "Offer",
-          priceCurrency: "PLN",
-          priceSpecification: {
-            "@type": "PriceSpecification",
-            minPrice: lp.priceMin,
-            maxPrice: lp.priceMax,
+      row.locPrices
+        .filter((lp) => lp.priceMin !== null)
+        .map((lp) => ({
+          "@type": "Service",
+          name: row.name,
+          provider: { "@id": `${baseUrl}/#${lp.locationSlug}` },
+          areaServed: { "@type": "City", name: "Kraków" },
+          offers: {
+            "@type": "Offer",
             priceCurrency: "PLN",
+            priceSpecification: {
+              "@type": "PriceSpecification",
+              minPrice: lp.priceMin,
+              maxPrice: lp.priceMax ?? lp.priceMin,
+              priceCurrency: "PLN",
+            },
           },
-        },
-      })),
+        })),
     ),
   ],
 };
 
-function fmtPrice(min: number, max: number) {
-  return min === max ? `${min} zł` : `${min}–${max} zł`;
+function fmtPrice(min: number | null, max: number | null) {
+  if (min === null && max === null) return "Cena ustalana indywidualnie";
+  if (min === null) return `do ${max} zł`;
+  if (max === null || min === max) return `${min} zł`;
+  return `${min}–${max} zł`;
 }
 function fmtDur(min: number, max: number) {
   return min === max ? `${min} min` : `${min}–${max} min`;
@@ -151,7 +162,7 @@ function fmtDur(min: number, max: number) {
 
 const title = "Cennik usług | Hey Beauty Kraków";
 const description =
-  "Sprawdź ceny wszystkich zabiegów w salonach Hey Beauty w Krakowie. Włosy, brwi, paznokcie, pedicure — aktualne ceny w 4 lokalizacjach.";
+  "Sprawdź ceny wszystkich zabiegów w salonach Hey Beauty w Krakowie. Kosmetologia, kosmetyka, włosy — aktualne ceny w 4 lokalizacjach.";
 const breadcrumbs = [
   { name: "Strona główna", url: "/" },
   { name: "Cennik", url: "/cennik/" },
@@ -326,8 +337,11 @@ const breadcrumbs = [
   let activeCat = "all";
   let searchQ = "";
 
-  function fmtPrice(min: number, max: number): string {
-    return min === max ? `${min} zł` : `${min}–${max} zł`;
+  function fmtPrice(min: number | null, max: number | null): string {
+    if (min === null && max === null) return "Cena ustalana indywidualnie";
+    if (min === null) return `do ${max} zł`;
+    if (max === null || min === max) return `${min} zł`;
+    return `${min}–${max} zł`;
   }
 
   function apply() {

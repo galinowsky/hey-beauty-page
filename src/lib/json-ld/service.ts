@@ -4,8 +4,8 @@ interface ServiceData {
 }
 
 interface ServiceLocationData {
-  priceMin: number;
-  priceMax?: number;
+  priceMin: number | null;
+  priceMax?: number | null;
 }
 
 interface LocationData {
@@ -30,16 +30,20 @@ export function buildService(
       "@type": "City",
       name: "Kraków",
     },
-    offers: {
-      "@type": "Offer",
-      priceCurrency: "PLN",
-      availability: "https://schema.org/InStock",
-      priceSpecification: {
-        "@type": "PriceSpecification",
-        minPrice: serviceLocation.priceMin,
-        ...(serviceLocation.priceMax ? { maxPrice: serviceLocation.priceMax } : {}),
-        priceCurrency: "PLN",
-      },
-    },
+    ...(serviceLocation.priceMin !== null
+      ? {
+          offers: {
+            "@type": "Offer",
+            priceCurrency: "PLN",
+            availability: "https://schema.org/InStock",
+            priceSpecification: {
+              "@type": "PriceSpecification",
+              minPrice: serviceLocation.priceMin,
+              ...(serviceLocation.priceMax ? { maxPrice: serviceLocation.priceMax } : {}),
+              priceCurrency: "PLN",
+            },
+          },
+        }
+      : {}),
   };
 }

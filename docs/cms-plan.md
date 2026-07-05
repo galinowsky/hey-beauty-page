@@ -13,12 +13,24 @@ Decided: 2026-04-12. Previous plan (Decap CMS) was scrapped — overkill for cur
 ```
 Booksy export → Airtable (source of truth for services/prices)
                     │
-                    ▼ API fetch at build time
+                    ▼ Astro content loaders (build time)
+              src/loaders/airtable.ts
+              ├── airtableServicesLoader()        → services collection
+              └── airtableServiceLocationsLoader() → serviceLocations collection
+                    │
+                    ▼
               Astro SSG build
                     │
                     ▼
             Static site deployed
 ```
+
+**Airtable details:**
+- Base ID: `appxLApX6BHtnXE4h`
+- Services table: `tblEx5r6lgbKKrdJl` (388 records, flat: one record = one service at one location)
+- Salons table: `tblLXo7SbbaSkGzQj` (4 records)
+- Auth: `AIRTABLE_API_KEY` env var (PAT with `data.records:read` scope)
+- Loaders deduplicate flat records into normalized services + serviceLocations collections
 
 All other content (specialist bios, location details, FAQ, page copy) is managed directly in the codebase by the developer.
 
@@ -53,3 +65,4 @@ Until then, Airtable + developer edits is sufficient.
 |------|----------|-----------|
 | 2026-03-29 | Decap CMS planned | Seemed needed for non-dev content editing |
 | 2026-04-12 | Decap CMS scrapped, Airtable-only | Page structure still in flux; CMS adds complexity without current value. Airtable covers the only real dynamic data (pricing). |
+| 2026-04-12 | Airtable content loaders shipped | 55 JSON files replaced by two Astro content loaders fetching from Airtable at build time. Categories migrated to CEO-confirmed taxonomy (Kosmetologia, Kosmetyka, Włosy, Inne). |

@@ -1,0 +1,331 @@
+---
+import Base from "../../layouts/Base.astro";
+import Breadcrumbs from "../Breadcrumbs.astro";
+import JsonLd from "../JsonLd.astro";
+import FAQAccordion from "../FAQAccordion.astro";
+import BookingCTA from "../BookingCTA.astro";
+import { buildBreadcrumbList, buildFAQPage } from "../../lib/json-ld";
+import { getCollection } from "astro:content";
+import { assetPath } from "../../utils/asset";
+import { useTranslations, localizePath } from "../../i18n/utils";
+import type { Lang } from "../../i18n/ui";
+
+interface Props { lang: Lang; category: "kosmetologia" | "kosmetyka" }
+const { lang, category } = Astro.props;
+const t = useTranslations(lang);
+const lp = (path: string) => localizePath(path, lang);
+
+// Category metadata
+const categoryMeta = {
+  kosmetologia: {
+    pl: {
+      title: "Kosmetologia Kraków — Zabiegi na Twarz i Ciało | Hey Beauty",
+      description: "Profesjonalne zabiegi kosmetologiczne w Krakowie. Oczyszczanie, peelingi, mezoterapia, dermapen, lifting. 4 salony Hey Beauty. Umów wizytę online.",
+      heading: "Kosmetologia",
+      label: "Zabiegi kosmetologiczne",
+      intro: "Profesjonalne zabiegi kosmetologiczne w 4 salonach Hey Beauty w Krakowie. Oczyszczanie, peelingi chemiczne, mezoterapia, dermapen, lifting i więcej. Każdy zabieg poprzedzony indywidualną konsultacją.",
+      seoText: "Kosmetologia w Hey Beauty to zabiegi oparte na wiedzy medycznej i najnowszych technologiach. Nasze specjalistki dobierają zabiegi indywidualnie, uwzględniając stan skóry, potrzeby i oczekiwania klientki. Oferujemy pełen zakres zabiegów na twarz i ciało — od regularnej pielęgnacji po zaawansowane procedury anti-aging.",
+    },
+    en: {
+      title: "Cosmetology Kraków — Face & Body Treatments | Hey Beauty",
+      description: "Professional cosmetology treatments in Kraków. Cleansing, peels, mesotherapy, dermapen, lifting. 4 Hey Beauty salons. Book online.",
+      heading: "Cosmetology",
+      label: "Cosmetology treatments",
+      intro: "Professional cosmetology treatments across 4 Hey Beauty salons in Kraków. Cleansing, chemical peels, mesotherapy, dermapen, lifting and more. Every treatment starts with a personal consultation.",
+      seoText: "Cosmetology at Hey Beauty is grounded in medical science and the latest technologies. Our specialists tailor each treatment to your skin's condition, needs and expectations. We offer a full range of face and body treatments — from regular skincare to advanced anti-aging procedures.",
+    },
+    uk: {
+      title: "Косметологія Краків — Процедури для обличчя і тіла | Hey Beauty",
+      description: "Професійні косметологічні процедури в Кракові. Очищення, пілінги, мезотерапія, дермапен, ліфтинг. 4 салони Hey Beauty. Запис онлайн.",
+      heading: "Косметологія",
+      label: "Косметологічні процедури",
+      intro: "Професійні косметологічні процедури в 4 салонах Hey Beauty у Кракові. Очищення, хімічні пілінги, мезотерапія, дермапен, ліфтинг та інше. Кожна процедура починається з індивідуальної консультації.",
+      seoText: "Косметологія в Hey Beauty базується на медичних знаннях та найновіших технологіях. Наші спеціалістки підбирають процедури індивідуально, враховуючи стан шкіри, потреби та очікування клієнтки.",
+    },
+  },
+  kosmetyka: {
+    pl: {
+      title: "Kosmetyka Kraków — Brwi, Rzęsy, Manicure, Pedicure | Hey Beauty",
+      description: "Stylizacja brwi i rzęs, manicure hybrydowy, pedicure, depilacja woskiem. 4 salony Hey Beauty w Krakowie. Sprawdź ceny i umów wizytę.",
+      heading: "Kosmetyka",
+      label: "Zabiegi kosmetyczne",
+      intro: "Stylizacja brwi i rzęs, manicure, pedicure, depilacja i więcej w 4 salonach Hey Beauty w Krakowie. Codzienne piękno w profesjonalnym wydaniu.",
+      seoText: "Kosmetyka w Hey Beauty to codzienna pielęgnacja na najwyższym poziomie. Stylizacja brwi i rzęs, manicure hybrydowy, pedicure, depilacja woskiem — każda usługa wykonywana z dbałością o detale i komfort klientki. Profesjonalne produkty, doświadczone specjalistki, luksusowa atmosfera.",
+    },
+    en: {
+      title: "Beauty Treatments Kraków — Brows, Lashes, Manicure | Hey Beauty",
+      description: "Brow and lash styling, hybrid manicure, pedicure, wax depilation. 4 Hey Beauty salons in Kraków. Check prices and book online.",
+      heading: "Beauty",
+      label: "Beauty treatments",
+      intro: "Brow and lash styling, manicure, pedicure, depilation and more across 4 Hey Beauty salons in Kraków. Everyday beauty at a professional level.",
+      seoText: "Beauty at Hey Beauty means everyday care at the highest standard. Brow and lash styling, hybrid manicure, pedicure, wax depilation — every service performed with attention to detail and client comfort. Professional products, experienced specialists, luxurious atmosphere.",
+    },
+    uk: {
+      title: "Косметика Краків — Брови, вії, манікюр, педикюр | Hey Beauty",
+      description: "Стилізація брів і вій, гібридний манікюр, педикюр, депіляція воском. 4 салони Hey Beauty у Кракові. Перевір ціни та запишись.",
+      heading: "Косметика",
+      label: "Косметичні процедури",
+      intro: "Стилізація брів і вій, манікюр, педикюр, депіляція та інше в 4 салонах Hey Beauty у Кракові. Щоденна краса на професійному рівні.",
+      seoText: "Косметика в Hey Beauty — це щоденний догляд найвищого рівня. Стилізація брів і вій, гібридний манікюр, педикюр, депіляція воском — кожна послуга з увагою до деталей та комфорту клієнтки.",
+    },
+  },
+} as const;
+
+const meta = categoryMeta[category][lang];
+
+// Fetch data
+const allServices = await getCollection("services");
+const serviceLocations = await getCollection("serviceLocations");
+const locations = await getCollection("locations");
+const allFaq = await getCollection("faq");
+
+const sortedLocations = [...locations].sort((a, b) => a.data.sortOrder - b.data.sortOrder);
+
+// Filter services by category
+const categoryServices = allServices
+  .filter((s) => s.data.category === category)
+  .sort((a, b) => (a.data.sortOrder ?? 0) - (b.data.sortOrder ?? 0) || a.data.name.localeCompare(b.data.name, "pl"));
+
+// Location short names
+const locationShort: Record<string, string> = {
+  "hey-beauty-1-0":      "1.0",
+  "hey-beauty-2-0":      "2.0",
+  "hey-beauty-3-0":      "3.0",
+  "hey-beauty-zablocie": "Zabłocie",
+};
+
+// Build service rows (cennik-style)
+type LocPrice = {
+  locationSlug: string;
+  shortName: string;
+  priceMin: number | null;
+  priceMax: number | null;
+  duration: number;
+  booksyUrl: string;
+};
+
+type ServiceRow = {
+  slug: string;
+  name: string;
+  locPrices: LocPrice[];
+  allMin: number | null;
+  allMax: number | null;
+  allDurMin: number;
+  allDurMax: number;
+  defaultUrl: string;
+};
+
+const serviceRows: ServiceRow[] = categoryServices
+  .map((svc) => {
+    const sls = serviceLocations.filter(
+      (sl) => sl.data.serviceSlug === svc.data.slug && sl.data.available,
+    );
+    if (sls.length === 0) return null;
+
+    const locPrices: LocPrice[] = sls.map((sl) => {
+      const loc = locations.find((l) => l.data.slug === sl.data.locationSlug);
+      return {
+        locationSlug: sl.data.locationSlug,
+        shortName: locationShort[sl.data.locationSlug] ?? sl.data.locationSlug,
+        priceMin: sl.data.priceMin,
+        priceMax: sl.data.priceMax ?? sl.data.priceMin,
+        duration: sl.data.duration,
+        booksyUrl: loc?.data.booksyUrl ?? "",
+      };
+    });
+
+    const validPrices = locPrices.map((lp) => lp.priceMin).filter((p): p is number => p !== null);
+    const validMaxPrices = locPrices.map((lp) => lp.priceMax).filter((p): p is number => p !== null);
+
+    return {
+      slug: svc.data.slug,
+      name: svc.data.name,
+      locPrices,
+      allMin: validPrices.length > 0 ? Math.min(...validPrices) : null,
+      allMax: validMaxPrices.length > 0 ? Math.max(...validMaxPrices) : null,
+      allDurMin: Math.min(...locPrices.map((lp) => lp.duration)),
+      allDurMax: Math.max(...locPrices.map((lp) => lp.duration)),
+      defaultUrl: locPrices[0]!.booksyUrl,
+    };
+  })
+  .filter((r): r is ServiceRow => r !== null);
+
+// FAQ
+const faqSlug = lang === "pl" ? category : `${category}-${lang}`;
+const categoryFaq = allFaq.find((f) => f.data.scope === "service" && f.data.scopeSlug === faqSlug);
+
+// Breadcrumbs
+const breadcrumbs = [
+  { name: t("breadcrumb.home"), url: lp("/") },
+  { name: t("breadcrumb.services"), url: lp("/uslugi/") },
+  { name: meta.heading, url: lp(`/uslugi/${category}/`) },
+];
+
+// Helpers
+function fmtPrice(min: number | null, max: number | null) {
+  if (min === null && max === null) return lang === "pl" ? "Cena ustalana indywidualnie" : lang === "en" ? "Price on consultation" : "Ціна індивідуально";
+  if (min === null) return `${lang === "pl" ? "do" : lang === "en" ? "up to" : "до"} ${max} ${lang === "pl" ? "zł" : "PLN"}`;
+  if (max === null || min === max) return `${min} ${lang === "pl" ? "zł" : "PLN"}`;
+  return `${min}–${max} ${lang === "pl" ? "zł" : "PLN"}`;
+}
+function fmtDur(min: number, max: number) {
+  return min === max ? `${min} ${t("common.min")}` : `${min}–${max} ${t("common.min")}`;
+}
+
+// JSON-LD
+const baseUrl = "https://heybeauty.pl";
+const jsonLdGraph = {
+  "@context": "https://schema.org",
+  "@graph": [
+    ...serviceRows.flatMap((row) =>
+      row.locPrices
+        .filter((lp) => lp.priceMin !== null)
+        .map((lp) => ({
+          "@type": "Service",
+          name: row.name,
+          provider: { "@type": "BeautySalon", name: "Hey Beauty", "@id": `${baseUrl}/#${lp.locationSlug}` },
+          areaServed: { "@type": "City", name: "Kraków" },
+          offers: {
+            "@type": "Offer",
+            priceCurrency: "PLN",
+            priceSpecification: {
+              "@type": "PriceSpecification",
+              minPrice: lp.priceMin,
+              maxPrice: lp.priceMax ?? lp.priceMin,
+              priceCurrency: "PLN",
+            },
+          },
+        })),
+    ),
+  ],
+};
+
+const bookLabel = lang === "pl" ? "Umów" : lang === "en" ? "Book" : "Запис";
+---
+
+<Base title={meta.title} description={meta.description} hreflangPath={`/uslugi/${category}/`}>
+  <JsonLd slot="head" data={buildBreadcrumbList(breadcrumbs, Astro.site)} />
+  <JsonLd slot="head" data={jsonLdGraph} />
+  {categoryFaq && <JsonLd slot="head" data={buildFAQPage(categoryFaq.data.items)} />}
+
+  <div class="mx-auto max-w-7xl px-6 pt-8">
+    <Breadcrumbs items={breadcrumbs} />
+  </div>
+
+  <!-- HERO -->
+  <section class="mx-auto max-w-7xl px-6 pb-12 pt-16 lg:pt-24">
+    <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">{meta.label}</p>
+    <h1 class="mt-4 font-display text-h1">{meta.heading}</h1>
+    <p class="mt-6 max-w-2xl text-lg leading-relaxed text-muted">{meta.intro}</p>
+  </section>
+
+  <!-- SERVICE LIST (cennik-style) -->
+  <section class="mx-auto max-w-7xl px-6 pb-16">
+    <div class="border-t border-border">
+      {serviceRows.map((row) => (
+        <div class="flex items-center gap-4 border-b border-border py-5 transition-colors hover:bg-surface/40">
+          <div class="min-w-0 flex-1">
+            <p class="font-display text-xl leading-tight">{row.name}</p>
+            <div class="mt-1.5 flex flex-wrap gap-1.5">
+              {row.locPrices.map((lp) => (
+                <span class="font-ui text-[9px] uppercase tracking-[1px] text-muted border border-border px-2 py-0.5">
+                  {lp.shortName}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div class="shrink-0 text-right">
+            <p class="font-ui text-sm tabular-nums">{fmtPrice(row.allMin, row.allMax)}</p>
+            <p class="mt-0.5 font-ui text-[11px] text-muted">{fmtDur(row.allDurMin, row.allDurMax)}</p>
+          </div>
+          <a
+            href={row.defaultUrl}
+            target="_blank"
+            rel="noopener"
+            class="hidden shrink-0 bg-primary px-4 py-2.5 font-ui text-[10px] uppercase tracking-[2px] text-bg transition-opacity hover:opacity-80 sm:block"
+          >
+            {bookLabel}
+          </a>
+        </div>
+      ))}
+    </div>
+
+    {serviceRows.length === 0 && (
+      <p class="py-16 text-center font-ui text-[11px] uppercase tracking-[2px] text-muted">
+        {lang === "pl" ? "Brak usług w tej kategorii" : lang === "en" ? "No services in this category" : "Немає послуг у цій категорії"}
+      </p>
+    )}
+
+    <p class="mt-6 font-mono text-[10px] tracking-[2px] text-muted/40">
+      {serviceRows.length} {lang === "pl" ? "usług" : lang === "en" ? "services" : "послуг"} · {lang === "pl" ? "Ceny na podstawie Booksy" : lang === "en" ? "Prices based on Booksy" : "Ціни на основі Booksy"}
+    </p>
+  </section>
+
+  <!-- SEO TEXT -->
+  <section class="grain bg-surface py-16">
+    <div class="mx-auto max-w-3xl px-6">
+      <p class="text-base leading-relaxed text-muted">{meta.seoText}</p>
+    </div>
+  </section>
+
+  <!-- LOCATIONS -->
+  <section class="mx-auto max-w-7xl px-6 py-16">
+    <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">
+      {lang === "pl" ? "Dostępne w" : lang === "en" ? "Available at" : "Доступно в"}
+    </p>
+    <div class="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+      {sortedLocations.map((loc) => (
+        <a
+          href={lp(`/salony/${loc.data.slug}/`)}
+          class="group border border-border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)]"
+        >
+          <p class="font-mono text-xs tracking-[2px] text-muted">{loc.data.shortName}</p>
+          <p class="mt-2 font-display text-lg">{loc.data.name}</p>
+          <p class="mt-1 text-xs text-muted">{loc.data.address.street}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  {categoryFaq && (
+    <section class="py-24 lg:py-32">
+      <div class="mx-auto max-w-3xl px-6">
+        <div class="text-center">
+          <p class="font-ui text-[11px] uppercase tracking-[4px] text-muted">FAQ</p>
+          <h2 class="mt-4 font-display text-h2">
+            {lang === "pl" ? "Najczęściej zadawane pytania" : lang === "en" ? "Frequently asked questions" : "Часті запитання"}
+          </h2>
+        </div>
+        <div class="mt-16">
+          <FAQAccordion items={categoryFaq.data.items} />
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- CTA -->
+  <section class="border-t border-border py-16 text-center">
+    <div class="mx-auto max-w-7xl px-6">
+      <p class="font-ui text-[11px] uppercase tracking-[3px] text-muted">
+        {lang === "pl" ? "Umów wizytę" : lang === "en" ? "Book now" : "Записатись"}
+      </p>
+      <h2 class="mt-3 font-display text-h2">
+        {lang === "pl" ? "Zarezerwuj termin" : lang === "en" ? "Book your appointment" : "Забронюй візит"}
+      </h2>
+      <p class="mt-4 text-muted">
+        {lang === "pl" ? "Rezerwuj przez Booksy — bezpłatnie, bez rejestracji." : lang === "en" ? "Book via Booksy — free, no registration." : "Записуйся через Booksy — безкоштовно, без реєстрації."}
+      </p>
+      <div class="mt-8">
+        <BookingCTA url="https://booksy.com/pl-pl/111132_hey-beauty-2-0_salon-kosmetyczny_8820_krakow" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Back link -->
+  <div class="mx-auto max-w-7xl px-6 py-12">
+    <a href={lp("/uslugi/")} class="font-ui text-[11px] uppercase tracking-[3px] text-muted hover:text-primary">
+      ← {t("breadcrumb.services")}
+    </a>
+  </div>
+</Base>

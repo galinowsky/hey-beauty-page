@@ -119,12 +119,13 @@ const breadcrumbs = [
           service ? (
             <ServiceCard
               name={tc("services", service.data.slug, "name", lang) ?? service.data.name}
-              slug={`${location.data.slug}/${service.data.slug}`}
+              slug={service.data.slug}
               description={tc("services", service.data.slug, "description", lang) ?? service.data.description}
               priceMin={serviceLocation.data.priceMin}
               duration={`${serviceLocation.data.duration} ${t("common.min")}`}
               image={service.data.image}
-              learnMoreText={t("common.learnMore")}
+              href={location.data.booksyUrl}
+              learnMoreText={t("common.bookNow")}
             />
           ) : null,
         )}

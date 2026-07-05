@@ -1,6 +1,10 @@
 import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
+import {
+  airtableServicesLoader,
+  airtableServiceLocationsLoader,
+} from "./loaders/airtable";
 
 // ── Locations ──────────────────────────────────────────
 const locations = defineCollection({
@@ -43,41 +47,37 @@ const locations = defineCollection({
   }),
 });
 
-// ── Services ───────────────────────────────────────────
+// ── Services (from Airtable) ──────────────────────────────
 const services = defineCollection({
-  loader: glob({ pattern: "*.json", base: "./src/data/services" }),
+  loader: airtableServicesLoader(),
   schema: z.object({
     name: z.string(),
     slug: z.string(),
-    category: z.string(),
-    description: z.string(),
-    longDescription: z.string().optional(),
+    category: z.enum(["kosmetologia", "kosmetyka", "wlosy", "inne"]),
+    description: z.string().default(""),
     duration: z.object({
       min: z.number(),
       max: z.number(),
     }),
     priceRange: z.object({
-      min: z.number(),
-      max: z.number(),
+      min: z.number().nullable(),
+      max: z.number().nullable(),
     }),
-    booksySlug: z.string(),
     image: z.string().optional(),
-    sortOrder: z.number().default(0),
+    sortOrder: z.number().optional(),
   }),
 });
 
-// ── Service-Location Cross-References ──────────────────
+// ── Service-Location Cross-References (from Airtable) ─────
 const serviceLocations = defineCollection({
-  loader: glob({ pattern: "*.json", base: "./src/data/service-locations" }),
+  loader: airtableServiceLocationsLoader(),
   schema: z.object({
     locationSlug: z.string(),
     serviceSlug: z.string(),
-    priceMin: z.number(),
-    priceMax: z.number().optional(),
-    priceNote: z.string().optional(),
+    priceMin: z.number().nullable(),
+    priceMax: z.number().nullable(),
     duration: z.number(),
     available: z.boolean().default(true),
-    booksyDirectUrl: z.string().url().optional(),
   }),
 });
 

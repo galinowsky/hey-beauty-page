@@ -1,0 +1,30 @@
+{
+  "scope": "service",
+  "scopeSlug": "kosmetologia",
+  "items": [
+    {
+      "question": "Czym różni się kosmetologia od kosmetyki?",
+      "answer": "Kosmetologia to zabiegi oparte na wiedzy medycznej, skupione na leczeniu i regeneracji skóry — np. peelingi chemiczne, mezoterapia, dermapen, oczyszczanie profesjonalne. Kosmetyka to zabiegi pielęgnacyjne i upiększające, takie jak stylizacja brwi, manicure czy depilacja."
+    },
+    {
+      "question": "Czy przed pierwszą wizytą potrzebuję konsultacji?",
+      "answer": "Tak, każdy zabieg kosmetologiczny w Hey Beauty poprzedzony jest indywidualną konsultacją. Specjalistka oceni stan Twojej skóry i dobierze odpowiedni zabieg. Konsultacja jest bezpłatna."
+    },
+    {
+      "question": "Jak często powinnam powtarzać zabiegi kosmetologiczne?",
+      "answer": "To zależy od rodzaju zabiegu i stanu skóry. Oczyszczanie polecamy co 4-6 tygodni, peelingi chemiczne w seriach 4-6 zabiegów co 2 tygodnie, mezoterapię w seriach 3-5 zabiegów co 2-4 tygodnie. Specjalistka ustali plan zabiegowy podczas konsultacji."
+    },
+    {
+      "question": "Czy zabiegi kosmetologiczne są bolesne?",
+      "answer": "Większość zabiegów jest komfortowa lub powoduje jedynie lekki dyskomfort. Przy zabiegach takich jak dermapen czy mezoterapia stosujemy krem znieczulający. Specjalistka zawsze informuje o przebiegu zabiegu i dostosowuje intensywność do Twojej wrażliwości."
+    },
+    {
+      "question": "W których salonach Hey Beauty dostępne są zabiegi kosmetologiczne?",
+      "answer": "Zabiegi kosmetologiczne dostępne są we wszystkich 4 salonach Hey Beauty w Krakowie — HB 1.0, 2.0, 3.0 oraz Zabłocie. Oferta może się nieznacznie różnić między lokalizacjami."
+    },
+    {
+      "question": "Jak rezerwować wizytę na zabieg kosmetologiczny?",
+      "answer": "Najwygodniej przez Booksy — wybierz salon, usługę i termin. Rezerwacja jest bezpłatna i nie wymaga rejestracji. Możesz też zadzwonić bezpośrednio do wybranego salonu."
+    }
+  ]
+}

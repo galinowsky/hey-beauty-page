@@ -3,7 +3,7 @@ interface Props {
   name: string;
   slug: string;
   description: string;
-  priceMin: number;
+  priceMin: number | null;
   duration: string;
   image?: string;
   href?: string;       // override URL (for locale-aware links)
@@ -39,7 +39,7 @@ const { name, slug, description, priceMin, duration, image, href, learnMoreText 
     <h3 class="font-display text-xl font-normal">{name}</h3>
     <p class="mt-2 line-clamp-2 text-sm text-muted">{description}</p>
     <div class="mt-4 flex items-baseline justify-between">
-      <span class="font-ui text-sm font-medium">od {priceMin} zł</span>
+      <span class="font-ui text-sm font-medium">{priceMin !== null ? `od ${priceMin} zł` : "Cena indyw."}</span>
       <span class="font-ui text-[11px] uppercase tracking-[2px] text-muted">
         {duration}
       </span>

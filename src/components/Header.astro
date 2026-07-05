@@ -13,14 +13,21 @@ const lang = (Astro.currentLocale ?? "pl") as Lang;
 const t = useTranslations(lang);
 const lp = (path: string) => localizePath(path, lang);
 
+const serviceSubItems = [
+  { href: lp("/uslugi/kosmetologia/"), label: "Kosmetologia" },
+  { href: lp("/uslugi/kosmetyka/"),    label: "Kosmetyka" },
+  { href: lp("/uslugi/wlosy/"),        label: lang === "pl" ? "Włosy" : lang === "en" ? "Hair" : "Волосся" },
+  ...(lang === "pl" ? [{ href: "/cennik/", label: "Cennik" }] : []),
+];
+
 const navItems = [
-  { href: lp("/uslugi/"),  label: t("nav.services") },
+  { href: lp("/uslugi/"),  label: t("nav.services"), children: serviceSubItems },
   // cennik is PL-only (PLN prices, no EN/UK translation)
   ...(lang === "pl" ? [{ href: lp("/cennik/"), label: t("nav.pricing") }] : []),
   { href: lp("/o-nas/"),   label: t("nav.about") },
   { href: lp("/salony/"),  label: t("nav.salons") },
   { href: lp("/kontakt/"), label: t("nav.contact") },
-];
+] as Array<{ href: string; label: string; children?: typeof serviceSubItems }>;
 
 // Language switcher — convert current URL back to canonical PL path,
 // then re-localize to each target language via the slug map.
@@ -50,6 +57,40 @@ const langLinks = [
       {
         navItems.map((item) => {
           const isActive = currentPath.startsWith(item.href);
+          if (item.children) {
+            return (
+              <div class="nav-dropdown relative">
+                <a
+                  href={item.href}
+                  class:list={[
+                    "relative flex items-center gap-1 py-3 font-ui text-[13px] uppercase tracking-[2px] transition-colors",
+                    isActive ? "text-primary" : "text-muted hover:text-primary",
+                  ]}
+                >
+                  {item.label}
+                  <svg class="size-3 transition-transform duration-200" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M3 5l3 3 3-3" />
+                  </svg>
+                  {isActive && (
+                    <span class="absolute -bottom-1 left-0 h-[1.5px] w-full bg-primary" />
+                  )}
+                </a>
+                <div class="nav-dropdown-menu absolute left-0 top-full z-50 min-w-[200px] border border-border bg-bg pt-2 opacity-0 shadow-sm transition-all duration-200">
+                  {item.children.map((child) => (
+                    <a
+                      href={child.href}
+                      class:list={[
+                        "block px-5 py-2.5 font-ui text-[12px] uppercase tracking-[2px] transition-colors",
+                        currentPath.startsWith(child.href) ? "text-primary" : "text-muted hover:text-primary hover:bg-surface/50",
+                      ]}
+                    >
+                      {child.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            );
+          }
           return (
             <a
               href={item.href}
@@ -176,26 +217,42 @@ const langLinks = [
         navItems.map((item, i) => {
           const isActive = currentPath.startsWith(item.href);
           return (
-            <a
-              href={item.href}
-              class="menu-item group flex items-center justify-between border-b border-border py-5"
-              style={`--delay: ${i * 60}ms`}
-            >
-              <span
-                class:list={[
-                  "font-display text-[2rem] transition-transform duration-300 group-hover:translate-x-3",
-                  isActive ? "text-primary" : "text-muted",
-                ]}
+            <div class="menu-item" style={`--delay: ${i * 60}ms`}>
+              <a
+                href={item.href}
+                class="group flex items-center justify-between border-b border-border py-5"
               >
-                {item.label}
-              </span>
-              {isActive && (
-                <span class="size-2 rounded-full bg-primary" />
+                <span
+                  class:list={[
+                    "font-display text-[2rem] transition-transform duration-300 group-hover:translate-x-3",
+                    isActive ? "text-primary" : "text-muted",
+                  ]}
+                >
+                  {item.label}
+                </span>
+                {isActive && (
+                  <span class="size-2 rounded-full bg-primary" />
+                )}
+                <span class="font-ui text-xs text-muted/0 transition-colors duration-300 group-hover:text-muted">
+                  →
+                </span>
+              </a>
+              {item.children && (
+                <div class="flex flex-col gap-0 border-b border-border pl-4">
+                  {item.children.map((child) => (
+                    <a
+                      href={child.href}
+                      class:list={[
+                        "block py-3 font-ui text-[14px] uppercase tracking-[2px] transition-colors",
+                        currentPath.startsWith(child.href) ? "text-primary" : "text-muted hover:text-primary",
+                      ]}
+                    >
+                      {child.label}
+                    </a>
+                  ))}
+                </div>
               )}
-              <span class="font-ui text-xs text-muted/0 transition-colors duration-300 group-hover:text-muted">
-                →
-              </span>
-            </a>
+            </div>
           );
         })
       }
@@ -224,6 +281,22 @@ const langLinks = [
 </div>
 
 <style>
+  /* Desktop dropdown */
+  .nav-dropdown-menu {
+    pointer-events: none;
+    visibility: hidden;
+    transform: translateY(4px);
+  }
+  .nav-dropdown:hover .nav-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+  .nav-dropdown:hover svg {
+    transform: rotate(180deg);
+  }
+
   /* Hamburger animation */
   .hamburger-line {
     position: absolute;

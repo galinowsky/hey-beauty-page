@@ -12,20 +12,24 @@
 
 export const slugMap: Record<"en" | "uk", Record<string, string>> = {
   en: {
-    "uslugi":  "services",
-    "salony":  "salons",
-    "wlosy":   "hair",
-    "o-nas":   "about",
-    "kontakt": "contact",
-    "faq":     "faq",
+    "uslugi":       "services",
+    "salony":       "salons",
+    "wlosy":        "hair",
+    "kosmetologia": "cosmetology",
+    "kosmetyka":    "beauty",
+    "o-nas":        "about",
+    "kontakt":      "contact",
+    "faq":          "faq",
   },
   uk: {
-    "uslugi":  "posluhy",
-    "salony":  "salony",    // same word in Ukrainian
-    "wlosy":   "volossia",
-    "o-nas":   "pro-nas",
-    "kontakt": "kontakt",   // same word in Ukrainian
-    "faq":     "faq",
+    "uslugi":       "posluhy",
+    "salony":       "salony",       // same word in Ukrainian
+    "wlosy":        "volossia",
+    "kosmetologia": "kosmetolohiia",
+    "kosmetyka":    "kosmetyka",    // same word in Ukrainian
+    "o-nas":        "pro-nas",
+    "kontakt":      "kontakt",      // same word in Ukrainian
+    "faq":          "faq",
   },
 };
 

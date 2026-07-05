@@ -5,13 +5,15 @@ import { useTranslations, localizePath, toCanonicalPlPath } from "../i18n/utils"
 import type { Lang } from "../i18n/ui";
 
 const locations = await getCollection("locations");
-const services = await getCollection("services");
 const sortedLocations = locations.sort(
   (a, b) => a.data.sortOrder - b.data.sortOrder,
 );
-const sortedServices = services
-  .sort((a, b) => a.data.sortOrder - b.data.sortOrder)
-  .slice(0, 8);
+
+const categories = [
+  { label: "Kosmetologia", href: "/uslugi/kosmetologia/" },
+  { label: "Kosmetyka",    href: "/uslugi/kosmetyka/" },
+  { label: "Włosy",        href: "/uslugi/wlosy/" },
+];
 
 const lang = (Astro.currentLocale ?? "pl") as Lang;
 const t = useTranslations(lang);
@@ -50,17 +52,25 @@ const langLinks = [
       </h4>
       <ul class="space-y-2">
         {
-          sortedServices.map((s) => (
+          categories.map((cat) => (
             <li>
               <a
-                href={lp(`/uslugi/${s.data.slug}/`)}
+                href={lp(cat.href)}
                 class="text-sm text-muted transition-colors hover:text-primary"
               >
-                {s.data.name}
+                {cat.label}
               </a>
             </li>
           ))
         }
+        <li>
+          <a
+            href={lp("/cennik/")}
+            class="text-sm text-muted transition-colors hover:text-primary"
+          >
+            {t("nav.pricing")}
+          </a>
+        </li>
       </ul>
     </div>
 
